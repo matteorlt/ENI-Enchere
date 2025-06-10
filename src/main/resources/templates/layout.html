@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html data-th-fragment="layout(contenu,titre)" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" data-th-href="@{/css/general.css}">
+    <link rel="stylesheet" data-th-href="@{/css/layout.css}">
+    <title data-th-replace="${titre}">Layout</title>
+</head>
+<body>
+
+<header >
+    <h1 id="nav-title">
+        <a href="/">Les objets sont nos amis !!</a>
+<!--        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">-->
+<!--            <p data-th-text="${#authentication.name}"></p>-->
+<!--            <a data-th-href="@{/logout}" >Se déconnecter</a>-->
+<!--        </th:block>-->
+<!--        <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">-->
+<!--            <a data-th-href="@{/login}" >Se connecter</a>-->
+<!--        </th:block>-->
+
+    </h1>
+    <nav>
+        <ul>
+            <li><a href="/enchere">Enchere</a></li>
+            <li><a href="/profil">Profil</a></li>
+            <li><a href="/vendre">Vendre Un Article</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="center-main" data-th-replace="${contenu}">
+    <section class="center-section">
+        <h1>Bienvenue sur ENI-Enchères</h1>
+        <h2>Votre plateforme d'enchères en ligne</h2>
+        <p>Découvrez des objets uniques et participez aux enchères !</p>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; ENI - Tous droits réservés</p>
+        <div class="footer-links">
+            <a href="/mentions-legales">Mentions légales</a>
+            <a href="/contact">Contact</a>
+            <a href="/a-propos">À propos</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
