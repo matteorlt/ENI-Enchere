@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil</title>
+</head>
+<body>
+<main>
+    <h1 data-th-text="${utilisateur.pseudo}></h1>
+
+</main>
+</body>
+</html>
