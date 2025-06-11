@@ -8,55 +8,68 @@
 </head>
 <body>
 <main>
-<!--    modifs pour css à faire-->
-<form class=form-container data-th-action="@{/profil/modifier?pseudo=}+${pseudo}"
-      method="post"
-      data-th-object="${utilisateur}">
-    <h1>Mon profil</h1>
-<ul class="????????????????????????">
-<!--    Pas de modif de pseudo-->
-    <li>
-        <label for="inputPseudo" data-th-text="#{view-profil-modif.pseudo}">Pseudo :</label>
-        <input type="pseudo" id="inputPseudo" data-th-field="*{pseudo}"/>
-    </li>
-    <li>
-        <label for="inputNom"  data-th-text="#{view-profil-modif.nom}">Nom* :</label>
-        <input type="nom" id="inputNom" data-th-field="*{nom}" required/>
-    </li>
-    <li>
-        <label for="inputPrenom"  data-th-text="#{view-profil-modif.prenom}">Prénom* :</label>
-        <input type="prenom" id="inputPrenom" data-th-field="*{prenom}" required/>
-    </li>
-    <li>
-        <label for="inputEmail"  data-th-text="#{view-profil-modif.email}">Email* :</label>
-        <input type="email" id="inputEmail" data-th-field="*{email}" required/>
-    </li>
-    <li>
-        <label for="inputTelephone"  data-th-text="#{view-profil-modif.telephone}">Téléphone :</label>
-        <input type="telephone" id="inputTelephone" data-th-field="*{telephone}"/>
-    </li>
-<!--    séparer adresse -->
-    <li>
-        <label for="inputAdresse"  data-th-text="#{view-profil-modif.adresse}">Adresse* :</label>
-        <input type="adresse" id="inputAdresse" data-th-field="*{adresse}"/>
-        <label for="inputCP"  data-th-text="#{view-profil-modif.cp}">Code postal* :</label>
-        <input type="cp" id="inputCP" data-th-field="*{cp}"/>
-        <label for="inputVille"  data-th-text="#{view-profil-modif.ville}">Ville* :</label>
-        <input type="ville" id="inputVille" data-th-field="*{ville}"/>
-    </li>
-<!--    pas de modif de credit-->
-    <li>
-        <label for="inputCredit" data-th-text="#{view-profil-modif.credit}">Mon crédit :</label>
-        <input type="credit" id="inputCredit" data-th-field="*{credit}"/>
-    </li>
-    <li>
-        <button type="submit" data-th-text="#{view-avis-form.enregistrer}">Modifier</button>
-        <a href="/profil/modifier-mot-de-passe"><button>Modifier mot de passe</button></a>
-<!--        < bouton SUPPRIMER COMPTE >-->
-        <a href="/profil"><button>Annuler</button></a>
-    </li>
-</ul>
-</form>
+    <form class="form-container" data-th-action="@{/profil/modifier?pseudo=}+${pseudo}"
+          method="post"
+          data-th-object="${utilisateur}">
+        <h1>Mon profil</h1>
+
+        <div class="form-group">
+            <label data-th-text="#{view-profil-modif.pseudo}">Pseudo :</label>
+            <p data-th-text="*{pseudo}"></p>
+            <input type="hidden" data-th-field="*{pseudo}"/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputNom" data-th-text="#{view-profil-modif.nom}">Nom* :</label>
+            <input type="text" id="inputNom" data-th-field="*{nom}" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputPrenom" data-th-text="#{view-profil-modif.prenom}">Prénom* :</label>
+            <input type="text" id="inputPrenom" data-th-field="*{prenom}" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputEmail" data-th-text="#{view-profil-modif.email}">Email* :</label>
+            <input type="email" id="inputEmail" data-th-field="*{email}" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputTelephone" data-th-text="#{view-profil-modif.telephone}">Téléphone :</label>
+            <input type="tel" id="inputTelephone" data-th-field="*{telephone}"/>
+        </div>
+
+        <div class="form-group address-group">
+            <div>
+                <label for="inputAdresse" data-th-text="#{view-profil-modif.adresse}">Adresse* :</label>
+                <input type="text" id="inputAdresse" data-th-field="*{adresse}" required/>
+            </div>
+            <div class="address-row">
+                <div>
+                    <label for="inputCP" data-th-text="#{view-profil-modif.cp}">Code postal* :</label>
+                    <input type="text" id="inputCP" data-th-field="*{cp}" required/>
+                </div>
+                <div>
+                    <label for="inputVille" data-th-text="#{view-profil-modif.ville}">Ville* :</label>
+                    <input type="text" id="inputVille" data-th-field="*{ville}" required/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label data-th-text="#{view-profil-modif.credit}">Credit :</label>
+            <p data-th-text="*{credit}"></p>
+            <input type="hidden" data-th-field="*{credit}"/>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary" data-th-text="#{view-avis-form.enregistrer}">Modifier</button>
+            <a href="/profil/modifier-mot-de-passe" class="btn btn-secondary">Modifier mot de passe</a>
+            <a href="/profil" class="btn btn-cancel-secondary">Annuler</a>
+            <a href="/profil" class="btn btn-cancel">Supprimer mon compte</a>
+        </div>
+
+    </form>
 </main>
 
 </body>
