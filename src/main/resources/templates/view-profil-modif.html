@@ -42,16 +42,16 @@
         <div class="form-group address-group">
             <div>
                 <label for="inputAdresse" data-th-text="#{view-profil-modif.adresse}">Adresse* :</label>
-                <input type="text" id="inputAdresse" data-th-field="*{adresse}" required/>
+                <input type="text" id="inputAdresse" data-th-field="*{utilisateur.adresse.rue}" required/>
             </div>
             <div class="address-row">
                 <div>
                     <label for="inputCP" data-th-text="#{view-profil-modif.cp}">Code postal* :</label>
-                    <input type="text" id="inputCP" data-th-field="*{cp}" required/>
+                    <input type="text" id="inputCP" data-th-field="*{utilisateur.adresse.code_postal}" required/>
                 </div>
                 <div>
                     <label for="inputVille" data-th-text="#{view-profil-modif.ville}">Ville* :</label>
-                    <input type="text" id="inputVille" data-th-field="*{ville}" required/>
+                    <input type="text" id="inputVille" data-th-field="*{utilisateur.adresse.ville}" required/>
                 </div>
             </div>
         </div>
@@ -63,10 +63,13 @@
         </div>
 
         <div class="button-group">
-            <button type="submit" class="btn btn-primary" data-th-text="#{view-avis-form.enregistrer}">Modifier</button>
             <a href="/profil/modifier-mot-de-passe" class="btn btn-secondary">Modifier mot de passe</a>
+            <button type="submit" class="btn btn-primary" data-th-text="#{view-profil-modif.enregistrer}">Enregistrer</button>
             <a href="/profil" class="btn btn-cancel-secondary">Annuler</a>
-            <a href="/profil" class="btn btn-cancel">Supprimer mon compte</a>
+
+<!--            AJOUTER DU JS POUR UNE POP UP DE CONFIRMATION AVANT SUPPRESSION-->
+            <a href="/supprimer" class="btn btn-cancel">Supprimer mon compte</a>
+<!--            ...............................................................-->
         </div>
 
     </form>
