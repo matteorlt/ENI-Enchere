@@ -58,30 +58,30 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Configuration CSRF (Cross-Site Request Forgery)
-            // Protège contre les attaques CSRF en validant les tokens
-            .csrf(Customizer.withDefaults())
-
-            // Configuration des en-têtes de sécurité
-            .headers(headers -> headers
-                // Empêche le site d'être affiché dans une iframe (protection contre le clickjacking)
-                .frameOptions().sameOrigin()
-                // Active la protection XSS du navigateur
-                .xssProtection())
-
-            // Configuration de la gestion des sessions
-            .sessionManagement(session -> session
-                // Limite à une session active par utilisateur
-                .maximumSessions(1)
-                // Redirige vers la page de connexion si la session expire
-                .expiredUrl("/connexion?expired")
-                // Configure le timeout de session à 5 minutes (300 secondes)
-                .and()
-                .sessionFixation().newSession()
-                .invalidSessionUrl("/connexion?expired")
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .maximumSessions(1)
-                .expiredUrl("/connexion?expired"))
+//            // Configuration CSRF (Cross-Site Request Forgery)
+//            // Protège contre les attaques CSRF en validant les tokens
+//            .csrf(Customizer.withDefaults())
+//
+//            // Configuration des en-têtes de sécurité
+//            .headers(headers -> headers
+//                // Empêche le site d'être affiché dans une iframe (protection contre le clickjacking)
+//                .frameOptions().sameOrigin()
+//                // Active la protection XSS du navigateur
+//                .xssProtection())
+//
+//            // Configuration de la gestion des sessions
+//            .sessionManagement(session -> session
+//                // Limite à une session active par utilisateur
+//                .maximumSessions(1)
+//                // Redirige vers la page de connexion si la session expire
+//                .expiredUrl("/connexion?expired")
+//                // Configure le timeout de session à 5 minutes (300 secondes)
+//                .and()
+//                .sessionFixation().newSession()
+//                .invalidSessionUrl("/connexion?expired")
+//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                .maximumSessions(1)
+//                .expiredUrl("/connexion?expired"))
 
             // Configuration de la déconnexion
             .logout(logout -> logout
