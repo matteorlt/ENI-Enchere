@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" data-th-href="@{/css/general.css}">
     <link rel="stylesheet" data-th-href="@{/css/layout.css}">
+    <link rel="icon" type="image/png" data-th-href="@{/images/logoENI.png}">
     <title data-th-replace="${titre}">Layout</title>
 </head>
 <body>
 
-<header >
+<header>
     <h1 id="nav-title">
-        <a href="/">Les objets sont nos amis !!</a>
+        <a href="/" class="logo-link">
+            <img src="/images/logoENI.png" alt="Logo ENI" class="nav-logo">
+            <span>Les objets sont nos amis !!</span>
+        </a>
 <!--        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">-->
 <!--            <p data-th-text="${#authentication.name}"></p>-->
 <!--            <a data-th-href="@{/logout}" >Se déconnecter</a>-->
