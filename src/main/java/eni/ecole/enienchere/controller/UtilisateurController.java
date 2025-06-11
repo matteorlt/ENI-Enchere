@@ -1,14 +1,13 @@
 package eni.ecole.enienchere.controller;
 
+import eni.ecole.enienchere.bll.UtilisateurService;
 import eni.ecole.enienchere.bo.Utilisateur;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
-import jakarta.validation.Valid;
+
 
 @Controller
 @RequestMapping("/utilisateur")
@@ -32,7 +31,7 @@ public class UtilisateurController {
     public String afficherUnUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
         if (utilisateurConnecte != null && utilisateurConnecte.getPseudo() != null) {
             if (pseudo != null) {
-                Utilisateur utilisateur = UtilisateurService.consulterUtilisateurParPseudo(pseudo);
+                Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                 // Ajout de l'instance dans le modèle
                 model.addAttribute("utilisateur", utilisateur);
                 return "view-profil";
@@ -49,9 +48,9 @@ public class UtilisateurController {
     @GetMapping("/mon-profil")
     public String afficherProfilUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
         if (utilisateurConnecte != null && pseudo.equals(utilisateurConnecte.getPseudo())) {
-                Utilisateur utilisateur = UtilisateurService.consulterUtilisateurParPseudo(pseudo);
-                model.addAttribute("utilisateur", utilisateur);
-                return "view-mon-profil";
+            Utilisateur utilisateur = UtilisateurService.consulterUtilisateurParPseudo(pseudo);
+            model.addAttribute("utilisateur", utilisateur);
+            return "view-mon-profil";
         } else {
             System.out.println("Pseudo utilisateur ne correspond pas à ce profil");
         }
@@ -60,7 +59,7 @@ public class UtilisateurController {
 
 
     @GetMapping("mon-profil/modifier")
-    public String afficherProfilUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
+    public String modifierProfilUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
         if (utilisateurConnecte != null && pseudo.equals(utilisateurConnecte.getPseudo())) {
             Utilisateur utilisateur = UtilisateurService.consulterUtilisateurParPseudo(pseudo);
             model.addAttribute("utilisateur", utilisateur);
@@ -71,41 +70,18 @@ public class UtilisateurController {
         return "redirect:/accueil";
     }
 
-
     @PostMapping("mon-profil/modifier")
-    public String mettreAJourFormateur(@ModelAttribute("utilisateur") Utilisateur utilisateur, BindingResult bindingResult) {
-            System.out.println(utilisateur);
-            UtilisateurService.update(utilisateur);
-            return "redirect:/mon-profil";
+    public String mettreAJourUtilisateur(@ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
+        System.out.println(utilisateurConnecte);
+        UtilisateurService.update(utilisateurConnecte);
+        return "redirect:/mon-profil";
     }
 
 
-//    @GetMapping("/connexion")
-//    public String connexion(@ModelAttribute("membreEnSession") Membre membreEnSession,
-//                            @RequestParam(name = "email", required = false, defaultValue = "jtrillard@campus-eni.fr") String email) {
-//        Membre aCharger = service.charger(email);
-//        if (aCharger != null) {
-//            membreEnSession.setId(aCharger.getId());
-//            membreEnSession.setNom(aCharger.getNom());
-//            membreEnSession.setPrenom(aCharger.getPrenom());
-//            membreEnSession.setPseudo(aCharger.getPseudo());
-//            membreEnSession.setAdmin(aCharger.isAdmin());
-//
-//        } else {
-//            membreEnSession.setId(0);
-//            membreEnSession.setNom(null);
-//            membreEnSession.setPrenom(null);
-//            membreEnSession.setPseudo(null);
-//            membreEnSession.setAdmin(false);
-//
-//        }
-//        System.out.println(membreEnSession);
-//        // Evidemment on évite de mettre un mot de passe en session
-//        // (surtout non chiffré)
-//
-//        return "redirect:/films";
-//    }
-
+    @GetMapping("/connexion")
+    public String connexion() {
+        return "view-connexion";
+    }
 
 
     @GetMapping("/deconnexion")
@@ -115,23 +91,42 @@ public class UtilisateurController {
         return "redirect:/accueil";
     }
 
+    //----- A RETRAVAILLER -----
+    @PostMapping("/supprimer")
+    public String supprimerCompte(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
+        if (utilisateurConnecte != null && pseudo.equals(utilisateurConnecte.getPseudo())) {
+
+            utilisateurService.supprimerUtilisateur(utilisateurConnecte.getPseudo());
+        } else {
+            return "redirect:/accueil";
+        }
+        return "redirect:/supprimer?success";
+
+    }
 
 
-//        @PostMapping("/supprimer")
-//        @ResponseBody
-//        public ResponseEntity<?> deleteAccount(Authentication authentication) {
-//            try {
-//                String UserPseudo = authentication.getPseudo();
-//                Long userId = getUserId(authentication); // Méthode à implémenter
-//
-//                utilisateurService.deleteUserAccount(userId, UserPseudo);
-//
-//                // Déconnexion de l'utilisateur
-//                SecurityContextHolder.clearContext();
-//
-//                return ResponseEntity.ok().body("{\"success\": true, \"message\": \"Compte supprimé avec succès\"}");
-//            } catch (Exception e) {
-//                return ResponseEntity.badRequest().body("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
-//            }
-//        }
+    @GetMapping("/creer-compte")
+    public String formulaireCreationCompte(Model model) {
+        Utilisateur utilisateur = new Utilisateur();
+        model.addAttribute("utilisateur", utilisateur);
+        return "view-creer-compte";
+    }
+
+    //----- A RETRAVAILLER -----
+    @PostMapping("creer-compte/enregistrer")
+    public String enregistrerCompte(@ModelAttribute("utilisateur") Utilisateur utilisateur, BindingResult result, Model model) {
+        Utilisateur utilisateurExistant = UtilisateurService.getUtilisateurParMail(utilisateur.getEmail());
+
+        if (utilisateurExistant != null && utilisateurExistant.getEmail() != null && !utilisateurExistant.getEmail().isEmpty()) {
+            result.rejectValue("email", null, "Cet email est déjà utilisé");
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("utilisateur", utilisateur);
+            return "/creer-compte";
+        }
+
+        utilisateurService.enregistrerUtilisateur(utilisateur);
+        return "redirect:/creer-compte?success";
+    }
 }
