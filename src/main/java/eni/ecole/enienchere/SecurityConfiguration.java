@@ -129,7 +129,7 @@ public class SecurityConfiguration {
                 auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();
                 auth.requestMatchers(HttpMethod.POST,"/cree").authenticated();
                 auth.requestMatchers(HttpMethod.POST,"/photo").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/acheter").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/article-detail").authenticated();
                 auth.requestMatchers(HttpMethod.GET,"/edit").authenticated();
                 auth.requestMatchers(HttpMethod.POST,"/edit").authenticated();
                 auth.requestMatchers(HttpMethod.GET,"/supprimer").authenticated();
