@@ -1,0 +1,59 @@
+<!DOCTYPE html >
+<html lang="en" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+
+<title>Détail de l'enchère</title>
+
+<main class="center-main">
+    <div class="center-section">
+        <form action="/edit" method="post" data-th-object="${enchere}">
+            <!-- Champs cachés pour la clé composite -->
+            <input type="hidden" name="id_utilisateur" data-th-value="${enchere.id_utilisateur}">
+            <input type="hidden" name="no_article" data-th-value="${enchere.no_article}">
+            <input type="hidden" name="montant_enchere" data-th-value="${enchere.montant_enchere}">
+            
+            <ul class="flex-outer">
+                <li>
+                    <label for="Nom">Nom :</label>
+                    <input type="text" id="Nom" data-th-field="*{article_a_vendre.nom_article}" readonly>
+                </li>
+                <li>
+                    <label for="Description">Description :</label>
+                    <input type="text" id="Description" data-th-field="*{article_a_vendre.description}" readonly>
+                </li>
+                <li>
+                    <label for="Photo">Photo :</label>
+                    <input type="text" id="Photo" data-th-field="*{article_a_vendre.photo}" readonly>
+                </li>
+                <li>
+                    <label for="date_debut_enchere">Date de Début :</label>
+                    <input type="date" id="date_debut_enchere" data-th-field="*{article_a_vendre.date_debut_enchere}" readonly>
+                </li>
+                <li>
+                    <label for="date_fin_enchere">Date de Fin :</label>
+                    <input type="date" id="date_fin_enchere" data-th-field="*{article_a_vendre.date_fin_enchere}" readonly>
+                </li>
+                <li>
+                    <label for="statut_enchere">Statut de l'enchere :</label>
+                    <input type="text" id="statut_enchere" data-th-field="*{article_a_vendre.statut_enchere}" readonly>
+                </li>
+                <li>
+                    <label for="pseudo">Pseudo du vendeur :</label>
+                    <input type="text" id="pseudo" data-th-field="*{article_a_vendre.utlisateur.pseudo}" readonly>
+                </li>
+                <li>
+                    <label for="adresse_retrait">Point de retrait :</label>
+                    <input type="text" id="adresse_retrait" data-th-field="*{article_a_vendre.adresses.rue + article_a_vendre.adresses.code_postal + article_a_vendre.adresses.ville}" readonly>
+                </li>
+                <li>
+                    <label for="montant_propose">Votre enchère :</label>
+                    <input type="number" id="montant_propose" name="montant_propose" min="0" step="0.01" required>
+                </li>
+                <li>
+                    <button type="submit" class="btn">Placer une enchère</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</main>
+
+</html>
