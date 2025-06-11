@@ -1,5 +1,6 @@
 package eni.ecole.enienchere.controller;
 
+import eni.ecole.enienchere.bll.UtilisateurService;
 import eni.ecole.enienchere.bo.Utilisateur;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/utilisateur")
@@ -32,7 +32,7 @@ public class UtilisateurController {
     public String afficherUnUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
         if (utilisateurConnecte != null && utilisateurConnecte.getPseudo() != null) {
             if (pseudo != null) {
-                Utilisateur utilisateur = UtilisateurService.consulterUtilisateurParPseudo(pseudo);
+                Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                 // Ajout de l'instance dans le modèle
                 model.addAttribute("utilisateur", utilisateur);
                 return "view-profil";
@@ -49,7 +49,7 @@ public class UtilisateurController {
     @GetMapping("/mon-profil")
     public String afficherProfilUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
         if (utilisateurConnecte != null && pseudo.equals(utilisateurConnecte.getPseudo())) {
-                Utilisateur utilisateur = UtilisateurService.consulterUtilisateurParPseudo(pseudo);
+                Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                 model.addAttribute("utilisateur", utilisateur);
                 return "view-mon-profil";
         } else {
@@ -60,9 +60,9 @@ public class UtilisateurController {
 
 
     @GetMapping("mon-profil/modifier")
-    public String afficherProfilUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
+    public String modifierProfilUtilisateur(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
         if (utilisateurConnecte != null && pseudo.equals(utilisateurConnecte.getPseudo())) {
-            Utilisateur utilisateur = UtilisateurService.consulterUtilisateurParPseudo(pseudo);
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
             model.addAttribute("utilisateur", utilisateur);
             return "view-profil-modif";
         } else {
