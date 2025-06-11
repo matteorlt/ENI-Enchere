@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface UtilisateurDAO {
 
-void create(Utilisateur utilisateur);
+String create(Utilisateur utilisateur);
 Utilisateur read(String pseudo);
 List<Utilisateur> readAll();
-Utilisateur update(String pseudo);
+void update(Utilisateur utilisateur);
 void delete(String pseudo);
 
 }
