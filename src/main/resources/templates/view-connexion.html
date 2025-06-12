@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Se connecter</title>
+</head>
+<body>
+<main>
+    <form class="form-container" data-th-action="@{/mon-profil/modifier?pseudo=}+${pseudo}"
+          method="post"
+          data-th-object="${utilisateur}">
+        <h1>Se connecter</h1>
+
+        <div class="form-group">
+            <label for="inputPseudo">Identifiant :</label>
+            <input type="text" id="inputPseudo" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputMdp">Mot de passe :</label>
+            <input type="text" id="inputMdp" required/>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary">Se connecter</button>
+            <a href="/" >Mot de passe oublié</a>
+        </div>
+
+        <div>
+            <a href="/creer-compte" class="btn btn-secondary">Créer un compte</a>
+        </div>
+    </form>
+</main>
+
+</body>
+</html>
+

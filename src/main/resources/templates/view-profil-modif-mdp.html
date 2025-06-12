@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier mon profil</title>
+</head>
+<body>
+<main>
+    <form class="form-container" data-th-action="@{/mon-profil/modifier-mot-de-passe/?pseudo=}+${pseudo}"
+          method="post"
+          data-th-object="${utilisateur}">
+        <h1>Modifier mon mot de passe</h1>
+
+        <div class="form-group">
+            <label for="inputOldMdp">Mot de passe actuel* :</label>
+            <input type="text" id="inputOldMdp" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputMdp">Nouveau mot de passe* :</label>
+            <input type="text" id="inputMdp" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputConfirmMdp">Confirmer mot de passe* :</label>
+            <input type="text" id="inputConfirmMdp" required/>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="/mon-profil" class="btn btn-cancel-secondary">Annuler</a>
+        </div>
+
+    </form>
+</main>
+
+</body>
+</html>
