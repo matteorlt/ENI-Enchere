@@ -38,7 +38,7 @@
         </div>
         <div class="vendeur">
             <span class="label">Vendeur :</span>
-            <span class="value" th:text="${article.vendeur.pseudo}"></span>
+            <a class="value" data-th-href="@{/utilisateur/profil(pseudo=${article.vendeur.pseudo})}" th:text="${article.vendeur.pseudo}"></a>
         </div>
         <div class="enchere-input">
             <label for="montant_propose">Votre enchère :</label>
@@ -50,7 +50,7 @@
             </div>
         </form>
         <div class="button-detail">
-            <a th:href="@{/}" class="btn btn-primary">Retour</a>
+            <a th:href="@{/enchere}" class="btn btn-primary">Retour</a>
         </div>
     </div>
 

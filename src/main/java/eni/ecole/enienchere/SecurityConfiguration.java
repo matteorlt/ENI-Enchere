@@ -131,10 +131,12 @@ public class SecurityConfiguration {
                 auth.requestMatchers(HttpMethod.GET,"/utilisateur/css/**").permitAll();
                 auth.requestMatchers(HttpMethod.GET,"/details").permitAll();
                 auth.requestMatchers(HttpMethod.GET,"/details/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/nouvelle").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/nouvelle").permitAll();
 
 //                // Accès authentifié (nécessite d'être connecté)
-//                auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();
-//                auth.requestMatchers(HttpMethod.POST,"/cree").authenticated();
+//                auth.requestMatchers(HttpMethod.GET,"/nouvelle").authenticated();
+//                auth.requestMatchers(HttpMethod.POST,"/nouvelle").authenticated();
 //                auth.requestMatchers(HttpMethod.POST,"/photo").authenticated();
 //                auth.requestMatchers(HttpMethod.POST,"/article-detail").authenticated();
 //                auth.requestMatchers(HttpMethod.GET,"/edit").authenticated();
