@@ -6,9 +6,13 @@ import eni.ecole.enienchere.bo.Utilisateur;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,19 +28,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Validated
 public class UtilisateurController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UtilisateurController.class);
+
+    protected final Log logger = LogFactory.getLog(getClass());
+
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     private final UtilisateurService utilisateurService;
 
-    public UtilisateurController(UtilisateurService utilisateurService) {
+    public UtilisateurController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UtilisateurService utilisateurService) {
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
         this.utilisateurService = utilisateurService;
     }
 
-    @ModelAttribute("utilisateurConnecte")
-    public Utilisateur utilisateurConnecte() {
-        logger.debug("Initialisation de l'attribut de session utilisateurConnecte");
-        return new Utilisateur();
-    }
+
 
 //    @GetMapping("/profil")
 //    public String afficherUnUtilisateur(
@@ -185,10 +191,10 @@ public class UtilisateurController {
 ////        return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
 ////    }
 //
-//    @GetMapping("/connexion")
-//    public String connexion() {
-//        return "view-connexion";
-//    }
+    @GetMapping("/connexion")
+    public String connexion() {
+        return "view-connexion";
+    }
 //
 //    @PostMapping("/connexion")
 //    public String connecter(

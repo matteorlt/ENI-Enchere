@@ -35,16 +35,16 @@ public class SecurityConfiguration {
     /**
      * Configuration de la gestion des utilisateurs avec la base de données
      * Cette méthode définit comment Spring Security va récupérer les informations des utilisateurs
-     * @param dataSource La source de données (connexion à la base de données)
+     * @param /dataSource La source de données (connexion à la base de données)
      * @return Un gestionnaire d'utilisateurs configuré
      */
-//    @Bean
-//    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-//        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
-//        auth.userDetailsService(utilisateurService)
-//                .passwordEncoder(passwordEncoder());
-//        return auth.build();
-//    }
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+        auth.userDetailsService(utilisateurService)
+                .passwordEncoder(passwordEncoder());
+        return auth.build();
+    }
 
     /**
      * Configuration de l'encodeur de mot de passe
