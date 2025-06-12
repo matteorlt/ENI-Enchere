@@ -129,6 +129,8 @@ public class SecurityConfiguration {
                 auth.requestMatchers(HttpMethod.GET,"/utilisateur/**").permitAll();
                 auth.requestMatchers(HttpMethod.POST,"/utilisateur/css/**").permitAll();
                 auth.requestMatchers(HttpMethod.GET,"/utilisateur/css/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/details").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/details/**").permitAll();
 
 //                // Accès authentifié (nécessite d'être connecté)
 //                auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();

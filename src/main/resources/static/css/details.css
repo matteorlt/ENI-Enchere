@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+}
+.detail-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background: #fff;
+}
+.detail-table {
+    display: table;
+    width: 100%;
+    margin-bottom: 40px;
+}
+.row {
+    display: table-row;
+}
+.cell {
+    display: table-cell;
+    padding: 10px 20px 10px 0;
+    vertical-align: top;
+}
+.label {
+    font-weight: bold;
+    text-align: right;
+    width: 180px;
+    color: #222;
+}
+.value {
+    text-align: left;
+    color: #222;
+    min-width: 180px;
+}
+.detail-bottom {
+    margin-top: 40px;
+}
+.button-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+.retrait, .vendeur {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+.retrait .label, .vendeur .label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+@media (max-width: 700px) {
+    .detail-container {
+        padding: 10px;
+    }
+    .detail-table, .row, .cell {
+        display: block;
+        width: 100%;
+    }
+    .label {
+        text-align: left;
+        width: auto;
+    }
+    .value {
+        min-width: 0;
+    }
+}
+.enchere-input {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0 1.5rem 0;
+}
+.enchere-input label {
+    font-weight: bold;
+    min-width: 140px;
+    color: #222;
+}
+.enchere-input input[type="number"] {
+    padding: 8px 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 1em;
+    width: 160px;
+    background: #fafafa;
+    transition: border 0.2s;
+}
+.enchere-input input[type="number"]:focus {
+    border: 1.5px solid #007bff;
+    outline: none;
+    background: #fff;
+}
