@@ -4,6 +4,8 @@ import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
 import eni.ecole.enienchere.dal.AdresseDAO;
 import eni.ecole.enienchere.dal.UtilisateurDAO;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,12 +41,19 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
     @Override
     public Utilisateur authentifier(String pseudo, String motDePasse) {
+        return null;
+    }
 
-        var utilisateurConnecter= utilisateurDAO.read(pseudo);
-        if (utilisateurConnecter.getMot_de_passe().equals(motDePasse)){
-            return utilisateurConnecter;
-        }
+    @Override
+    public Utilisateur enregistrerUnUtilisateur(Utilisateur utilisateur) {
 
+        var nouvelUtilisateur = utilisateurDAO.read(utilisateurDAO.create(utilisateur));
+        return nouvelUtilisateur;
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
 }

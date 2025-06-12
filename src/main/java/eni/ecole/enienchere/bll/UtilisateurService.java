@@ -15,4 +15,6 @@ public interface UtilisateurService extends UserDetailsService {
     Adresse consulterAdresseParId(int no_adresse);
 
     Utilisateur authentifier(@NotBlank String pseudo, @NotBlank String motDePasse);
+
+    Utilisateur enregistrerUnUtilisateur(Utilisateur utilisateur);
 }

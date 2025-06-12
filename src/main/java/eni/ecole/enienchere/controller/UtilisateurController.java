@@ -3,6 +3,7 @@ package eni.ecole.enienchere.controller;
 import eni.ecole.enienchere.bll.UtilisateurService;
 import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +46,6 @@ public class UtilisateurController {
         this.passwordEncoder = passwordEncoder;
         this.utilisateurService = utilisateurService;
     }
-
 
 
 //    @GetMapping("/profil")
@@ -79,8 +82,8 @@ public class UtilisateurController {
             Model model,
             @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
         Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-        int no_adresse =(int) utilisateur.getAdresse().getNo_adresse();
-        Adresse adresse=utilisateurService.consulterAdresseParId(no_adresse);
+        int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
+        Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
         model.addAttribute("utilisateur", utilisateur);
         model.addAttribute("adresse", adresse);
         return "view-mon-profil";
@@ -97,8 +100,8 @@ public class UtilisateurController {
 //            logger.error("Erreur lors du chargement du profil utilisateur: {}", pseudo, e);
 //            model.addAttribute("errorMessage", "Erreur lors du chargement du profil");
 //            return "redirect:/accueil";
-        }
     }
+
 
 //    @GetMapping("/mon-profil/modifier")
 //    public String modifierProfilUtilisateur(
@@ -169,28 +172,29 @@ public class UtilisateurController {
 //        }
 //    }
 //
-////    @PostMapping("/mon-profil/modifier-mot-de-passe")
-////    public String mettreAJourMdp(
-////            @RequestParam("pseudo") @NotBlank String pseudo,
-////            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte,
-////            @RequestParam("mot_de_passe") @NotBlank @Size(min = 8) String motDePasse,
-////            RedirectAttributes redirectAttributes) {
-////
-////        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-////            return "redirect:/accueil";
-////        }
-////
-////        try {
-////            utilisateurService.updateMdp(utilisateurConnecte, motDePasse);
-////            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}", pseudo);
-////            redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
-////        } catch (Exception e) {
-////            logger.error("Erreur lors de la mise à jour du mot de passe: {}", pseudo, e);
-////            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
-////        }
-////
-////        return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
-////    }
+
+    /// /    @PostMapping("/mon-profil/modifier-mot-de-passe")
+    /// /    public String mettreAJourMdp(
+    /// /            @RequestParam("pseudo") @NotBlank String pseudo,
+    /// /            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte,
+    /// /            @RequestParam("mot_de_passe") @NotBlank @Size(min = 8) String motDePasse,
+    /// /            RedirectAttributes redirectAttributes) {
+    /// /
+    /// /        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
+    /// /            return "redirect:/accueil";
+    /// /        }
+    /// /
+    /// /        try {
+    /// /            utilisateurService.updateMdp(utilisateurConnecte, motDePasse);
+    /// /            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}", pseudo);
+    /// /            redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
+    /// /        } catch (Exception e) {
+    /// /            logger.error("Erreur lors de la mise à jour du mot de passe: {}", pseudo, e);
+    /// /            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
+    /// /        }
+    /// /
+    /// /        return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
+    /// /    }
 //
     @GetMapping("/connexion")
     public String connexion() {
@@ -198,37 +202,66 @@ public class UtilisateurController {
     }
 
 
-////    @PostMapping("/supprimer")
-////    public String supprimerCompte(
-////            @RequestParam("pseudo") @NotBlank String pseudo,
-////            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte,
-////            SessionStatus status,
-////            RedirectAttributes redirectAttributes) {
-////
-////        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-////            return "redirect:/accueil";
-////        }
-////
-////        try {
-////            utilisateurService.supprimerUtilisateur(pseudo);
-////            status.setComplete(); // Terminer la session après suppression
-////            logger.info("Compte supprimé avec succès pour l'utilisateur: {}", pseudo);
-////            redirectAttributes.addFlashAttribute("successMessage", "Votre compte a été supprimé avec succès");
-////            return "redirect:/accueil";
-////        } catch (Exception e) {
-////            logger.error("Erreur lors de la suppression du compte: {}", pseudo, e);
-////            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression du compte");
-////            return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
-////        }
-////    }
+    /// /    @PostMapping("/supprimer")
+    /// /    public String supprimerCompte(
+    /// /            @RequestParam("pseudo") @NotBlank String pseudo,
+    /// /            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte,
+    /// /            SessionStatus status,
+    /// /            RedirectAttributes redirectAttributes) {
+    /// /
+    /// /        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
+    /// /            return "redirect:/accueil";
+    /// /        }
+    /// /
+    /// /        try {
+    /// /            utilisateurService.supprimerUtilisateur(pseudo);
+    /// /            status.setComplete(); // Terminer la session après suppression
+    /// /            logger.info("Compte supprimé avec succès pour l'utilisateur: {}", pseudo);
+    /// /            redirectAttributes.addFlashAttribute("successMessage", "Votre compte a été supprimé avec succès");
+    /// /            return "redirect:/accueil";
+    /// /        } catch (Exception e) {
+    /// /            logger.error("Erreur lors de la suppression du compte: {}", pseudo, e);
+    /// /            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression du compte");
+    /// /            return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
+    /// /        }
+    /// /    }
+
+    @PostMapping("/creer-compte")
+    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
+        var password = utilisateur.getPassword();
+        utilisateur.setMot_de_passe(passwordEncoder.encode(password));
+        utilisateurService.enregistrerUnUtilisateur(utilisateur);
+
+        try {
+            request.login(utilisateur.getUsername(), password);
+        } catch (ServletException e) {
+            // Gérer l'erreur (par exemple, mot de passe incorrect)
+            return "redirect:/register?error";
+        }
+
+        // 2. Authentifier automatiquement l'utilisateur
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        utilisateur.getUsername(),
+                        password // la c'est le mdp en clair qu'il nous faut
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+        return "redirect:/";
+    }
 
     @GetMapping("/creer-compte")
-    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
-       var password = utilisateur.getPassword();
-       utilisateur.setMot_de_passe(passwordEncoder.encode(password));
-       ut
-        return "view-creer-compte";
+    public String registerGet(Model model) {
+        model.addAttribute("utilisateur", new Utilisateur());
+        return "redirect:/creer-compte";
     }
+
+}
+
+
 
 ////    @PostMapping("/creer-compte/enregistrer")
 ////    public String enregistrerCompte(
@@ -263,7 +296,7 @@ public class UtilisateurController {
 ////            model.addAttribute("utilisateur", utilisateur);
 ////            return "view-creer-compte";
 ////        }
-////    }
+//    }
 //
 //    // Méthodes utilitaires privées
 //    private boolean isUtilisateurConnecte(Utilisateur utilisateur) {
