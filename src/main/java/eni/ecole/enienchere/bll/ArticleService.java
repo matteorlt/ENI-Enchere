@@ -1,6 +1,7 @@
 package eni.ecole.enienchere.bll;
 
 import eni.ecole.enienchere.bo.ArticleAVendre;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
