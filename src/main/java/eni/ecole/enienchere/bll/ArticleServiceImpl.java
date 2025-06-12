@@ -125,6 +125,10 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleAVendre> getArticlesFiltres(String nom, String categorie) {
-        return articleDAO.findByNomAndCategorie(nom, categorie);
+        if ((nom == null || nom.isEmpty()) && (categorie == null || categorie.isEmpty())) {
+            return articleDAO.findAll();
+        } else {
+            return articleDAO.findByNomAndCategorie(nom, categorie);
+        }
     }
 } 

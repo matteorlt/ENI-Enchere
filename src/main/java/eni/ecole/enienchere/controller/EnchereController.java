@@ -1,6 +1,7 @@
 package eni.ecole.enienchere.controller;
 
 import eni.ecole.enienchere.bll.ArticleService;
+import eni.ecole.enienchere.bll.CategorieService;
 import eni.ecole.enienchere.bll.EnchereService;
 import eni.ecole.enienchere.bo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,30 +22,26 @@ public class EnchereController {
 
     private EnchereService enchereService;
     private ArticleService articleService;
+    private final CategorieService categorieService;
 
     @Autowired
-    public EnchereController(ArticleService articleService) {
+    public EnchereController(ArticleService articleService, CategorieService categorieService) {
         this.articleService = articleService;
+        this.categorieService = categorieService;
     }
 
-    @GetMapping("/encheres")
+    @GetMapping("/enchere")
     public String afficherEncheres(Model model,
                                    @RequestParam(name = "nom", required = false) String nom,
                                    @RequestParam(name = "categorie", required = false) String categorie) {
-        List<String> categories = List.of("Ameublement", "Informatique", "Sports&Loisirs", "Vêtements");
+        var categories = categorieService.getAllCategories();
+        System.out.println("Catégories récupérées : " + categories);
         List<ArticleAVendre> encheres = articleService.getArticlesFiltres(nom, categorie);
         model.addAttribute("encheres", encheres);
         model.addAttribute("categories", categories);
         model.addAttribute("nom", nom);
         model.addAttribute("categorie", categorie);
         model.addAttribute("currentDate", java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        return "view-enchere";
-    }
-
-    @GetMapping("/enchere")
-    public String ListEnchereController(Model model) {
-        List<ArticleAVendre> encheres = articleService.getAllArticles();
-        model.addAttribute("encheres", encheres);
         return "view-enchere";
     }
 
