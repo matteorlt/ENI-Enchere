@@ -22,20 +22,16 @@ public class EnchereController {
     private ArticleService articleService;
 
     @GetMapping("/encheres")
-
-    public String afficherEncheres(Model model, @RequestParam(name = "nom", required = true) String nom,
-   @RequestParam(name = "categorie", required = true) int idcategorie) {
-
-
-    List<String> categories = List.of("Ameublement", "Informatique", "Sport&Loisirs", "Vêtements");
-    List<ArticleAVendre> encheres = articleService.getArticlesByCategorie(idcategorie);
-
-        //TO DO
+    public String afficherEncheres(Model model,
+                                   @RequestParam(name = "nom", required = false) String nom,
+                                   @RequestParam(name = "categorie", required = false) String categorie) {
+        List<String> categories = List.of("Ameublement", "Informatique", "Sports&Loisirs", "Vêtements");
+        List<ArticleAVendre> encheres = articleService.getArticlesFiltres(nom, categorie);
         model.addAttribute("encheres", encheres);
+        model.addAttribute("categories", categories);
         model.addAttribute("nom", nom);
-        model.addAttribute("categorie", idcategorie);
-        model.addAttribute("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-
+        model.addAttribute("categorie", categorie);
+        model.addAttribute("currentDate", java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         return "view-enchere";
     }
 

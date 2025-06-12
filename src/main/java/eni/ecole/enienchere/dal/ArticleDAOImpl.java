@@ -144,4 +144,24 @@ public class ArticleDAOImpl implements ArticleDAO {
                 "WHERE a.prix_initial = ?";
         return jdbcTemplate.query(sql, articleRowMapper, prixInitial);
     }
+
+    @Override
+    public List<ArticleAVendre> findByNomAndCategorie(String nom, String categorie) {
+        StringBuilder sql = new StringBuilder("SELECT a.*, c.libelle, u.pseudo, u.nom, u.prenom, u.email, u.telephone, " +
+                "ad.no_adresse, ad.rue, ad.code_postal, ad.ville " +
+                "FROM ARTICLES_A_VENDRE a " +
+                "JOIN CATEGORIES c ON a.no_categorie = c.no_categorie " +
+                "JOIN UTILISATEURS u ON a.id_utilisateur = u.pseudo " +
+                "LEFT JOIN ADRESSES ad ON a.no_adresse_retrait = ad.no_adresse WHERE 1=1");
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        if (nom != null && !nom.isEmpty()) {
+            sql.append(" AND a.nom_article LIKE :nom");
+            params.addValue("nom", "%" + nom + "%");
+        }
+        if (categorie != null && !categorie.isEmpty()) {
+            sql.append(" AND c.libelle = :categorie");
+            params.addValue("categorie", categorie);
+        }
+        return namedParameterJdbcTemplate.query(sql.toString(), params, articleRowMapper);
+    }
 }

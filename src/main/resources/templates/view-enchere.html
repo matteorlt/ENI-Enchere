@@ -14,10 +14,6 @@
          <label for="categorie">Catégorie :</label>
          <select name="categorie" id="categorie">
              <option value="">Toutes</option>
-             <option value="">Ameublement</option>
-             <option value="">Informatique</option>
-             <option value="">Sports&Loisirs</option>
-             <option value="">Vêtements</option>
              <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
          </select><br><br>
  
@@ -36,10 +32,10 @@
      <div th:each="enchere : ${encheres}">
          <div style="border: 1px solid black; margin: 10px; padding: 10px;">
              <img src="/images/DD_Pic.jpc" alt="Disque Dur" class="nav-logo">
-             <h3 th:text="${enchere.nom}">Nom</h3>
-             <p>Prix : <span th:text="${enchere.prix}">0</span> point(s)</p>
-             <p>Fin de l'enchère : <span th:text="${enchere.dateFin}">01/06/202X</span></p>
-             <p>Vendeur : <span th:text="${enchere.vendeur}">vendeur</span></p>
+             <h3 th:text="${enchere.nom_article}">Nom</h3>
+             <p>Prix : <span th:text="${enchere.prix_vente != null ? enchere.prix_vente : enchere.prix_initial}">0</span> point(s)</p>
+             <p>Fin de l'enchère : <span th:text="${#dates.format(enchere.date_fin_enchere, 'dd/MM/yyyy')}">01/06/202X</span></p>
+             <p>Vendeur : <span th:text="${enchere.vendeur.pseudo}">vendeur</span></p>
          </div>
      </div>
  </section>
