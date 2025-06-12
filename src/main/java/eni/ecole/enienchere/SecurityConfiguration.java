@@ -1,9 +1,12 @@
 package eni.ecole.enienchere;
 
+import eni.ecole.enienchere.bll.UtilisateurService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +25,12 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    private final UtilisateurService utilisateurService;
+
+    public SecurityConfiguration(UtilisateurService utilisateurService) {
+        this.utilisateurService = utilisateurService;
+    }
+
 
     /**
      * Configuration de la gestion des utilisateurs avec la base de données
@@ -30,13 +39,11 @@ public class SecurityConfiguration {
      * @return Un gestionnaire d'utilisateurs configuré
      */
 //    @Bean
-//    UserDetailsManager userDetailsManager(DataSource dataSource) {
-//        JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-//        // Requête pour récupérer les informations de l'utilisateur (pseudo, mot de passe, enabled)
-//        userDetailsManager.setUsersByUsernameQuery("select pseudo, mot_de_passe, 1 from utilisateur where pseudo=?");
-//        // Requête pour récupérer les rôles de l'utilisateur
-//        userDetailsManager.setAuthoritiesByUsernameQuery("select pseudo, 'ROLE_USER' from utilisateur where pseudo=?");
-//        return userDetailsManager;
+//    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+//        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+//        auth.userDetailsService(utilisateurService)
+//                .passwordEncoder(passwordEncoder());
+//        return auth.build();
 //    }
 
     /**
@@ -58,6 +65,8 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
+
 
 //            // Configuration CSRF (Cross-Site Request Forgery)
 //            // Protège contre les attaques CSRF en validant les tokens
@@ -150,6 +159,9 @@ public class SecurityConfiguration {
                 // Tout autre accès est refusé
                 auth.anyRequest().permitAll();
             });
+
+
+
 
 //            // Configuration du formulaire de connexion
 //            .formLogin(form -> form

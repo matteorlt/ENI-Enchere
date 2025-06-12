@@ -36,4 +36,15 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     public Adresse consulterAdresseParId(int no_adresse) {
         return adresseDAO.read(no_adresse);
     }
+
+    @Override
+    public Utilisateur authentifier(String pseudo, String motDePasse) {
+
+        var utilisateurConnecter= utilisateurDAO.read(pseudo);
+        if (utilisateurConnecter.getMot_de_passe().equals(motDePasse)){
+            return utilisateurConnecter;
+        }
+
+        return null;
+    }
 }
