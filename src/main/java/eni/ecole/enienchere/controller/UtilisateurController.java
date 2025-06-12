@@ -3,6 +3,7 @@ package eni.ecole.enienchere.controller;
 import eni.ecole.enienchere.bll.UtilisateurService;
 import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -195,40 +196,8 @@ public class UtilisateurController {
     public String connexion() {
         return "view-connexion";
     }
-//
-//    @PostMapping("/connexion")
-//    public String connecter(
-//            @RequestParam("pseudo") @NotBlank String pseudo,
-//            @RequestParam("mot_de_passe") @NotBlank String motDePasse,
-//            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte,
-//            RedirectAttributes redirectAttributes) {
-//
-//        try {
-//            Utilisateur utilisateur = utilisateurService.authentifier(pseudo, motDePasse);
-//            if (utilisateur != null) {
-//                // Copie des propriétés dans l'objet de session
-//                BeanUtils.copyProperties(utilisateur, utilisateurConnecte);
-//                logger.info("Connexion réussie pour l'utilisateur: {}", pseudo);
-//                return "redirect:/accueil";
-//            } else {
-//                redirectAttributes.addFlashAttribute("errorMessage", "Identifiants incorrects");
-//                return "redirect:/utilisateur/connexion";
-//            }
-//        } catch (Exception e) {
-//            logger.error("Erreur lors de la connexion: {}", pseudo, e);
-//            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la connexion");
-//            return "redirect:/utilisateur/connexion";
-//        }
-//    }
-//
-//    @GetMapping("/deconnexion")
-//    public String deconnexion(SessionStatus status, RedirectAttributes redirectAttributes) {
-//        status.setComplete();
-//        logger.info("Déconnexion effectuée");
-//        redirectAttributes.addFlashAttribute("successMessage", "Vous avez été déconnecté avec succès");
-//        return "redirect:/accueil";
-//    }
-//
+
+
 ////    @PostMapping("/supprimer")
 ////    public String supprimerCompte(
 ////            @RequestParam("pseudo") @NotBlank String pseudo,
@@ -252,15 +221,15 @@ public class UtilisateurController {
 ////            return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
 ////        }
 ////    }
-//
-//    @GetMapping("/creer-compte")
-//    public String formulaireCreationCompte(Model model) {
-//        if (!model.containsAttribute("utilisateur")) {
-//            model.addAttribute("utilisateur", new Utilisateur());
-//        }
-//        return "view-creer-compte";
-//    }
-//
+
+    @GetMapping("/creer-compte")
+    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
+       var password = utilisateur.getPassword();
+       utilisateur.setMot_de_passe(passwordEncoder.encode(password));
+       ut
+        return "view-creer-compte";
+    }
+
 ////    @PostMapping("/creer-compte/enregistrer")
 ////    public String enregistrerCompte(
 ////            @ModelAttribute("utilisateur") @Valid Utilisateur utilisateur,
