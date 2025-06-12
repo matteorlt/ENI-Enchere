@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle vente</title>
+</head>
+<body>
+<header>
+    <h1>(Logo) Eni-Enchères</h1>
+    <nav>
+        <a th:href="@{/}">Accueil</a>
+        <a th:href="@{/vendre}">Vendre un article</a>
+        <a th:href="@{/profil}">Mon profil</a>
+        <a th:href="@{/logout}">Se déconnecter</a>
+    </nav>
+    <div>
+        <p>Date du jour : <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span></p>
+        <p>Participant : <span th:text="${utilisateur.pseudo}"></span></p>
+    </div>
+</header>
+
+<div>
+    <label th:action="@{/ventes/nouvelle}" method="post">
+        <label>Article (*) :
+            <input type="text" name="nomArticle" th:value="${article.nom}" required />
+        </label><br><br>
+
+        <label>Catégorie (*) :
+        <select name="categorie" id="categorie">
+            <option value="">Toutes</option>
+            <option value="">Ameublement</option>
+            <option value="">Informatique</option>
+            <option value="">Sports&Loisirs</option>
+            <option value="">Vêtements</option>
+            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+        </select>
+        </label><br><br>
+
+
+        <label>Description (*) :
+            <textarea name="description" required th:text="${article.description}"></textarea>
+        </label><br><br>
+
+        <label>Mise à prix (*) :
+            <input type="number" name="miseAPrix" step="1" min="1" th:value="${article.miseAPrix}" required />
+        </label><br><br>
+
+        <label>Début de l'enchère (*) :
+            <input type="date" name="dateDebut" th:value="${#dates.format(article.dateDebut, 'yyyy-MM-dd')}" required />
+        </label><br><br>
+
+
+        <label>Fin de l'enchère (*) :
+            <input type="date" name="dateFin" th:value="${#dates.format(article.dateFin, 'yyyy-MM-dd')}" required />
+        </label><br><br>
+
+        <label>Retrait (*) :
+        <select name="retrait" id="retrait">
+            <option value="">3 rue Michaël Faraday 44800 SAINT HERBLAIN</option>
+            <option value="">2B rue Benjamin Franklin 44800 SAINT HERBLAIN</option>
+            <option value="">8 rue Léo Lagrange 35131 CHARTRES DE BRETAGNE</option>
+            <option value="">2 rue Georges Perros 29000 QUIMPER</option>
+            <option value="">19 avenue Léo Lagrange 79000 NIORT</option>
+            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+        </select>
+        <br><br>
+
+        <button type="submit" name="action" value="suivant">Suivant</button>
+
+        <button type="submit" name="action" value="annulerVente">Annuler la vente</button>
+
+        <button type="submit" name="action" value="annuler">Annuler</button>
+
+    </label>
+        </div>
+            </body>
+                </html>
