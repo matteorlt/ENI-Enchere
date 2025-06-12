@@ -9,8 +9,8 @@
 <header>
     <h1>Eni-Enchères</h1>
     <nav>
-        <a th:href="@{/}">Accueil</a> |
-        <a th:href="@{/inscription}">S'inscrire</a> -
+        <a th:href="@{/}">Accueil</a>
+        <a th:href="@{/inscription}">S'inscrire</a>
         <a th:href="@{/login}">Se connecter</a>
     </nav>
     <div>Date du jour : <span th:text="${currentDate}"> </span></div>
@@ -19,10 +19,9 @@
 <section>
     <h2>Filtres :</h2>
     <form method="get" th:action="@{/encheres}">
-        <input type="text" name="nom" placeholder="Le nom de l'article contient" th:value="${nom}">
+        <input type="text" name="nom" placeholder="Le nom de l'article contient" th:value="${nom}"> <br><br>
 
         <label for="categorie">Catégorie :</label>
-
         <select name="categorie" id="categorie">
             <option value="">Toutes</option>
             <option value="">Ameublement</option>
@@ -30,7 +29,7 @@
             <option value="">Sports&Loisirs</option>
             <option value="">Vêtements</option>
             <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
-        </select>
+        </select><br><br>
 
         <div>
             <button type="submit">Rechercher</button>
@@ -49,7 +48,33 @@
             <p>Prix : <span th:text="${enchere.prix}">0</span> point(s)</p>
             <p>Fin de l'enchère : <span th:text="${enchere.dateFin}">01/06/202X</span></p>
             <p>Vendeur : <span th:text="${enchere.vendeur}">vendeur</span></p>
-        </div>
+        </div><br>
+
+        <div style="border: 1px solid black; margin: 10px; padding: 10px;">
+            <img src="/images/DD_Pic.jpc" alt="Disque Dur" class="nav-logo">
+            <h3 th:text="${enchere.nom}">Nom</h3>
+            <p>Prix : <span th:text="${enchere.prix}">3</span> point(s)</p>
+            <p>Fin de l'enchère : <span th:text="${enchere.dateFin}">01/10/202X</span></p>
+            <p>Vendeur : <span th:text="${enchere.vendeur}">vendeur coach_titi</span></p>
+        </div><br>
+
+        <div style="border: 1px solid black; margin: 10px; padding: 10px;">
+            <img src="/images/DD_Pic.jpc" alt="Disque Dur" class="nav-logo">
+            <h3 th:text="${enchere.nom}">Nom : </h3>
+            <p>Prix : <span th:text="${enchere.prix}">8</span> point(s)</p>
+            <p>Fin de l'enchère : <span th:text="${enchere.dateFin}">12/06/202X</span></p>
+            <p>Vendeur : <span th:text="${enchere.vendeur}">vendeur venom</span></p>
+        </div><br>
+
+        <div style="border: 1px solid black; margin: 10px; padding: 10px;">
+            <img src="/images/DD_Pic.jpc" alt="Disque Dur" class="nav-logo">
+            <h3 th:text="${enchere.nom}">Nom : </h3>
+            <p>Prix : <span th:text="${enchere.prix}">8</span> point(s)</p>
+            <p>Fin de l'enchère : <span th:text="${enchere.dateFin}">01/09/202X</span></p>
+            <p>Vendeur : <span th:text="${enchere.vendeur}">vendeur chausse_pied</span></p>
+        </div><br>
+
+
     </div>
 </section>
 
