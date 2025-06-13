@@ -133,6 +133,10 @@ public class SecurityConfiguration {
                 auth.requestMatchers(HttpMethod.GET,"/details/**").permitAll();
                 auth.requestMatchers(HttpMethod.GET,"/nouvelle").permitAll();
                 auth.requestMatchers(HttpMethod.POST,"/nouvelle").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/enchere/soumettre").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/enchere/soumettre").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/enchere/soumettre/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/enchere/soumettre/**").permitAll();
 
 //                // Accès authentifié (nécessite d'être connecté)
 //                auth.requestMatchers(HttpMethod.GET,"/nouvelle").authenticated();
