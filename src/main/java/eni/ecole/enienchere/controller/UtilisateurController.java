@@ -3,6 +3,7 @@ package eni.ecole.enienchere.controller;
 import eni.ecole.enienchere.bll.UtilisateurService;
 import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
+import eni.ecole.enienchere.dal.AdresseDAOImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -40,11 +41,13 @@ public class UtilisateurController {
     private final PasswordEncoder passwordEncoder;
 
     private final UtilisateurService utilisateurService;
+    private final AdresseDAOImpl adresseDAOImpl;
 
-    public UtilisateurController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UtilisateurService utilisateurService) {
+    public UtilisateurController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UtilisateurService utilisateurService, AdresseDAOImpl adresseDAOImpl) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.utilisateurService = utilisateurService;
+        this.adresseDAOImpl = adresseDAOImpl;
     }
 
 
@@ -230,7 +233,16 @@ public class UtilisateurController {
     public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
         var password = utilisateur.getPassword();
         utilisateur.setMot_de_passe(passwordEncoder.encode(password));
+
+
+        utilisateurService.enregistrerUneAdresse(utilisateur.getAdresse());
+
+//        var no_adresse = newAdresse.getNo_adresse();
+//        utilisateur.
+
+//        utilisateur.getAdresse().setNo_adresse(adresseEnregistrer.getNo_adresse());
         utilisateurService.enregistrerUnUtilisateur(utilisateur);
+
 
         try {
             request.login(utilisateur.getUsername(), password);
@@ -256,7 +268,7 @@ public class UtilisateurController {
     @GetMapping("/creer-compte")
     public String registerGet(Model model) {
         model.addAttribute("utilisateur", new Utilisateur());
-        return "redirect:/creer-compte";
+        return "view-creer-compte";
     }
 
 }

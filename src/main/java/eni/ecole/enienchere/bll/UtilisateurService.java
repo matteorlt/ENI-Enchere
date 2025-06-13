@@ -16,5 +16,7 @@ public interface UtilisateurService extends UserDetailsService {
 
     Utilisateur authentifier(@NotBlank String pseudo, @NotBlank String motDePasse);
 
-    Utilisateur enregistrerUnUtilisateur(Utilisateur utilisateur);
+    String enregistrerUnUtilisateur(Utilisateur utilisateur);
+
+    void enregistrerUneAdresse(Adresse adresse);
 }

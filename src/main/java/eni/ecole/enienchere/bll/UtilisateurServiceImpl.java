@@ -45,10 +45,19 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     }
 
     @Override
-    public Utilisateur enregistrerUnUtilisateur(Utilisateur utilisateur) {
+    public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
 
-        var nouvelUtilisateur = utilisateurDAO.read(utilisateurDAO.create(utilisateur));
-        return nouvelUtilisateur;
+
+
+        utilisateurDAO.create(utilisateur);
+        return utilisateur.getPseudo();
+    }
+
+    @Override
+    public void enregistrerUneAdresse(Adresse adresse) {
+
+        adresseDAO.create(adresse);
+
     }
 
 
@@ -56,4 +65,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
+
+
 }
