@@ -16,9 +16,8 @@
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
     
     <div style="text-align:center; margin-bottom:2rem;">
-        <img th:src="@{/${article.photo}}" alt="Image de l'article" class="nav-logo" th:if="${article.photo != null and article.photo != ''}" style="max-width:300px;" />
+        <img th:src="@{/images/{photo}(photo=${article.photo})}" alt="Image de l'article" th:if="${article.photo != null and article.photo != ''}" style="max-width:800px;" />
         <img src="/images/default.webp" alt="Image par défaut" class="nav-logo" th:if="${article.photo == null or article.photo == ''}" style="max-width:300px;" />
-        <p style="color:red;font-weight:bold;">Valeur photo (debug) : <span th:text="${article.photo}"></span></p>
     </div>
     
     <div class="detail-table">
