@@ -41,7 +41,6 @@ public class EnchereController {
                                    @RequestParam(name = "nom", required = false) String nom,
                                    @RequestParam(name = "categorie", required = false) String categorie) {
         var categories = categorieService.getAllCategories();
-        System.out.println("Catégories récupérées : " + categories);
         List<ArticleAVendre> encheres = articleService.getArticlesFiltres(nom, categorie);
         model.addAttribute("encheres", encheres);
         model.addAttribute("categories", categories);
