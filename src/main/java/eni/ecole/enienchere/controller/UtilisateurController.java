@@ -245,7 +245,7 @@ public class UtilisateurController {
 
 
         try {
-            request.login(utilisateur.getUsername(), password);
+            request.login(utilisateur.getPseudo(), password);
         } catch (ServletException e) {
             // Gérer l'erreur (par exemple, mot de passe incorrect)
             return "redirect:/register?error";
@@ -254,7 +254,7 @@ public class UtilisateurController {
         // 2. Authentifier automatiquement l'utilisateur
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        utilisateur.getUsername(),
+                        utilisateur.getPseudo(),
                         password // la c'est le mdp en clair qu'il nous faut
                 )
         );

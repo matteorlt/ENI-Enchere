@@ -15,6 +15,7 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
 
@@ -64,7 +65,28 @@ public class SecurityConfiguration {
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+//        http
+        return http.authorizeHttpRequests(auth->
+                {
+
+
+                    auth.anyRequest().permitAll();
+                })
+                .csrf(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
+                .formLogin(f ->
+                        f.loginPage("/connexion")
+                                .permitAll()
+                )
+                .logout(logout -> logout
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll())
+                .build();
+    }
 
 
 
@@ -120,7 +142,7 @@ public class SecurityConfiguration {
 //                .tokenValiditySeconds(86400))
 
             // Configuration des autorisations
-            .authorizeHttpRequests(auth -> {
+//            .authorizeHttpRequests(auth -> {
                 // Accès public (sans authentification)
 //                auth.requestMatchers(HttpMethod.GET,"/").permitAll();
 //                auth.requestMatchers(HttpMethod.GET,"/error/**").permitAll();
@@ -156,9 +178,23 @@ public class SecurityConfiguration {
 //                auth.requestMatchers(HttpMethod.GET,"/admin/**").hasRole("ADMIN");
 //                auth.requestMatchers(HttpMethod.POST,"/admin/**").hasRole("ADMIN");
 
-                // Tout autre accès est refusé
-                auth.anyRequest().permitAll();
-            });
+//                // Tout autre accès est refusé
+//                auth.anyRequest().permitAll();
+//            })
+//                .csrf(Customizer.withDefaults())
+//                .cors(Customizer.withDefaults())
+//                .formLogin(f ->
+//                        f.loginPage("/connexion")
+//                                .permitAll()
+//                )
+//                .logout(logout -> logout
+//                        .invalidateHttpSession(true)
+//                        .clearAuthentication(true)
+//                        .deleteCookies("JSESSIONID")
+//                        .logoutUrl("/logout")
+//                        .logoutSuccessUrl("/")
+//                        .permitAll())
+//                .build();;
 
 
 
@@ -172,6 +208,6 @@ public class SecurityConfiguration {
 //                // Permet l'accès à la page de connexion sans authentification
 //                .permitAll());
 
-        return http.build();
-    }
+//        return http.build();
+//    }
 }

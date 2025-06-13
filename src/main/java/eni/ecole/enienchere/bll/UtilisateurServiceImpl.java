@@ -39,10 +39,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
         return adresseDAO.read(no_adresse);
     }
 
-    @Override
-    public Utilisateur authentifier(String pseudo, String motDePasse) {
-        return null;
-    }
 
     @Override
     public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
@@ -61,9 +57,15 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     }
 
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        var utilisateur = utilisateurDAO.read(username);
+
+        if (utilisateur == null)
+            throw new UsernameNotFoundException("User not found");
+
+        return utilisateur;
     }
 
 
