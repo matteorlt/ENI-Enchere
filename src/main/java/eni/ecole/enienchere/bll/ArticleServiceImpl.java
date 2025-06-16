@@ -122,4 +122,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         return true;
     }
+
+    @Override
+    public List<ArticleAVendre> getArticlesFiltres(String nom, String categorie) {
+        return articleDAO.findByNomAndCategorie(nom, categorie);
+    }
 } 

@@ -1,5 +1,6 @@
 package eni.ecole.enienchere.dal;
 
+import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -17,6 +18,10 @@ public class UtilisateurRowMapper implements RowMapper<Utilisateur> {
         utilisateur.setTelephone(rs.getString("telephone"));
         utilisateur.setCredit(rs.getInt("credit"));
         utilisateur.setAdministrateur(rs.getBoolean("administrateur"));
+
+        utilisateur.setAdresse(new Adresse());
+        utilisateur.getAdresse().setNo_adresse(rs.getLong("no_adresse"));
+
         return utilisateur;
     }
 }

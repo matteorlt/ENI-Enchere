@@ -16,9 +16,9 @@ public class AdresseDAOImpl implements AdresseDAO{
     public AdresseDAOImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
-    private final static String FIND_BY_PSEUDO = "SELECT no_adresse, rue, code_postal, ville, adresse_eni from ADRESSE WHERE no_adresse = :no_adresse";
+    private final static String FIND_BY_ID = "SELECT no_adresse, rue, code_postal, ville, adresse_eni from ADRESSES WHERE no_adresse = :no_adresse";
     private final static String UPDATE = "UPDATE ADRESSE SET rue=:rue, code_postal=:code_postal, ville=:ville, adresse_eni=:adresse_eni WHERE no_adresse = :no_adresse";
-    private final static String INSERT = "INSERT INTO ADRESSE (no_adresse, rue, code_postal, ville, adresse_eni) values (:no_adresse, :rue, :code_postal, :ville, :adresse_eni)";
+    private final static String INSERT = "INSERT INTO ADRESSES (no_adresse, rue, code_postal, ville, adresse_eni) values (:no_adresse, :rue, :code_postal, :ville, :adresse_eni)";
     private final static String DELETE = "DELETE FROM ADRESSE where no_adresse=:no_adresse";
     private final static String SELECT_ALL = "SELECT * FROM ADRESSE";
 
@@ -40,8 +40,11 @@ public class AdresseDAOImpl implements AdresseDAO{
     }
 
     @Override
-    public Utilisateur read(int no_adresse) {
-        return null;
+    public Adresse read(int no_adresse) {
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("no_adresse", no_adresse);
+
+        return namedParameterJdbcTemplate.queryForObject(FIND_BY_ID, namedParameters, new AdresseRowMapper());
     }
 
     @Override
