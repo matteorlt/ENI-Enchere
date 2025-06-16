@@ -16,6 +16,7 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 import javax.sql.DataSource;
@@ -54,10 +55,9 @@ public class SecurityConfiguration {
      * @return Un encodeur de mot de passe BCrypt
      */
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     /**
      * Configuration principale de la sécurité
@@ -67,57 +67,33 @@ public class SecurityConfiguration {
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
         return http.authorizeHttpRequests(auth->
                 {
                     auth.requestMatchers(HttpMethod.GET,"/").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/error/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/js/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/enchere").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/article-detail").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/connexion/").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/inscription").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/connexion/").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/inscription").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/profil/**").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/mon-profil").permitAll();
+                    auth.requestMatchers("/creer-compte").permitAll();
+                    auth.requestMatchers("/mon-profil/**").permitAll();
 
-                // Accès authentifié (nécessite d'être connecté)
-                auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/cree").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/photo").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/article-detail").authenticated();
-                auth.requestMatchers(HttpMethod.GET,"/edit").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/edit").authenticated();
-                auth.requestMatchers(HttpMethod.GET,"/supprimer").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/supprimer").authenticated();
-                auth.requestMatchers(HttpMethod.GET,"/ventes").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/annule").authenticated();
-                auth.requestMatchers(HttpMethod.GET,"/livraison").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/livraison").authenticated();
-                auth.requestMatchers(HttpMethod.POST,"/profil").authenticated();
-                auth.requestMatchers(HttpMethod.GET,"/profil").authenticated();
 
-                    auth.anyRequest().permitAll();
+
+                    auth.requestMatchers(HttpMethod.GET,"/error").permitAll();
+                    auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
+
+
+
+                    auth.anyRequest().authenticated();
                 })
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
                 .formLogin(f ->
                         f.loginPage("/connexion")
-                                .loginPage("/connexion")
-                                .usernameParameter("pseudo")
-                                .loginProcessingUrl("/connexion") // URL de traitement du login
-                                .defaultSuccessUrl("/")
-                                .failureUrl("/connexion?error=true")
                                 .permitAll()
                 )
                 .logout(logout -> logout
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
-                        .logoutUrl("/logout")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/")
                         .permitAll())
                 .build();
