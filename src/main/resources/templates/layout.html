@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-th-fragment="layout(contenu,titre)" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html data-th-fragment="layout(contenu,titre)" lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" data-th-href="@{/css/general.css}">
@@ -28,11 +28,15 @@
     <nav>
         <ul>
             <li><a href="/enchere">Enchere</a></li>
-            <li><a href="/utilisateur/mon-profil">Profil</a></li>
+            <li><a href="/mon-profil">Profil</a></li>
             <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
                 <li>
                 <li><a data-th-href="@{/connexion}">Se connecter</a></li>
                 </li>
+            </th:block>
+            <th:block  sec:authorize="isAuthenticated()">
+                <p data-th-text="${#authentication.name}"></p>
+                <a data-th-href="@{/logout}" >Se déconnecter</a>
             </th:block>
             <li><a href="/vendre">Vendre Un Article</a></li>
         </ul>
