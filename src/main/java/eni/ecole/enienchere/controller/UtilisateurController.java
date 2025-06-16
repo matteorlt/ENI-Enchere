@@ -77,7 +77,7 @@ public class UtilisateurController {
                     model.addAttribute("utilisateur", principal);
                     return "view-profil-modif";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification: {}", pseudo, e);
+                    logger.error("Erreur lors du chargement du formulaire de modification: {}");
                     return "redirect:/accueil";
                 }
             }
@@ -118,13 +118,13 @@ public class UtilisateurController {
             utilisateurService.updateAdresse(utilisateur.getAdresse(),rue, cp, ville);
             utilisateurService.modifUtilisateur(utilisateur, nom, prenom, email, telephone);
 
-            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}", pseudo);
+            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}");
             redirectAttributes.addFlashAttribute("successMessage", "Profil mis à jour avec succès");
 
             return "redirect:/mon-profil?pseudo=" + pseudo;
 
         } catch (Exception e) {
-            logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}", pseudo, e);
+            logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}");
             model.addAttribute("utilisateur", utilisateur);
             model.addAttribute("errorMessage", "Erreur lors de la mise à jour du profil");
             return "view-profil-modif";
@@ -147,7 +147,7 @@ public class UtilisateurController {
                     model.addAttribute("utilisateur", principal);
                     return "view-profil-modif-mdp";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification de mot de passe: {}", pseudo, e);
+                    logger.error("Erreur lors du chargement du formulaire de modification de mot de passe: {}");
                     return "redirect:/accueil";
                 }
         }
@@ -204,13 +204,13 @@ public class UtilisateurController {
             // Mise à jour en base de données
             utilisateurService.updateMdp(utilisateur.getPseudo(), nouveauMotDePasseEncode);
 
-            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}", pseudo);
+            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}");
             redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
 
             return "redirect:/mon-profil?pseudo=" + pseudo;
 
         } catch (Exception e) {
-            logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}", pseudo, e);
+            logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}");
             model.addAttribute("utilisateur", utilisateur);
             model.addAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
             return "view-profil-modif-mdp";
