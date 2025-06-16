@@ -8,6 +8,10 @@
 </head>
 <body>
 <main class="detail-container">
+    <!-- Messages d'alerte -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    
     <div class="detail-table">
         <div class="row">
             <div class="cell label">Article :</div>
@@ -19,7 +23,7 @@
             <div class="cell label">Catégorie :</div>
             <div class="cell value" th:text="${article.categorie.libelle}"></div>
             <div class="cell label">Meilleure offre :</div>
-            <div class="cell value">1 point (s)</div>
+            <div class="cell value" th:text="${meilleureOffre} + ' point(s)'"></div>
         </div>
         <div class="row">
             <div class="cell label">Description :</div>
@@ -34,6 +38,7 @@
             </div>
         </div>
     </div>
+    
     <div class="detail-bottom">
         <div class="retrait">
             <span class="label">Retrait :</span>
@@ -43,17 +48,42 @@
             <span class="label">Vendeur :</span>
             <a data-th-href="@{/profil(pseudo=${article.vendeur.pseudo})}" class="value" th:text="${article.vendeur.pseudo}"></a>
         </div>
-        <div class="enchere-input">
-            <label for="montant_propose">Votre enchère :</label>
-            <input type="number" id="montant_propose" name="montant_propose" min="0" step="0.1" required>
+        
+        <!-- Formulaire d'enchère -->
+        <div th:if="${peutEncherir}" class="enchere-section">
+            <form th:action="@{/enchere/soumettre}" method="post" class="enchere-form">
+                <input type="hidden" name="no_article" th:value="${article.no_article}">
+                
+                <div class="enchere-input">
+                    <label for="montant_propose">Votre enchère :</label>
+                    <input type="number" 
+                           id="montant_propose" 
+                           name="montant_propose" 
+                           th:min="${montantMinimum}" 
+                           th:placeholder="'Minimum : ' + ${montantMinimum} + ' points'"
+                           required>
+                    <span class="montant-info">Minimum : <span th:text="${montantMinimum}"></span> points</span>
+                </div>
+                
+                <div class="button-detail">
+                    <button type="submit" class="btn btn-primary">Enchérir</button>
+                </div>
+            </form>
         </div>
-        <form action="post">
-            <div class="button-detail">
-                <a th:href="@{/acheter}" class="btn btn-primary">Validation de l'enchère</a>
+        
+        <!-- Message si l'utilisateur ne peut pas enchérir -->
+        <div th:unless="${peutEncherir}" class="enchere-section">
+            <div th:if="${#authorization.expression('isAuthenticated()')}" class="alert alert-info">
+                Vous ne pouvez pas enchérir sur votre propre article.
             </div>
-        </form>
+            <div th:unless="${#authorization.expression('isAuthenticated()')}" class="alert alert-warning">
+                Vous devez être connecté pour enchérir.
+                <a th:href="@{/connexion}" class="btn btn-secondary">Se connecter</a>
+            </div>
+        </div>
+        
         <div class="button-detail">
-            <a th:href="@{/}" class="btn btn-primary">Retour</a>
+            <a th:href="@{/enchere}" class="btn btn-secondary">Retour à la liste</a>
         </div>
     </div>
 

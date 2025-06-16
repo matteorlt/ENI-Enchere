@@ -15,7 +15,7 @@ public class DaoEnchereImpl implements DaoEnchere {
     private final String SELECT_ALL = "SELECT * FROM ENCHERES";
     private final String SELECT_BY_ARTICLE = "SELECT * FROM ENCHERES WHERE no_article = :no_article ORDER BY montant_enchere DESC";
     private final String SELECT_BY_USER = "SELECT * FROM ENCHERES WHERE id_utilisateur = :id_utilisateur";
-    private final String SELECT_HIGHEST_BID = "SELECT * FROM ENCHERES WHERE no_article = :no_article ORDER BY montant_enchere DESC LIMIT 1";
+    private final String SELECT_HIGHEST_BID = "SELECT TOP 1 * FROM ENCHERES WHERE no_article = :no_article ORDER BY montant_enchere DESC";
     private final String INSERT = "INSERT INTO ENCHERES (id_utilisateur, no_article, montant_enchere, date_enchere) VALUES (:id_utilisateur, :no_article, :montant_enchere, :date_enchere)";
     private final String UPDATE = "UPDATE ENCHERES SET montant_enchere = :montant_enchere, date_enchere = :date_enchere WHERE id_utilisateur = :id_utilisateur AND no_article = :no_article";
     private final String DELETE = "DELETE FROM ENCHERES WHERE id_utilisateur = :id_utilisateur AND no_article = :no_article AND montant_enchere = :montant_enchere";
@@ -47,7 +47,12 @@ public class DaoEnchereImpl implements DaoEnchere {
     public Enchere getHighestBid(Integer articleId) {
         var params = new MapSqlParameterSource();
         params.addValue("no_article", articleId);
-        return jdbcTemplate.queryForObject(SELECT_HIGHEST_BID, params, new EnchereRowMapper());
+        try {
+            return jdbcTemplate.queryForObject(SELECT_HIGHEST_BID, params, new EnchereRowMapper());
+        } catch (Exception e) {
+            // Aucune enchère trouvée pour cet article
+            return null;
+        }
     }
 
     @Override

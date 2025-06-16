@@ -31,10 +31,11 @@ public class EnchereController {
     private UtilisateurService utilisateurService;
 
     @Autowired
-    public EnchereController(ArticleService articleService, CategorieService categorieService, UtilisateurService utilisateurService) {
+    public EnchereController(ArticleService articleService, CategorieService categorieService, UtilisateurService utilisateurService, EnchereService enchereService) {
         this.articleService = articleService;
         this.categorieService = categorieService;
         this.utilisateurService = utilisateurService;
+        this.enchereService = enchereService;
     }
 
     @GetMapping("/enchere")
@@ -63,7 +64,7 @@ public class EnchereController {
     }
 
     @GetMapping("/details")
-    public String getDetail(@RequestParam(name = "no_article", required = true) Integer noArticle, Model model) {
+    public String getDetail(@RequestParam(name = "no_article", required = true) Integer noArticle, Model model, Principal principal) {
         List<ArticleAVendre> articles = articleService.getArticleById(noArticle);
         if (articles != null && !articles.isEmpty()) {
             ArticleAVendre article = articles.get(0);
@@ -74,6 +75,30 @@ public class EnchereController {
             String dateFinFormatted = sdf.format(article.getDate_fin_enchere());
             model.addAttribute("dateFinFormatted", dateFinFormatted);
             
+            // Récupérer la meilleure enchère actuelle
+            try {
+                Enchere meilleureEnchere = enchereService.getHighestBid(noArticle);
+                if (meilleureEnchere != null) {
+                    model.addAttribute("meilleureOffre", meilleureEnchere.getMontant_enchere());
+                    model.addAttribute("montantMinimum", meilleureEnchere.getMontant_enchere() + 1);
+                } else {
+                    model.addAttribute("meilleureOffre", article.getPrix_initial());
+                    model.addAttribute("montantMinimum", article.getPrix_initial() + 1);
+                }
+            } catch (Exception e) {
+                model.addAttribute("meilleureOffre", article.getPrix_initial());
+                model.addAttribute("montantMinimum", article.getPrix_initial() + 1);
+            }
+            
+            // Vérifier si l'utilisateur peut enchérir
+            if (principal != null) {
+                Utilisateur utilisateurConnecte = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+                boolean peutEncherir = !article.getVendeur().getPseudo().equals(utilisateurConnecte.getPseudo());
+                model.addAttribute("peutEncherir", peutEncherir);
+            } else {
+                model.addAttribute("peutEncherir", false);
+            }
+            
             return "view-detail";
         }
         return "redirect:/";
@@ -81,13 +106,61 @@ public class EnchereController {
 
     @PostMapping("/enchere/soumettre")
     public String soumettreEnchere(@RequestParam("no_article") Integer noArticle,
-                                 @RequestParam("montant") Integer montant,
+                                 @RequestParam("montant_propose") Integer montant,
                                  Principal principal,
                                  RedirectAttributes redirectAttributes) {
+        
+        if (principal == null) {
+            redirectAttributes.addFlashAttribute("error", "Vous devez être connecté pour enchérir.");
+            return "redirect:/details?no_article=" + noArticle;
+        }
+        
         try {
-            ArticleAVendre article = articleService.getArticleById(noArticle).get(0);
+            // Récupérer l'article
+            List<ArticleAVendre> articles = articleService.getArticleById(noArticle);
+            if (articles == null || articles.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Article non trouvé.");
+                return "redirect:/enchere";
+            }
+            
+            ArticleAVendre article = articles.get(0);
             Utilisateur acquereur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
             
+            // Vérifier que l'utilisateur n'est pas le vendeur
+            if (article.getVendeur().getPseudo().equals(acquereur.getPseudo())) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas enchérir sur votre propre article.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            
+            // Vérifier que l'enchère n'est pas terminée
+            Date maintenant = new Date();
+            if (article.getDate_fin_enchere().before(maintenant)) {
+                redirectAttributes.addFlashAttribute("error", "Cette enchère est terminée.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            
+            // Vérifier le montant minimum
+            Enchere meilleureEnchere = null;
+            try {
+                meilleureEnchere = enchereService.getHighestBid(noArticle);
+            } catch (Exception e) {
+                // Pas d'enchère existante
+            }
+            
+            int montantMinimum;
+            if (meilleureEnchere != null) {
+                montantMinimum = meilleureEnchere.getMontant_enchere() + 1;
+            } else {
+                montantMinimum = article.getPrix_initial() + 1;
+            }
+            
+            if (montant < montantMinimum) {
+                redirectAttributes.addFlashAttribute("error", 
+                    "Votre enchère doit être d'au moins " + montantMinimum + " points.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            
+            // Créer l'enchère
             Enchere enchere = new Enchere();
             enchere.setDate_enchere(LocalDateTime.now());
             enchere.setMontant_enchere(montant);
@@ -96,9 +169,16 @@ public class EnchereController {
             
             enchereService.createEnchere(enchere);
             
-            redirectAttributes.addFlashAttribute("success", "Votre enchère a été enregistrée avec succès !");
+            // Mettre à jour le prix de vente de l'article
+            article.setPrix_vente(montant);
+            articleService.updateArticle(article);
+            
+            redirectAttributes.addFlashAttribute("success", 
+                "Votre enchère de " + montant + " points a été enregistrée avec succès !");
+                
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Une erreur est survenue lors de l'enregistrement de votre enchère.");
+            redirectAttributes.addFlashAttribute("error", 
+                "Une erreur est survenue lors de l'enregistrement de votre enchère : " + e.getMessage());
         }
         
         return "redirect:/details?no_article=" + noArticle;
