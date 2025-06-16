@@ -118,7 +118,11 @@ public class UtilisateurController {
             if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
 
                 try {
-                    model.addAttribute("utilisateur", principal);
+                    Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
+                    int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
+                    Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
+                    model.addAttribute("utilisateur", utilisateur);
+                    model.addAttribute("adresse", adresse);
                     return "view-profil-modif";
                 } catch (Exception e) {
                     logger.error("Erreur lors du chargement du formulaire de modification: {}");
@@ -145,13 +149,13 @@ public class UtilisateurController {
             Model model) {
 
         if (authentication == null) {
-            return "redirect:/accueil";
+            return "redirect:/";
         }
 
         var principal = authentication.getPrincipal();
 
         if (!(principal instanceof Utilisateur) || !pseudo.equals(((Utilisateur) principal).getPseudo())) {
-            return "redirect:/accueil";
+            return "redirect:/";
         }
 
         Utilisateur utilisateur = (Utilisateur) principal;
@@ -192,11 +196,11 @@ public class UtilisateurController {
                     return "view-profil-modif-mdp";
                 } catch (Exception e) {
                     logger.error("Erreur lors du chargement du formulaire de modification de mot de passe: {}");
-                    return "redirect:/accueil";
+                    return "redirect:/";
                 }
             }
         }
-        return "redirect:/accueil";
+        return "redirect:/";
     }
 
     @PostMapping("/mon-profil/modifier-mot-de-passe")
@@ -210,13 +214,13 @@ public class UtilisateurController {
             Model model) {
 
         if (authentication == null) {
-            return "redirect:/accueil";
+            return "redirect:/";
         }
 
         var principal = authentication.getPrincipal();
 
         if (!(principal instanceof Utilisateur) || !pseudo.equals(((Utilisateur) principal).getPseudo())) {
-            return "redirect:/accueil";
+            return "redirect:/";
         }
 
         Utilisateur utilisateur = (Utilisateur) principal;
