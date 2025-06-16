@@ -1,0 +1,61 @@
+<!DOCTYPE html >
+<html lang="en"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>S'incrire'</title>
+</head>
+<body><main>
+  <h1>Inscription</h1>
+  <form data-th-action="@{/creer-compte}" data-th-object="${utilisateur}" method="post">
+    <div>
+      <label for="username">Nom d'utilisateur :</label>
+      <input type="text" id="username" data-th-field="*{pseudo}" required value="test10">
+    </div>
+    <div>
+      <label for="password">Mot de passe :</label>
+      <input type="password" id="password" data-th-field="*{mot_de_passe}" required value="test10" >
+    </div>
+    <div>
+      <label for="nom">Nom :</label>
+      <input type="text" id="nom" data-th-field="*{nom}" required value="françoise">
+    </div>
+    <div>
+      <label for="prenom">Prénom :</label>
+      <input type="text" id="prenom" data-th-field="*{prenom}" required value="rene">
+    </div>
+    <div class="form-group">
+      <label for="inputEmail">Email* :</label>
+      <input type="email" id="inputEmail" data-th-field="*{email}" required value="ifygazeiyf@ireoi.com">
+    </div>
+
+    <div class="form-group">
+      <label for="inputTelephone">Téléphone :</label>
+      <input type="tel" id="inputTelephone" data-th-field="*{telephone}" value="0302010405">
+    </div>
+
+        <div class="form-group address-group">
+          <div>
+            <label for="inputAdresse">Adresse* :</label>
+            <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required >
+          </div>
+          <div class="address-row">
+            <div>
+              <label for="inputCP">Code postal* :</label>
+              <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required value="35620">
+            </div>
+            <div>
+              <label for="inputVille" >Ville* :</label>
+              <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required value="Allle">
+            </div>
+          </div>
+        </div>
+    <div>
+      <button type="submit">Inscrire</button>
+    </div>
+  </form>
+</main>
+</body>
+
+</html>

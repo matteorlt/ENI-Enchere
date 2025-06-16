@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-th-fragment="layout(contenu, titre)">
+<html data-th-fragment="layout(contenu,titre)" lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/general.css}">
-    <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/form.css}">
-    <link rel="stylesheet" th:href="@{/css/details.css}">
-    <link rel="icon" type="image/png" th:href="@{/images/logoENI.png}">
-    <title th:replace="${titre}">ENI-Enchères</title>
+    <link rel="stylesheet" data-th-href="@{/css/general.css}">
+    <link rel="stylesheet" data-th-href="@{/css/layout.css}">
+    <link rel="stylesheet" data-th-href="@{/css/form.css}">
+    <link rel="icon" type="image/png" data-th-href="@{/images/logoENI.png}">
+    <title data-th-replace="${titre}">Layout</title>
 </head>
 <body>
 
@@ -28,14 +27,19 @@
     </h1>
     <nav>
         <ul>
-            <li><a href="/enchere">Enchère</a></li>
-            <li><a href="/profil">Profil</a></li>
+            <li><a href="/enchere">Enchere</a></li>
+            <li><a href="/utilisateur/mon-profil">Profil</a></li>
+            <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
+                <li>
+                <li><a data-th-href="@{/utilisateur/connexion}">Se connecter</a></li>
+                </li>
+            </th:block>
             <li><a href="/vendre">Vendre Un Article</a></li>
         </ul>
     </nav>
 </header>
 
-<main class="center-main" th:replace="${contenu}">
+<main class="center-main" data-th-replace="${contenu}">
     <section class="center-section">
         <h1>Bienvenue sur ENI-Enchères</h1>
         <h2>Votre plateforme d'enchères en ligne</h2>

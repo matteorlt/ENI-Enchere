@@ -1,17 +1,22 @@
 package eni.ecole.enienchere;
 
+import eni.ecole.enienchere.bll.UtilisateurService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
+
 
 import javax.sql.DataSource;
 
@@ -22,21 +27,25 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    private final UtilisateurService utilisateurService;
+
+    public SecurityConfiguration(UtilisateurService utilisateurService) {
+        this.utilisateurService = utilisateurService;
+    }
+
 
     /**
      * Configuration de la gestion des utilisateurs avec la base de données
      * Cette méthode définit comment Spring Security va récupérer les informations des utilisateurs
-     * @param dataSource La source de données (connexion à la base de données)
+     * @param /dataSource La source de données (connexion à la base de données)
      * @return Un gestionnaire d'utilisateurs configuré
      */
     @Bean
-    UserDetailsManager userDetailsManager(DataSource dataSource) {
-        JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-        // Requête pour récupérer les informations de l'utilisateur (pseudo, mot de passe, enabled)
-        userDetailsManager.setUsersByUsernameQuery("select pseudo, mot_de_passe, 1 from utilisateur where pseudo=?");
-        // Requête pour récupérer les rôles de l'utilisateur
-        userDetailsManager.setAuthoritiesByUsernameQuery("select pseudo, 'ROLE_USER' from utilisateur where pseudo=?");
-        return userDetailsManager;
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+        auth.userDetailsService(utilisateurService)
+                .passwordEncoder(passwordEncoder());
+        return auth.build();
     }
 
     /**
@@ -49,6 +58,7 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+
     /**
      * Configuration principale de la sécurité
      * Définit les règles d'accès, la gestion des sessions, etc.
@@ -57,7 +67,64 @@ public class SecurityConfiguration {
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+//        http
+        return http.authorizeHttpRequests(auth->
+                {
+                    auth.requestMatchers(HttpMethod.GET,"/").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/error/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/js/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/enchere").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/article-detail").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/connexion/").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/inscription").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/connexion/").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/inscription").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/profil/**").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/mon-profil").permitAll();
+
+                // Accès authentifié (nécessite d'être connecté)
+                auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/cree").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/photo").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/article-detail").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/edit").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/edit").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/supprimer").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/supprimer").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/ventes").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/annule").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/livraison").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/livraison").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/profil").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/profil").authenticated();
+
+                    auth.anyRequest().permitAll();
+                })
+                .csrf(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
+                .formLogin(f ->
+                        f.loginPage("/connexion")
+                                .loginPage("/connexion")
+                                .usernameParameter("pseudo")
+                                .loginProcessingUrl("/connexion") // URL de traitement du login
+                                .defaultSuccessUrl("/")
+                                .failureUrl("/connexion?error=true")
+                                .permitAll()
+                )
+                .logout(logout -> logout
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll())
+                .build();
+    }
+
+
+
 //            // Configuration CSRF (Cross-Site Request Forgery)
 //            // Protège contre les attaques CSRF en validant les tokens
 //            .csrf(Customizer.withDefaults())
@@ -110,28 +177,22 @@ public class SecurityConfiguration {
 //                .tokenValiditySeconds(86400))
 
             // Configuration des autorisations
-            .authorizeHttpRequests(auth -> {
+//            .authorizeHttpRequests(auth -> {
                 // Accès public (sans authentification)
-                auth.requestMatchers(HttpMethod.GET,"/").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/error/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/js/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/enchere").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/article-detail").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/connexion/").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/inscription").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/connexion/").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/inscription").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/profil/**").permitAll();
-                // à changer en authentificated a la fin
-                auth.requestMatchers(HttpMethod.POST,"/utilisateur/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/utilisateur/**").permitAll();
-                auth.requestMatchers(HttpMethod.POST,"/utilisateur/css/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/utilisateur/css/**").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/details").permitAll();
-                auth.requestMatchers(HttpMethod.GET,"/details/**").permitAll();
-
+//                auth.requestMatchers(HttpMethod.GET,"/").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/error/**").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/js/**").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/enchere").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/article-detail").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/connexion/").permitAll();
+//                auth.requestMatchers(HttpMethod.GET,"/inscription").permitAll();
+//                auth.requestMatchers(HttpMethod.POST,"/connexion/").permitAll();
+//                auth.requestMatchers(HttpMethod.POST,"/inscription").permitAll();
+//                auth.requestMatchers(HttpMethod.POST,"/profil/**").permitAll();
+//                auth.requestMatchers(HttpMethod.POST,"/mon-profil").permitAll();
+//
 //                // Accès authentifié (nécessite d'être connecté)
 //                auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();
 //                auth.requestMatchers(HttpMethod.POST,"/cree").authenticated();
@@ -153,9 +214,26 @@ public class SecurityConfiguration {
 //                auth.requestMatchers(HttpMethod.POST,"/admin/**").hasRole("ADMIN");
 
 //                // Tout autre accès est refusé
-//                auth.anyRequest().denyAll();
-            });
-//
+//                auth.anyRequest().permitAll();
+//            })
+//                .csrf(Customizer.withDefaults())
+//                .cors(Customizer.withDefaults())
+//                .formLogin(f ->
+//                        f.loginPage("/connexion")
+//                                .permitAll()
+//                )
+//                .logout(logout -> logout
+//                        .invalidateHttpSession(true)
+//                        .clearAuthentication(true)
+//                        .deleteCookies("JSESSIONID")
+//                        .logoutUrl("/logout")
+//                        .logoutSuccessUrl("/")
+//                        .permitAll())
+//                .build();;
+
+
+
+
 //            // Configuration du formulaire de connexion
 //            .formLogin(form -> form
 //                // Page de connexion personnalisée
@@ -165,6 +243,6 @@ public class SecurityConfiguration {
 //                // Permet l'accès à la page de connexion sans authentification
 //                .permitAll());
 
-        return http.build();
-    }
+//        return http.build();
+//    }
 }

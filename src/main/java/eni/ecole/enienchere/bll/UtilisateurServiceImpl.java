@@ -4,10 +4,12 @@ import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
 import eni.ecole.enienchere.dal.AdresseDAO;
 import eni.ecole.enienchere.dal.UtilisateurDAO;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UtilisateurServiceImpl implements UtilisateurService{
+public class UtilisateurServiceImpl implements UtilisateurService {
 
     UtilisateurDAO utilisateurDAO;
     AdresseDAO adresseDAO;
@@ -20,7 +22,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     @Override
     public Utilisateur consulterUtilisateurParPseudo(String pseudo) {
         var utilisateur = utilisateurDAO.read(pseudo);
-        var adresse = adresseDAO.read((int)utilisateur.getAdresse().getNo_adresse());
+        var adresse = adresseDAO.read((int) utilisateur.getAdresse().getNo_adresse());
         utilisateur.setAdresse(adresse);
 
 
@@ -35,5 +37,38 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     @Override
     public Adresse consulterAdresseParId(int no_adresse) {
         return adresseDAO.read(no_adresse);
+    }
+
+
+    @Override
+    public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
+
+
+        utilisateurDAO.create(utilisateur);
+        return utilisateur.getPseudo();
+    }
+
+    @Override
+    public void enregistrerUneAdresse(Adresse adresse) {
+
+        adresseDAO.create(adresse);
+
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try {
+            var utilisateur = utilisateurDAO.read(username);
+
+            if (utilisateur == null)
+                throw new UsernameNotFoundException("User not found");
+
+            return utilisateur;
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Erreur lors de la récupération de l'utilisateur: " + username, e);
+        }
+
+
     }
 }
