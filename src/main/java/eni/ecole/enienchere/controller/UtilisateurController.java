@@ -218,7 +218,8 @@ public class UtilisateurController {
     }
 
     @GetMapping("/connexion")
-    String login() {
+    String login(Model model) {
+        model.addAttribute(new Utilisateur());
         logger.info("Affichage du formulaire login");
 
         return "view-connexion";
