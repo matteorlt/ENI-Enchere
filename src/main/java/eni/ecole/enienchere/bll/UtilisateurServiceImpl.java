@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UtilisateurServiceImpl implements UtilisateurService{
+public class UtilisateurServiceImpl implements UtilisateurService {
 
     UtilisateurDAO utilisateurDAO;
     AdresseDAO adresseDAO;
@@ -22,7 +22,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     @Override
     public Utilisateur consulterUtilisateurParPseudo(String pseudo) {
         var utilisateur = utilisateurDAO.read(pseudo);
-        var adresse = adresseDAO.read((int)utilisateur.getAdresse().getNo_adresse());
+        var adresse = adresseDAO.read((int) utilisateur.getAdresse().getNo_adresse());
         utilisateur.setAdresse(adresse);
 
 
@@ -44,7 +44,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
 
 
-
         utilisateurDAO.create(utilisateur);
         return utilisateur.getPseudo();
     }
@@ -57,16 +56,19 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     }
 
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var utilisateur = utilisateurDAO.read(username);
+        try {
+            var utilisateur = utilisateurDAO.read(username);
 
-        if (utilisateur == null)
-            throw new UsernameNotFoundException("User not found");
+            if (utilisateur == null)
+                throw new UsernameNotFoundException("User not found");
 
-        return utilisateur;
+            return utilisateur;
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Erreur lors de la récupération de l'utilisateur: " + username, e);
+        }
+
+
     }
-
-
 }

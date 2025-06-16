@@ -82,8 +82,7 @@ public class UtilisateurController {
     @GetMapping("/mon-profil")
     public String afficherProfilUtilisateur(
             @RequestParam("pseudo") @NotBlank String pseudo,
-            Model model,
-            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
+            Model model) {
         Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
         int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
         Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
@@ -200,7 +199,9 @@ public class UtilisateurController {
     /// /    }
 //
     @GetMapping("/connexion")
-    public String connexion() {
+    String login() {
+        logger.info("Affichage du formulaire login");
+
         return "view-connexion";
     }
 
@@ -231,7 +232,7 @@ public class UtilisateurController {
 
     @PostMapping("/creer-compte")
     public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
-        var password = utilisateur.getPassword();
+        var password = utilisateur.getMot_de_passe();
         utilisateur.setMot_de_passe(passwordEncoder.encode(password));
 
 
@@ -274,40 +275,39 @@ public class UtilisateurController {
 }
 
 
-
-////    @PostMapping("/creer-compte/enregistrer")
-////    public String enregistrerCompte(
-////            @ModelAttribute("utilisateur") @Valid Utilisateur utilisateur,
-////            BindingResult result,
-////            Model model,
-////            RedirectAttributes redirectAttributes) {
-////
-////        // Vérification de l'unicité de l'email
-////        if (utilisateurService.existeParEmail(utilisateur.getEmail())) {
-////            result.rejectValue("email", "email.exists", "Cet email est déjà utilisé");
-////        }
-////
-////        // Vérification de l'unicité du pseudo
-////        if (utilisateurService.existeParPseudo(utilisateur.getPseudo())) {
-////            result.rejectValue("pseudo", "pseudo.exists", "Ce pseudo est déjà utilisé");
-////        }
-////
-////        if (result.hasErrors()) {
-////            model.addAttribute("utilisateur", utilisateur);
-////            return "view-creer-compte";
-////        }
-////
-////        try {
-////            utilisateurService.enregistrerUtilisateur(utilisateur);
-////            logger.info("Nouveau compte créé avec succès pour l'utilisateur: {}", utilisateur.getPseudo());
-////            redirectAttributes.addFlashAttribute("successMessage", "Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
-////            return "redirect:/utilisateur/connexion";
-////        } catch (Exception e) {
-////            logger.error("Erreur lors de la création du compte pour: {}", utilisateur.getPseudo(), e);
-////            model.addAttribute("errorMessage", "Erreur lors de la création du compte");
-////            model.addAttribute("utilisateur", utilisateur);
-////            return "view-creer-compte";
-////        }
+/// /    @PostMapping("/creer-compte/enregistrer")
+/// /    public String enregistrerCompte(
+/// /            @ModelAttribute("utilisateur") @Valid Utilisateur utilisateur,
+/// /            BindingResult result,
+/// /            Model model,
+/// /            RedirectAttributes redirectAttributes) {
+/// /
+/// /        // Vérification de l'unicité de l'email
+/// /        if (utilisateurService.existeParEmail(utilisateur.getEmail())) {
+/// /            result.rejectValue("email", "email.exists", "Cet email est déjà utilisé");
+/// /        }
+/// /
+/// /        // Vérification de l'unicité du pseudo
+/// /        if (utilisateurService.existeParPseudo(utilisateur.getPseudo())) {
+/// /            result.rejectValue("pseudo", "pseudo.exists", "Ce pseudo est déjà utilisé");
+/// /        }
+/// /
+/// /        if (result.hasErrors()) {
+/// /            model.addAttribute("utilisateur", utilisateur);
+/// /            return "view-creer-compte";
+/// /        }
+/// /
+/// /        try {
+/// /            utilisateurService.enregistrerUtilisateur(utilisateur);
+/// /            logger.info("Nouveau compte créé avec succès pour l'utilisateur: {}", utilisateur.getPseudo());
+/// /            redirectAttributes.addFlashAttribute("successMessage", "Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+/// /            return "redirect:/utilisateur/connexion";
+/// /        } catch (Exception e) {
+/// /            logger.error("Erreur lors de la création du compte pour: {}", utilisateur.getPseudo(), e);
+/// /            model.addAttribute("errorMessage", "Erreur lors de la création du compte");
+/// /            model.addAttribute("utilisateur", utilisateur);
+/// /            return "view-creer-compte";
+/// /        }
 //    }
 //
 //    // Méthodes utilitaires privées
