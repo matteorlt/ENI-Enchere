@@ -2,8 +2,11 @@ package eni.ecole.enienchere.dal;
 
 import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,13 +21,16 @@ public class AdresseDAOImpl implements AdresseDAO{
     }
     private final static String FIND_BY_ID = "SELECT no_adresse, rue, code_postal, ville, adresse_eni from ADRESSES WHERE no_adresse = :no_adresse";
     private final static String UPDATE = "UPDATE ADRESSE SET rue=:rue, code_postal=:code_postal, ville=:ville, adresse_eni=:adresse_eni WHERE no_adresse = :no_adresse";
-    private final static String INSERT = "INSERT INTO ADRESSES (no_adresse, rue, code_postal, ville, adresse_eni) values (:no_adresse, :rue, :code_postal, :ville, :adresse_eni)";
+    private final static String INSERT = "INSERT INTO ADRESSES (rue, code_postal, ville, adresse_eni) values (:rue, :code_postal, :ville, :adresse_eni)";
     private final static String DELETE = "DELETE FROM ADRESSE where no_adresse=:no_adresse";
     private final static String SELECT_ALL = "SELECT * FROM ADRESSE";
+    private final static String FIND_ID = "SELECT no_adresse from ADRESSES WHERE rue = :rue AND code_postal=:code_postal AND ville=:ville  ";
 
 
     @Override
-    public long create(Adresse adresse) {
+    public void create(Adresse adresse) {
+
+
         var namedParameters = new MapSqlParameterSource();
 
         namedParameters.addValue("no_adresse", adresse.getNo_adresse());
@@ -33,9 +39,24 @@ public class AdresseDAOImpl implements AdresseDAO{
         namedParameters.addValue("ville", adresse.getVille());
         namedParameters.addValue("adresse_eni", adresse.isAdresse_eni());
 
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
+//        var no_adresse4 = namedParameterJdbcTemplate.queryForObject(FIND_BY_ID, namedParameters, new BeanPropertyRowMapper<>());
+//        System.out.println(no_adresse4);
 
-        namedParameterJdbcTemplate.update(INSERT, namedParameters);
-        return adresse.getNo_adresse();
+
+
+
+        Number generatedId = keyHolder.getKey();
+        if (generatedId != null) {
+            adresse.setNo_adresse(generatedId.longValue());
+        }
+
+
+
+
+
+
 
     }
 

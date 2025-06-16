@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AdresseDAO {
 
-    long create(Adresse adresse);
+    void create(Adresse adresse);
     Adresse read(int no_adresse);
     List<Adresse> readAll();
     void update(Adresse adresse);

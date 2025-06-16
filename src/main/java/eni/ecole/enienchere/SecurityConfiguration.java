@@ -1,19 +1,24 @@
 package eni.ecole.enienchere;
 
 import eni.ecole.enienchere.bll.UtilisateurService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+
+import javax.sql.DataSource;
 
 /**
  * Configuration de la sécurité de l'application
@@ -22,15 +27,19 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-
-    protected final Log logger = LogFactory.getLog(getClass());
-
     private final UtilisateurService utilisateurService;
 
     public SecurityConfiguration(UtilisateurService utilisateurService) {
         this.utilisateurService = utilisateurService;
     }
 
+
+    /**
+     * Configuration de la gestion des utilisateurs avec la base de données
+     * Cette méthode définit comment Spring Security va récupérer les informations des utilisateurs
+     * @param /dataSource La source de données (connexion à la base de données)
+     * @return Un gestionnaire d'utilisateurs configuré
+     */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -39,52 +48,69 @@ public class SecurityConfiguration {
         return auth.build();
     }
 
+    /**
+     * Configuration de l'encodeur de mot de passe
+     * Utilise BCrypt pour le hachage sécurisé des mots de passe
+     * @return Un encodeur de mot de passe BCrypt
+     */
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+
+    /**
+     * Configuration principale de la sécurité
+     * Définit les règles d'accès, la gestion des sessions, etc.
+     * @param http L'objet HttpSecurity à configurer
+     * @return La chaîne de filtres de sécurité configurée
+     */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
         return http.authorizeHttpRequests(auth->
                 {
                     auth.requestMatchers(HttpMethod.GET,"/").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/error/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/static/js/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/enchere").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/article-detail").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/connexion").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/inscription").permitAll();
-                    auth.requestMatchers(HttpMethod.POST,"/connexion").permitAll();
-                    auth.requestMatchers(HttpMethod.POST,"/inscription").permitAll();
-                    auth.requestMatchers(HttpMethod.POST,"/profil/**").permitAll();
-                    auth.requestMatchers(HttpMethod.POST,"/mon-profil").permitAll();
-                    auth.requestMatchers("/debug/**").permitAll(); // Pour le débogage
+                auth.requestMatchers(HttpMethod.GET,"/error/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/js/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/enchere").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/article-detail").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/connexion/").permitAll();
+                auth.requestMatchers(HttpMethod.GET,"/inscription").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/connexion/").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/inscription").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/profil/**").permitAll();
+                auth.requestMatchers(HttpMethod.POST,"/mon-profil").permitAll();
 
-                    // Accès authentifié (nécessite d'être connecté)
-                    auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/cree").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/photo").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/article-detail").authenticated();
-                    auth.requestMatchers(HttpMethod.GET,"/edit").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/edit").authenticated();
-                    auth.requestMatchers(HttpMethod.GET,"/supprimer").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/supprimer").authenticated();
-                    auth.requestMatchers(HttpMethod.GET,"/ventes").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/annule").authenticated();
-                    auth.requestMatchers(HttpMethod.GET,"/livraison").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/livraison").authenticated();
-                    auth.requestMatchers(HttpMethod.POST,"/profil").authenticated();
-                    auth.requestMatchers(HttpMethod.GET,"/profil").authenticated();
+                // Accès authentifié (nécessite d'être connecté)
+                auth.requestMatchers(HttpMethod.GET,"/cree").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/cree").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/photo").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/article-detail").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/edit").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/edit").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/supprimer").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/supprimer").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/ventes").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/annule").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/livraison").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/livraison").authenticated();
+                auth.requestMatchers(HttpMethod.POST,"/profil").authenticated();
+                auth.requestMatchers(HttpMethod.GET,"/profil").authenticated();
 
-                    auth.anyRequest().authenticated();
+                    auth.anyRequest().permitAll();
                 })
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
                 .formLogin(f ->
                         f.loginPage("/connexion")
+                                .loginPage("/connexion")
+                                .usernameParameter("pseudo")
+                                .loginProcessingUrl("/connexion") // URL de traitement du login
+                                .defaultSuccessUrl("/")
+                                .failureUrl("/connexion?error=true")
                                 .permitAll()
                 )
                 .logout(logout -> logout

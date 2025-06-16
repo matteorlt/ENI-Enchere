@@ -7,8 +7,10 @@ public class Adresse {
     private String ville;
     private boolean adresse_eni;
 
-    public Adresse(long no_adresse, String rue, String code_postal, String ville, boolean adresse_eni) {
-        this.no_adresse = no_adresse;
+
+
+    public Adresse(String rue, String code_postal, String ville, boolean adresse_eni) {
+
         this.rue = rue;
         this.code_postal = code_postal;
         this.ville = ville;

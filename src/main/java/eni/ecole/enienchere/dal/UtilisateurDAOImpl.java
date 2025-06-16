@@ -10,7 +10,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +22,7 @@ public class UtilisateurDAOImpl implements UtilisateurDAO{
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    private final static String FIND_BY_PSEUDO = "SELECT pseudo, nom, prenom, email, telephone, mot_de_passe, credit, administrateur, no_adresse from UTILISATEURS WHERE pseudo = :pseudo";
+    private final static String FIND_BY_PSEUDO = "SELECT pseudo, nom, prenom, email, telephone, credit, administrateur, no_adresse from UTILISATEURS WHERE pseudo = :pseudo";
     private final static String UPDATE = "UPDATE UTILISATEURS SET nom=:nom, prenom=:prenom, email=:email, telephone=:telephone, mot_de_passe=:mot_de_passe, no_adresse=:no_adresse WHERE pseudo = :pseudo";
     private final static String INSERT = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, telephone, mot_de_passe, credit, no_adresse ) values (:pseudo, :nom, :prenom, :email, :telephone, :mot_de_passe, :credit, :no_adresse )";
     private final static String DELETE = "DELETE FROM UTILISATEURS where pseudo=:pseudo";
@@ -51,9 +50,7 @@ public class UtilisateurDAOImpl implements UtilisateurDAO{
 
     @Override
     public Utilisateur read(String pseudo) {
-        var namedParameters = new MapSqlParameterSource();
-        namedParameters.addValue("pseudo", pseudo);
-        var rows = namedParameterJdbcTemplate.queryForList(FIND_BY_PSEUDO, namedParameters);
+        var rows = jdbcTemplate.queryForList(FIND_BY_PSEUDO, pseudo);
 
         if (rows.isEmpty())
             return null;
@@ -70,6 +67,13 @@ public class UtilisateurDAOImpl implements UtilisateurDAO{
         utilisateur.setCredit((int) firstRow.get("credit"));
 
 
+
+        var roles = rows.stream()
+                .map(row -> (String) row.get("role"))
+                .filter(Objects::nonNull) // Filtre les éventuels NULL
+                .map(SimpleGrantedAuthority::new).toList();
+
+        utilisateur.setAuthorities(roles);
 
         return utilisateur;
     }

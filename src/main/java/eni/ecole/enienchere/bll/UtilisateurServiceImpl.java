@@ -81,12 +81,18 @@ utilisateurDAO.update(utilisateur);
 
 
     @Override
-    public UserDetails loadUserByUsername(String pseudo) throws UsernameNotFoundException {
-        var personne = utilisateurDAO.read(pseudo);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try {
+            var utilisateur = utilisateurDAO.read(username);
 
-        if (personne == null)
-            throw new UsernameNotFoundException("User not found");
+            if (utilisateur == null)
+                throw new UsernameNotFoundException("User not found");
 
-        return personne;
+            return utilisateur;
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Erreur lors de la récupération de l'utilisateur: " + username, e);
+        }
+
+
     }
 }
