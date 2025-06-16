@@ -16,25 +16,25 @@
             <img src="/images/logoENI.png" alt="Logo ENI" class="nav-logo">
             <span>Les objets sont nos amis !!</span>
         </a>
-<!--        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">-->
-<!--            <p data-th-text="${#authentication.name}"></p>-->
-<!--            <a data-th-href="@{/logout}" >Se déconnecter</a>-->
-<!--        </th:block>-->
-<!--        <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">-->
-<!--            <a data-th-href="@{/login}" >Se connecter</a>-->
-<!--        </th:block>-->
-
+        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">
+            <div class="user-info">
+                <span>Bienvenue, </span>
+                <span data-th-text="${#authentication.name}"></span>
+            </div>
+        </th:block>
     </h1>
     <nav>
         <ul>
             <li><a href="/enchere">Enchere</a></li>
-            <li><a href="/utilisateur/mon-profil">Profil</a></li>
-            <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
-                <li>
-                <li><a data-th-href="@{/utilisateur/connexion}">Se connecter</a></li>
-                </li>
+            <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">
+                <li><a data-th-href="@{/mon-profil(pseudo=${#authentication.name})}">Profil</a></li>
+                <li><a data-th-href="@{/vendre}">Vendre Un Article</a></li>
+                <li><a data-th-href="@{/deconnexion}">Se déconnecter</a></li>
             </th:block>
-            <li><a href="/vendre">Vendre Un Article</a></li>
+            <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
+                <li><a data-th-href="@{/connexion}">Se connecter</a></li>
+                <li><a data-th-href="@{/creer-compte}">S'inscrire</a></li>
+            </th:block>
         </ul>
     </nav>
 </header>

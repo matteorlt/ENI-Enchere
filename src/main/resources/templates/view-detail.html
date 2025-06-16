@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Détail de l'enchère</title>
+    <link rel="stylesheet" th:href="@{/css/details.css}" href="/css/details.css" />
+</head>
+<body>
+<main class="detail-container">
+    <div class="detail-table">
+        <div class="row">
+            <div class="cell label">Article :</div>
+            <div class="cell value" th:text="${article.nom_article}"></div>
+            <div class="cell label">Mise à prix :</div>
+            <div class="cell value" th:text="${article.prix_initial} + ' point(s)' "></div>
+        </div>
+        <div class="row">
+            <div class="cell label">Catégorie :</div>
+            <div class="cell value" th:text="${article.categorie.libelle}"></div>
+            <div class="cell label">Meilleure offre :</div>
+            <div class="cell value">1 point (s)</div>
+        </div>
+        <div class="row">
+            <div class="cell label">Description :</div>
+            <div class="cell value" th:text="${article.description}" colspan="3"></div>
+            <div class="cell label">Fin de l'enchère :</div>
+            <div class="cell value" th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy')}"></div>
+        </div>
+    </div>
+    <div class="detail-bottom">
+        <div class="retrait">
+            <span class="label">Retrait :</span>
+            <span class="value" th:text="${article.adresse_retrait.rue + ' ' + article.adresse_retrait.code_postal + ' ' + article.adresse_retrait.ville}"></span>
+        </div>
+        <div class="vendeur">
+            <span class="label">Vendeur :</span>
+            <span class="value" th:text="${article.vendeur.pseudo}"></span>
+        </div>
+        <div class="enchere-input">
+            <label for="montant_propose">Votre enchère :</label>
+            <input type="number" id="montant_propose" name="montant_propose" min="0" step="0.1" required>
+        </div>
+        <form action="post">
+            <div class="button-detail">
+                <a th:href="@{/acheter}" class="btn btn-primary">Validation de l'enchère</a>
+            </div>
+        </form>
+        <div class="button-detail">
+            <a th:href="@{/}" class="btn btn-primary">Retour</a>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

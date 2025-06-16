@@ -6,6 +6,7 @@ import eni.ecole.enienchere.bo.Utilisateur;
 import eni.ecole.enienchere.dal.AdresseDAOImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -204,6 +205,50 @@ public class UtilisateurController {
         return "view-connexion";
     }
 
+    @PostMapping("/connexion")
+    public String processLogin(@RequestParam String username, 
+                             @RequestParam String password, 
+                             HttpServletRequest request, 
+                             RedirectAttributes redirectAttributes) {
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Les identifiants ne peuvent pas être vides");
+            return "redirect:/connexion";
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password)
+            );
+            
+            if (authentication != null && authentication.isAuthenticated()) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                
+                HttpSession session = request.getSession(true);
+                session.setAttribute("utilisateurConnecte", authentication.getPrincipal());
+                
+                return "redirect:/";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Échec de l'authentification");
+                return "redirect:/connexion";
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Identifiants invalides");
+            return "redirect:/connexion";
+        }
+    }
+
+    @GetMapping("/deconnexion")
+    public String deconnexion(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            SecurityContextHolder.clearContext();
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+        }
+        return "redirect:/";
+    }
 
     /// /    @PostMapping("/supprimer")
     /// /    public String supprimerCompte(
@@ -230,39 +275,39 @@ public class UtilisateurController {
     /// /    }
 
     @PostMapping("/creer-compte")
-    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
-        var password = utilisateur.getPassword();
-        utilisateur.setMot_de_passe(passwordEncoder.encode(password));
-
-
-        utilisateurService.enregistrerUneAdresse(utilisateur.getAdresse());
-
-//        var no_adresse = newAdresse.getNo_adresse();
-//        utilisateur.
-
-//        utilisateur.getAdresse().setNo_adresse(adresseEnregistrer.getNo_adresse());
-        utilisateurService.enregistrerUnUtilisateur(utilisateur);
-
-
+    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, 
+                                         HttpServletRequest request,
+                                         RedirectAttributes redirectAttributes) {
         try {
-            request.login(utilisateur.getUsername(), password);
-        } catch (ServletException e) {
-            // Gérer l'erreur (par exemple, mot de passe incorrect)
-            return "redirect:/register?error";
-        }
+            // Encoder le mot de passe
+            var password = utilisateur.getPassword();
+            utilisateur.setMot_de_passe(passwordEncoder.encode(password));
 
-        // 2. Authentifier automatiquement l'utilisateur
-        Authentication authentication = authenticationManager.authenticate(
+            // Enregistrer l'adresse
+            utilisateurService.enregistrerUneAdresse(utilisateur.getAdresse());
+
+            // Enregistrer l'utilisateur
+            utilisateurService.enregistrerUnUtilisateur(utilisateur);
+
+            // Authentifier automatiquement l'utilisateur
+            Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        utilisateur.getUsername(),
-                        password // la c'est le mdp en clair qu'il nous faut
+                    utilisateur.getUsername(),
+                    password
                 )
-        );
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            
+            // Créer une nouvelle session
+            HttpSession session = request.getSession(true);
+            session.setAttribute("utilisateurConnecte", authentication.getPrincipal());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
-        return "redirect:/";
+            redirectAttributes.addFlashAttribute("success", "Compte créé avec succès");
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la création du compte");
+            return "redirect:/creer-compte";
+        }
     }
 
     @GetMapping("/creer-compte")
