@@ -10,6 +10,50 @@
     <link rel="icon" type="image/png" data-th-href="@{/images/logoENI.png}">
     <title data-th-replace="${titre}">Layout</title>
 </head>
+<script th:inline="javascript">
+    console.log('Script chargé !');
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+        function updateCountdown() {
+            const countdownElement = document.getElementById('countdown');
+
+            if (!countdownElement) {
+                return;
+            }
+
+            const dateFinStr = countdownElement.getAttribute('data-date-fin');
+
+            if (!dateFinStr) {
+                countdownElement.innerHTML = "Erreur: pas de date";
+                return;
+            }
+
+            // Conversion de la date en timestamp
+            const dateFin = new Date(dateFinStr);
+            const maintenant = new Date();
+
+            const difference = dateFin - maintenant;
+
+            if (difference <= 0) {
+                countdownElement.innerHTML = "L'enchère est terminée";
+                return;
+            }
+
+            const jours = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const heures = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const secondes = Math.floor((difference % (1000 * 60)) / 1000);
+
+            countdownElement.innerHTML = `${jours}j ${heures}h ${minutes}m ${secondes}s`;
+        }
+
+        // Mettre à jour toutes les secondes
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    });
+</script>
 <body>
 
 <header>

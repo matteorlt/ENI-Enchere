@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 @Controller
 public class EnchereController {
@@ -65,10 +66,16 @@ public class EnchereController {
     public String getDetail(@RequestParam(name = "no_article", required = true) Integer noArticle, Model model) {
         List<ArticleAVendre> articles = articleService.getArticleById(noArticle);
         if (articles != null && !articles.isEmpty()) {
-            model.addAttribute("article", articles.get(0));
+            ArticleAVendre article = articles.get(0);
+            model.addAttribute("article", article);
+            
+            // Formatage de la date pour JavaScript
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            String dateFinFormatted = sdf.format(article.getDate_fin_enchere());
+            model.addAttribute("dateFinFormatted", dateFinFormatted);
+            
             return "view-detail";
         }
-
         return "redirect:/";
     }
 

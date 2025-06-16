@@ -25,7 +25,13 @@
             <div class="cell label">Description :</div>
             <div class="cell value" th:text="${article.description}" colspan="3"></div>
             <div class="cell label">Fin de l'enchère :</div>
-            <div class="cell value" th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy')}"></div>
+            <div class="cell value" th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy HH:mm')}"></div>
+            <div class="cell label">Temps restant :</div>
+            <div class="cell value">
+                <div id="countdown" th:data-date-fin="${dateFinFormatted}">
+                    Chargement...
+                </div>
+            </div>
         </div>
     </div>
     <div class="detail-bottom">
