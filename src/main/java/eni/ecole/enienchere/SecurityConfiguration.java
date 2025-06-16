@@ -16,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 
@@ -31,13 +33,13 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/connexion", "/creer-compte", "/css/**", "/images/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/connexion", "/creer-compte", "/css/**", "/images/**", "/js/**", "/error", "/.well-known/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/connexion")
                         .loginProcessingUrl("/connexion")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/", true)
                         .failureUrl("/connexion?error=true")
                         .permitAll()
                 )
@@ -57,6 +59,23 @@ public class SecurityConfiguration {
                 .csrf(Customizer.withDefaults());
 
         return http.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer webMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/.well-known/**")
+                        .addResourceLocations("classpath:/.well-known/");
+                registry.addResourceHandler("/css/**")
+                        .addResourceLocations("classpath:/static/css/");
+                registry.addResourceHandler("/js/**")
+                        .addResourceLocations("classpath:/static/js/");
+                registry.addResourceHandler("/images/**")
+                        .addResourceLocations("classpath:/static/images/");
+            }
+        };
     }
 
     @Bean

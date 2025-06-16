@@ -1,16 +1,55 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Erreur</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 50px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .error-code {
+            font-size: 72px;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .error-details {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
+<main>
     <div class="error-container">
-        <h1>Une erreur est survenue</h1>
-        <p th:if="${statusCode}" th:text="'Code d\'erreur : ' + ${statusCode}"></p>
-        <p th:if="${exception}" th:text="'Message : ' + ${exception}"></p>
-        <a th:href="@{/}" class="btn">Retour à l'accueil</a>
+        <div class="error-code" th:text="${statusCode}">500</div>
+        <div class="error-message" th:text="${errorMessage}">Une erreur s'est produite</div>
+        <div class="error-details">
+            <p>Nous sommes désolés pour ce désagrément.</p>
+            <p>Veuillez réessayer ou retourner à la page d'accueil.</p>
+        </div>
+        <a th:href="@{/}" class="back-button">Retour à l'accueil</a>
     </div>
+</main>
 </body>
 </html> 

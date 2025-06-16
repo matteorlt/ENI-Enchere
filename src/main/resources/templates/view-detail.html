@@ -4,7 +4,7 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Détail de l'enchère</title>
-    <link rel="stylesheet" th:href="@{/css/details.css}" href="/css/details.css" />
+    <link rel="stylesheet" th:href="@{/css/details.css}"/>
 </head>
 <body>
 <main class="detail-container">
@@ -35,7 +35,7 @@
         </div>
         <div class="vendeur">
             <span class="label">Vendeur :</span>
-            <span class="value" th:text="${article.vendeur.pseudo}"></span>
+            <a data-th-href="@{/profil(pseudo=${article.vendeur.pseudo})}" class="value" th:text="${article.vendeur.pseudo}"></a>
         </div>
         <div class="enchere-input">
             <label for="montant_propose">Votre enchère :</label>
