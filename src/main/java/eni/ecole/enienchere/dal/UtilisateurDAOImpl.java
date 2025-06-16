@@ -22,7 +22,7 @@ public class UtilisateurDAOImpl implements UtilisateurDAO{
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    private final static String FIND_BY_PSEUDO = "SELECT pseudo, nom, prenom, email, telephone, credit, administrateur, no_adresse from UTILISATEURS WHERE pseudo = :pseudo";
+    private final static String FIND_BY_PSEUDO = "SELECT pseudo, nom, prenom, email, telephone, mot_de_passe, credit, administrateur, no_adresse from UTILISATEURS WHERE pseudo = :pseudo";
 
     private final static String UPDATE = "UPDATE UTILISATEURS SET nom=:nom, prenom=:prenom, email=:email, telephone=:telephone, mot_de_passe=:mot_de_passe, no_adresse=:no_adresse WHERE pseudo = :pseudo";
     private final static String INSERT = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, telephone, mot_de_passe, credit, no_adresse ) values (:pseudo, :nom, :prenom, :email, :telephone, :mot_de_passe, :credit, :no_adresse )";
@@ -44,39 +44,48 @@ public class UtilisateurDAOImpl implements UtilisateurDAO{
         namedParameters.addValue("no_adresse", utilisateur.getAdresse().getNo_adresse());
 
         namedParameterJdbcTemplate.update(INSERT, namedParameters);
+
+
+
         return utilisateur.getPseudo();
 
 
     }
 
-    @Override
+//    @Override
+//    public Utilisateur read(String pseudo) {
+//        var rows = jdbcTemplate.queryForList(FIND_BY_PSEUDO, pseudo);
+//
+//        if (rows.isEmpty())
+//            return null;
+//
+//        // Étape 2 : Construit l'objet Personne à partir de la première ligne
+//        Map<String, Object> firstRow = rows.get(0);
+//        Utilisateur utilisateur = new Utilisateur();
+//        utilisateur.setPseudo((String) firstRow.get("pseudo"));
+//        utilisateur.setNom((String) firstRow.get("nom"));
+//        utilisateur.setPrenom((String) firstRow.get("prenom"));
+//        utilisateur.setEmail((String) firstRow.get("email"));
+//        utilisateur.setTelephone((String) firstRow.get("telephone"));
+//        utilisateur.setMot_de_passe((String) firstRow.get("mot_de_passe"));
+//        utilisateur.setCredit((int) firstRow.get("credit"));
+//
+//
+//
+//        var roles = rows.stream()
+//                .map(row -> (String) row.get("role"))
+//                .filter(Objects::nonNull) // Filtre les éventuels NULL
+//                .map(SimpleGrantedAuthority::new).toList();
+//
+//        utilisateur.setAuthorities(roles);
+//
+//        return utilisateur;
+//    }
     public Utilisateur read(String pseudo) {
-        var rows = jdbcTemplate.queryForList(FIND_BY_PSEUDO, pseudo);
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("pseudo", pseudo);
 
-        if (rows.isEmpty())
-            return null;
-
-        // Étape 2 : Construit l'objet Personne à partir de la première ligne
-        Map<String, Object> firstRow = rows.get(0);
-        Utilisateur utilisateur = new Utilisateur();
-        utilisateur.setPseudo((String) firstRow.get("pseudo"));
-        utilisateur.setNom((String) firstRow.get("nom"));
-        utilisateur.setPrenom((String) firstRow.get("prenom"));
-        utilisateur.setEmail((String) firstRow.get("email"));
-        utilisateur.setTelephone((String) firstRow.get("telephone"));
-        utilisateur.setMot_de_passe((String) firstRow.get("mot_de_passe"));
-        utilisateur.setCredit((int) firstRow.get("credit"));
-
-
-
-        var roles = rows.stream()
-                .map(row -> (String) row.get("role"))
-                .filter(Objects::nonNull) // Filtre les éventuels NULL
-                .map(SimpleGrantedAuthority::new).toList();
-
-        utilisateur.setAuthorities(roles);
-
-        return utilisateur;
+        return namedParameterJdbcTemplate.queryForObject(FIND_BY_PSEUDO, namedParameters, new UtilisateurRowMapper());
     }
 
     @Override

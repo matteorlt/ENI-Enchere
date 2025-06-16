@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
+
 
 @Controller
 
@@ -199,8 +201,9 @@ public class UtilisateurController {
     /// /    }
 //
     @GetMapping("/connexion")
-    String login() {
+    String login(Model model) {
         logger.info("Affichage du formulaire login");
+        model.addAttribute("utilisateur", new Utilisateur());
 
         return "view-connexion";
     }
@@ -231,8 +234,10 @@ public class UtilisateurController {
     /// /    }
 
     @PostMapping("/creer-compte")
-    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
+    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request, Principal principal) {
+
         var password = utilisateur.getMot_de_passe();
+
         utilisateur.setMot_de_passe(passwordEncoder.encode(password));
 
 
@@ -246,7 +251,7 @@ public class UtilisateurController {
 
 
         try {
-            request.login(utilisateur.getPseudo(), password);
+            request.login(utilisateur.getUsername(), password);
         } catch (ServletException e) {
             // Gérer l'erreur (par exemple, mot de passe incorrect)
             return "redirect:/register?error";
@@ -255,12 +260,13 @@ public class UtilisateurController {
         // 2. Authentifier automatiquement l'utilisateur
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        utilisateur.getPseudo(),
+                        utilisateur.getUsername(),
                         password // la c'est le mdp en clair qu'il nous faut
                 )
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
 
         return "redirect:/";
