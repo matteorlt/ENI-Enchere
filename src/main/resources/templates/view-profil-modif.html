@@ -21,37 +21,37 @@
 
         <div class="form-group">
             <label for="inputNom" >Nom* :</label>
-            <input type="text" id="inputNom" data-th-field="*{nom}" required/>
+            <input type="text" id="inputNom" data-th-field="*{nom}" name="nom" required/>
         </div>
 
         <div class="form-group">
             <label for="inputPrenom">Prénom* :</label>
-            <input type="text" id="inputPrenom" data-th-field="*{prenom}" required/>
+            <input type="text" id="inputPrenom" data-th-field="*{prenom}" name="prenom" required/>
         </div>
 
         <div class="form-group">
             <label for="inputEmail">Email* :</label>
-            <input type="email" id="inputEmail" data-th-field="*{email}" required/>
+            <input type="email" id="inputEmail" data-th-field="*{email}" name="email" required/>
         </div>
 
         <div class="form-group">
             <label for="inputTelephone">Téléphone :</label>
-            <input type="tel" id="inputTelephone" data-th-field="*{telephone}"/>
+            <input type="tel" id="inputTelephone" data-th-field="*{telephone}" name="telephone"/>
         </div>
 
         <div class="form-group address-group">
             <div>
                 <label for="inputAdresse">Adresse* :</label>
-                <input type="text" id="inputAdresse" data-th-field="*{utilisateur.adresse.rue}" required/>
+                <input type="text" id="inputAdresse" data-th-field="*{utilisateur.adresse.rue}" name="rue" required/>
             </div>
             <div class="address-row">
                 <div>
                     <label for="inputCP">Code postal* :</label>
-                    <input type="text" id="inputCP" data-th-field="*{utilisateur.adresse.code_postal}" required/>
+                    <input type="text" id="inputCP" data-th-field="*{utilisateur.adresse.code_postal}" name="cp" required/>
                 </div>
                 <div>
                     <label for="inputVille" >Ville* :</label>
-                    <input type="text" id="inputVille" data-th-field="*{utilisateur.adresse.ville}" required/>
+                    <input type="text" id="inputVille" data-th-field="*{utilisateur.adresse.ville}" name="ville" required/>
                 </div>
             </div>
         </div>

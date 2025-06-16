@@ -4,10 +4,12 @@ import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
 import eni.ecole.enienchere.dal.AdresseDAO;
 import eni.ecole.enienchere.dal.UtilisateurDAO;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UtilisateurServiceImpl implements UtilisateurService{
+public class UtilisateurServiceImpl implements UtilisateurService {
 
     UtilisateurDAO utilisateurDAO;
     AdresseDAO adresseDAO;
@@ -20,7 +22,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     @Override
     public Utilisateur consulterUtilisateurParPseudo(String pseudo) {
         var utilisateur = utilisateurDAO.read(pseudo);
-        var adresse = adresseDAO.read((int)utilisateur.getAdresse().getNo_adresse());
+        var adresse = adresseDAO.read((int) utilisateur.getAdresse().getNo_adresse());
         utilisateur.setAdresse(adresse);
 
 
@@ -35,5 +37,56 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     @Override
     public Adresse consulterAdresseParId(int no_adresse) {
         return adresseDAO.read(no_adresse);
+    }
+
+    @Override
+    public void updateMdp(String pseudo, String mot_de_passe) {
+        var utilisateur = utilisateurDAO.read(pseudo);
+        utilisateur.setMot_de_passe(mot_de_passe);
+        utilisateurDAO.update(utilisateur);
+    }
+
+    @Override
+    public void updateAdresse(Adresse adresse, String rue, String cp, String ville) {
+        adresse.setRue(rue);
+        adresse.setCode_postal(cp);
+        adresse.setVille(ville);
+        adresseDAO.update(adresse);
+    }
+
+    @Override
+    public void modifUtilisateur(Utilisateur utilisateur, String nom, String prenom, String email, String telephone) {
+utilisateur.setNom(nom);
+utilisateur.setPrenom(prenom);
+utilisateur.setEmail(email);
+utilisateur.setTelephone(telephone);
+utilisateurDAO.update(utilisateur);
+    }
+
+
+    @Override
+    public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
+
+
+        utilisateurDAO.create(utilisateur);
+        return utilisateur.getPseudo();
+    }
+
+    @Override
+    public void enregistrerUneAdresse(Adresse adresse) {
+
+        adresseDAO.create(adresse);
+
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String pseudo) throws UsernameNotFoundException {
+        var personne = utilisateurDAO.read(pseudo);
+
+        if (personne == null)
+            throw new UsernameNotFoundException("User not found");
+
+        return personne;
     }
 }
