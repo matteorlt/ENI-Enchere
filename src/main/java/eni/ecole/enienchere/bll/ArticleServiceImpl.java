@@ -32,8 +32,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleAVendre> getArticlesByVendeur(Long vendeurId) {
-        return articleDAO.findByVendeur(vendeurId);
+    public List<ArticleAVendre> getArticlesByVendeur(String vendeurPseudo) {
+        return articleDAO.findByVendeur(vendeurPseudo);
     }
 
     @Override

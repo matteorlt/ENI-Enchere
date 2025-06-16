@@ -39,13 +39,24 @@ public class EnchereController {
     @GetMapping("/enchere")
     public String afficherEncheres(Model model,
                                    @RequestParam(name = "nom", required = false) String nom,
-                                   @RequestParam(name = "categorie", required = false) String categorie) {
+                                   @RequestParam(name = "categorie", required = false) String categorie,
+                                   @RequestParam(name = "mesEncheres", required = false) Boolean mesEncheres,
+                                   Principal principal) {
         var categories = categorieService.getAllCategories();
-        List<ArticleAVendre> encheres = articleService.getArticlesFiltres(nom, categorie);
+        List<ArticleAVendre> encheres;
+        
+        if (mesEncheres != null && mesEncheres && principal != null) {
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+            encheres = articleService.getArticlesByVendeur(utilisateur.getPseudo());
+        } else {
+            encheres = articleService.getArticlesFiltres(nom, categorie);
+        }
+        
         model.addAttribute("encheres", encheres);
         model.addAttribute("categories", categories);
         model.addAttribute("nom", nom);
         model.addAttribute("categorie", categorie);
+        model.addAttribute("mesEncheres", mesEncheres);
         model.addAttribute("currentDate", java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         return "view-enchere";
     }

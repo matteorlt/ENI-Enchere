@@ -110,7 +110,7 @@ public class ArticleDAOImpl implements ArticleDAO {
     }
 
     @Override
-    public List<ArticleAVendre> findByVendeur(Long vendeurId) {
+    public List<ArticleAVendre> findByVendeur(String vendeurPseudo) {
         String sql = "SELECT a.*, c.libelle, u.pseudo, u.nom, u.prenom, u.email, u.telephone, " +
                 "ad.no_adresse, ad.rue, ad.code_postal, ad.ville " +
                 "FROM ARTICLES_A_VENDRE a " +
@@ -118,7 +118,7 @@ public class ArticleDAOImpl implements ArticleDAO {
                 "JOIN UTILISATEURS u ON a.id_utilisateur = u.pseudo " +
                 "LEFT JOIN ADRESSES ad ON a.no_adresse_retrait = ad.no_adresse " +
                 "WHERE a.id_utilisateur = ?";
-        return jdbcTemplate.query(sql, articleRowMapper, vendeurId);
+        return jdbcTemplate.query(sql, articleRowMapper, vendeurPseudo);
     }
 
     @Override

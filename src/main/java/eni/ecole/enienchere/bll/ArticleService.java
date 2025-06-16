@@ -10,7 +10,7 @@ public interface ArticleService {
     List<ArticleAVendre> getAllArticles();
     List<ArticleAVendre> getArticleById(Integer articleId);
     List<ArticleAVendre> getArticlesByCategorie(Integer categorieId);
-    List<ArticleAVendre> getArticlesByVendeur(Long vendeurId);
+    List<ArticleAVendre> getArticlesByVendeur(String vendeurPseudo);
     List<ArticleAVendre> getArticlesByNom(String nom);
     List<ArticleAVendre> getArticlesByPrixInitial(Integer prixInitial);
     List<ArticleAVendre> getArticlesFiltres(String nom, String categorie);

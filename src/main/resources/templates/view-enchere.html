@@ -29,6 +29,13 @@
                     </select>
                 </div>
                 
+                <div class="filtre-groupe">
+                    <label for="mesEncheres">
+                        <input type="checkbox" id="mesEncheres" name="mesEncheres" th:checked="${mesEncheres}">
+                        Mes enchères
+                    </label>
+                </div>
+                
                 <div class="boutons-filtres">
                     <button type="submit" class="btn-rechercher">Rechercher</button>
                     <a th:href="@{/enchere}">
