@@ -18,4 +18,6 @@ public interface UtilisateurService extends UserDetailsService {
     String enregistrerUnUtilisateur(Utilisateur utilisateur);
 
     void enregistrerUneAdresse(Adresse adresse);
+
+
 }

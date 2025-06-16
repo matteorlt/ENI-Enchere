@@ -56,6 +56,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {

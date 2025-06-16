@@ -28,7 +28,8 @@
     <nav>
         <ul>
             <li><a href="/enchere">Enchere</a></li>
-            <li><a href="/mon-profil">Profil</a></li>
+
+            <li><a th:href="@{/mon-profil(pseudo=${#authentication.name})}">Profil</a></li>
             <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
                 <li>
                 <li><a data-th-href="@{/connexion}">Se connecter</a></li>

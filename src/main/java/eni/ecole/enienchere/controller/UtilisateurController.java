@@ -84,26 +84,30 @@ public class UtilisateurController {
     @GetMapping("/mon-profil")
     public String afficherProfilUtilisateur(
             @RequestParam("pseudo") @NotBlank String pseudo,
-            Model model) {
-        Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-        int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
-        Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
-        model.addAttribute("utilisateur", utilisateur);
-        model.addAttribute("adresse", adresse);
-        return "view-mon-profil";
-//        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-//            logger.warn("Accès non autorisé au profil pour le pseudo: {}", pseudo);
-//            return "redirect:/accueil";
-//        }
-//
-//        try {
-//            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-//            model.addAttribute("utilisateur", utilisateur);
-//            return "view-mon-profil";
-//        } catch (Exception e) {
-//            logger.error("Erreur lors du chargement du profil utilisateur: {}", pseudo, e);
-//            model.addAttribute("errorMessage", "Erreur lors du chargement du profil");
-//            return "redirect:/accueil";
+            Model model, Authentication authentication) {
+
+
+        if(authentication!=null) {
+            var principal = authentication.getPrincipal();
+
+            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
+
+                try {
+
+                    Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
+                    int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
+                    Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
+                    model.addAttribute("utilisateur", utilisateur);
+                    model.addAttribute("adresse", adresse);
+                    return "view-mon-profil";
+                } catch (Exception e) {
+                    logger.error("Erreur lors du chargement du formulaire de modification: {}");
+                    return "redirect:/accueil";
+                }
+            }
+        }
+        return "redirect:/accueil";
+
     }
 
 
