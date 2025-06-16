@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une photo</title>
+</head>
+
+<body>
+<header>
+    <div>
+        <span>(Logo) Eni-Encheres</span>
+        <nav>
+            <a th:href="@{/}">Accueil</a>
+            <a th:href="@{/vendre}">Vendre un article</a>
+            <a th:href="@{/profil}">Mon profil</a>
+            <a th:href="@{/logout}">Se déconnecter</a>
+
+        </nav>
+    </div>
+
+    <div>
+        <p>Date du jour : <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span></p>
+        <p>Participant : <span th:text="${participant}"></span></p>
+    </div>
+</header>
+
+
+<main>
+    <h2>Ajouter une photo</h2>
+    <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data">
+        <label>Photo de l'article :</label>
+
+        <input type="file" name="photo" accept="image/*" onchange="previewImage" required>
+
+        <br><br>
+
+        <img src="#" alt="photo" style="max-width: 100px; display: block;">
+
+        <br><br>
+        <button type="submit">Enregistrer la photo</button>
+        <button type="button">Annuler</button>
+
+    </form>
+</main>
+</body>
+</html>
