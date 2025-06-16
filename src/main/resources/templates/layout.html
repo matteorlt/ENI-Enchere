@@ -31,10 +31,9 @@
         <ul>
             <li><a href="/enchere">Enchere</a></li>
             <li><a href="/utilisateur/mon-profil">Profil</a></li>
+            <li><a href="/creer-compte">S'inscrire</a></li>
             <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
-                <li>
-                <li><a data-th-href="@{/utilisateur/connexion}">Se connecter</a></li>
-                </li>
+                <li><a data-th-href="@{/connexion}">Se connecter</a></li>
             </th:block>
             <li><a href="/vendre">Vendre Un Article</a></li>
         </ul>
