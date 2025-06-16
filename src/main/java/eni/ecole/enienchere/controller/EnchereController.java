@@ -50,6 +50,17 @@ public class EnchereController {
         return "view-enchere";
     }
 
+    @GetMapping("/details")
+    public String getDetail(@RequestParam(name = "no_article", required = true) Integer noArticle, Model model) {
+        List<ArticleAVendre> articles = articleService.getArticleById(noArticle);
+        if (articles != null && !articles.isEmpty()) {
+            model.addAttribute("article", articles.get(0));
+            return "view-detail";
+        }
+
+        return "redirect:/";
+    }
+
     @PostMapping("/enchere/soumettre")
     public String soumettreEnchere(@RequestParam("no_article") Integer noArticle,
                                  @RequestParam("montant") Integer montant,
