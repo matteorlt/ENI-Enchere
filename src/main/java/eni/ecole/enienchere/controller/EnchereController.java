@@ -47,9 +47,9 @@ public class EnchereController {
         
         if (mesEncheres != null && mesEncheres && principal != null) {
             Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
-            encheres = articleService.getArticlesByVendeur(utilisateur.getPseudo());
+            encheres = articleService.getArticlesFiltres(nom, categorie, utilisateur.getPseudo());
         } else {
-            encheres = articleService.getArticlesFiltres(nom, categorie);
+            encheres = articleService.getArticlesFiltres(nom, categorie, null);
         }
         
         model.addAttribute("encheres", encheres);
