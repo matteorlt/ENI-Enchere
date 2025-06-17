@@ -15,6 +15,7 @@ public class ArticleAVendre {
     private Utilisateur vendeur;
     private Categorie categorie;
     private Adresse adresse_retrait;
+    private String photo;
 
     public ArticleAVendre(long no_article, Adresse adresse_retrait, Categorie categorie, Utilisateur vendeur, int prix_vente, int prix_initial, int statut, Date date_fin_enchere, Date date_debut_enchere, String description, String nom_article) {
         this.no_article = no_article;
@@ -77,6 +78,10 @@ public class ArticleAVendre {
         return nom_article;
     }
 
+    public String getPhoto() {
+        return photo;
+    }
+
     public void setNo_article(long no_article) {
         this.no_article = no_article;
     }
@@ -119,6 +124,10 @@ public class ArticleAVendre {
 
     public void setCategorie(Categorie categorie) {
         this.categorie = categorie;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     @Override

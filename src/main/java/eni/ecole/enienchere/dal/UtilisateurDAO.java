@@ -11,5 +11,6 @@ Utilisateur read(String pseudo);
 List<Utilisateur> readAll();
 void update(Utilisateur utilisateur);
 void delete(String pseudo);
+void updateCredit(String pseudo, int nouveauCredit);
 
 }

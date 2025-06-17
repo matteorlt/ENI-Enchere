@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Utilisateur implements UserDetails {
 
@@ -18,7 +19,7 @@ public class Utilisateur implements UserDetails {
     private int credit;
     private boolean administrateur;
     private Adresse adresse;
-    private  Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
+    private Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
 
     public Utilisateur(String pseudo, String nom, String prenom, String email, String telephone, String mot_de_passe, int credit, boolean administrateur, Adresse adresse ) {
         this.pseudo = pseudo;
@@ -115,6 +116,19 @@ public class Utilisateur implements UserDetails {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Utilisateur that = (Utilisateur) o;
+        return Objects.equals(pseudo, that.pseudo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pseudo);
+    }
+
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
@@ -131,10 +145,18 @@ public class Utilisateur implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
     @Override
     public boolean isEnabled() {

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Erreur</title>
+</head>
+<body>
+<main>
+    <div class="error-container">
+        <div class="error-code" th:text="${statusCode}">500</div>
+        <div class="error-message" th:text="${errorMessage}">Une erreur s'est produite</div>
+        <div class="error-details">
+            <p>Nous sommes désolés pour ce désagrément.</p>
+            <p>Veuillez réessayer ou retourner à la page d'accueil.</p>
+        </div>
+        <a th:href="@{/}" class="back-button">Retour à l'accueil</a>
+    </div>
+</main>
+</body>
+</html> 

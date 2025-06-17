@@ -97,4 +97,9 @@ utilisateur.setTelephone(telephone);
 
 
     }
+
+    @Override
+    public void updateCredit(String pseudo, int nouveauCredit) {
+        utilisateurDAO.updateCredit(pseudo, nouveauCredit);
+    }
 }

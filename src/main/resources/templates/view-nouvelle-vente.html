@@ -1,78 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Nouvelle vente</title>
 </head>
-<body>
-<header>
-    <h1>(Logo) Eni-Enchères</h1>
-    <nav>
-        <a th:href="@{/}">Accueil</a>
-        <a th:href="@{/vendre}">Vendre un article</a>
-        <a th:href="@{/profil}">Mon profil</a>
-        <a th:href="@{/logout}">Se déconnecter</a>
-    </nav>
-    <div>
-        <p>Date du jour : <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span></p>
-        <p>Participant : <span th:text="${utilisateur.pseudo}"></span></p>
-    </div>
-</header>
+<main class="vente-main">
+    <div class="vente-container">
+        <h1 class="vente-container__title">Nouvelle vente</h1>
+        
+        <div th:if="${error}" class="alert alert--danger" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert--success" th:text="${success}"></div>
 
-<div>
-    <label th:action="@{/ventes/nouvelle}" method="post">
-        <label>Article (*) :
-            <input type="text" name="nomArticle" th:value="${article.nom}" required />
-        </label><br><br>
+        <form th:action="@{/vendre}" method="post" class="form-container vente-form">
+            <div class="form-group">
+                <label for="nomArticle" class="form-group__label form-group__label--required">Article :</label>
+                <input type="text" id="nomArticle" name="nomArticle" class="form-group__input" th:value="${article?.nom_article}" required>
+            </div>
 
-        <label>Catégorie (*) :
-        <select name="categorie" id="categorie">
-            <option value="">Toutes</option>
-            <option value="">Ameublement</option>
-            <option value="">Informatique</option>
-            <option value="">Sports&Loisirs</option>
-            <option value="">Vêtements</option>
-            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
-        </select>
-        </label><br><br>
+            <div class="form-group">
+                <label for="categorie" class="form-group__label form-group__label--required">Catégorie :</label>
+                <select id="categorie" name="categorie" class="form-group__select" required>
+                    <option value="">Sélectionnez une catégorie</option>
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.no_categorie}"
+                            th:text="${cat.libelle}">
+                    </option>
+                </select>
+            </div>
 
+            <div class="form-group">
+                <label for="description" class="form-group__label form-group__label--required">Description :</label>
+                <textarea id="description" name="description" class="form-group__textarea" th:text="${article?.description}" required style="width: 534px; height: 200px;"></textarea>
+            </div>
 
-        <label>Description (*) :
-            <textarea name="description" required th:text="${article.description}"></textarea>
-        </label><br><br>
+            <div class="form-group">
+                <label for="miseAPrix" class="form-group__label form-group__label--required">Mise à prix :</label>
+                <input type="number" id="miseAPrix" name="miseAPrix" class="form-group__input" th:value="${article?.prix_initial}" required min="1">
+            </div>
 
-        <label>Mise à prix (*) :
-            <input type="number" name="miseAPrix" step="1" min="1" th:value="${article.miseAPrix}" required />
-        </label><br><br>
+            <div class="form-group">
+                <label for="dateDebut" class="form-group__label form-group__label--required">Début de l'enchère :</label>
+                <input type="datetime-local" id="dateDebut" name="dateDebut" class="form-group__input" required>
+            </div>
 
-        <label>Début de l'enchère (*) :
-            <input type="date" name="dateDebut" th:value="${#dates.format(article.dateDebut, 'yyyy-MM-dd')}" required />
-        </label><br><br>
+            <div class="form-group">
+                <label for="dateFin" class="form-group__label form-group__label--required">Fin de l'enchère :</label>
+                <input type="datetime-local" id="dateFin" name="dateFin" class="form-group__input" required>
+            </div>
 
+            <div class="form-group">
+                <label class="form-group__label">Retrait :</label>
+                <div th:if="${utilisateur?.adresse}" class="vente-form__retrait">
+                    <p class="vente-form__retrait-info">
+                        <span th:text="${utilisateur.adresse.rue}"></span><br>
+                        <span th:text="${utilisateur.adresse.code_postal}"></span>
+                        <span th:text="${utilisateur.adresse.ville}"></span>
+                    </p>
+                    <input type="hidden" name="retrait" th:value="${utilisateur.adresse.no_adresse}">
+                </div>
+                <div th:unless="${utilisateur?.adresse}" class="alert alert--warning">
+                    Vous devez avoir une adresse de retrait pour vendre un article.
+                </div>
+            </div>
 
-        <label>Fin de l'enchère (*) :
-            <input type="date" name="dateFin" th:value="${#dates.format(article.dateFin, 'yyyy-MM-dd')}" required />
-        </label><br><br>
-
-        <label>Retrait (*) :
-        <select name="retrait" id="retrait">
-            <option value="">3 rue Michaël Faraday 44800 SAINT HERBLAIN</option>
-            <option value="">2B rue Benjamin Franklin 44800 SAINT HERBLAIN</option>
-            <option value="">8 rue Léo Lagrange 35131 CHARTRES DE BRETAGNE</option>
-            <option value="">2 rue Georges Perros 29000 QUIMPER</option>
-            <option value="">19 avenue Léo Lagrange 79000 NIORT</option>
-            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
-        </select>
-        <br><br>
-
-        <button type="submit" name="action" value="suivant">Suivant</button>
-
-        <button type="submit" name="action" value="annulerVente">Annuler la vente</button>
-
-        <button type="submit" name="action" value="annuler">Annuler</button>
-
-    </label>
+            <div class="form-actions">
+                <button type="submit" name="action" value="enregistrer" class="btn btn--primary">Enregistrer</button>
+                <button type="submit" name="action" value="annulerVente" class="btn btn--secondary">Annuler</button>
+            </div>
+        </form>
+        <div class="vente-container__photo-link">
+            <a th:href="@{/ajouter-photo}" class="btn btn--outline">📷 Ajouter une photo</a>
         </div>
-            </body>
-                </html>
+    </div>
+</main>
+</html>

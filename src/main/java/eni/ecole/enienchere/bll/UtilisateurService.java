@@ -19,10 +19,11 @@ public interface UtilisateurService extends UserDetailsService {
 
     void modifUtilisateur(Utilisateur utilisateur, String nom, String prenom, String email, String telephone);
 
-
     String enregistrerUnUtilisateur(Utilisateur utilisateur);
 
     void enregistrerUneAdresse(Adresse adresse);
+
+    void updateCredit(String pseudo, int nouveauCredit);
 
 
 }
