@@ -141,8 +141,9 @@ public class NouvelleVenteController {
 
             articleService.createArticle(article);
             
-            redirectAttributes.addFlashAttribute("success", "Votre article a été mis en vente avec succès !");
-            return "redirect:/enchere";
+            // Rediriger vers la page d'ajout de photo avec l'ID de l'article créé
+            redirectAttributes.addFlashAttribute("success", "Votre article a été mis en vente avec succès ! Vous pouvez maintenant ajouter une photo.");
+            return "redirect:/ajouter-photo?articleId=" + article.getNo_article();
             
         } catch (ParseException e) {
             redirectAttributes.addFlashAttribute("error", "Format de date invalide : " + e.getMessage());

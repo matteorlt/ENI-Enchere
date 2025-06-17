@@ -13,9 +13,32 @@
 
         <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data" class="form-container photo-form">
             
+            <!-- Information sur l'article présélectionné -->
+            <div th:if="${selectedArticle}" class="alert alert--info">
+                <h3>📦 Article créé avec succès !</h3>
+                <p><strong>Nom :</strong> <span th:text="${selectedArticle.nom_article}"></span></p>
+                <p><strong>Description :</strong> <span th:text="${selectedArticle.description}"></span></p>
+                <p>Vous pouvez maintenant ajouter une photo à cet article.</p>
+            </div>
+            
             <div class="form-group">
                 <label for="articleId" class="form-group__label form-group__label--required">Article :</label>
-                <select id="articleId" name="articleId" class="form-group__select" required>
+                
+                <!-- Si un article spécifique est sélectionné (venant de la création) -->
+                <div th:if="${selectedArticle}">
+                    <input type="text" 
+                           class="form-group__input form-group__input--readonly" 
+                           th:value="${selectedArticle.nom_article}" 
+                           readonly>
+                    <input type="hidden" name="articleId" th:value="${selectedArticle.no_article}">
+                </div>
+                
+                <!-- Sinon, afficher tous les articles de l'utilisateur -->
+                <select th:unless="${selectedArticle}" 
+                        id="articleId" 
+                        name="articleId" 
+                        class="form-group__select" 
+                        required>
                     <option value="">Sélectionnez un article</option>
                     <option th:each="article : ${articles}" 
                             th:value="${article.no_article}" 
@@ -56,8 +79,13 @@
                     📷 Enregistrer la photo
                 </button>
                 <a th:href="@{/enchere}" class="btn btn--secondary">
-                    Annuler
+                    Ignorer pour l'instant
                 </a>
+                <div th:if="${selectedArticle}" style="margin-top: 1rem;">
+                    <a th:href="@{/details(no_article=${selectedArticle.no_article})}" class="btn btn--info">
+                        👁️ Voir mon article
+                    </a>
+                </div>
             </div>
         </form>
     </div>

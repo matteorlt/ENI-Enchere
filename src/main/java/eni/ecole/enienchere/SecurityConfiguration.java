@@ -84,6 +84,14 @@ public class SecurityConfiguration {
 
                     auth.anyRequest().authenticated();
                 })
+
+                // Configuration "Se souvenir de moi"
+                .rememberMe(remember -> remember
+                // Clé secrète pour signer le cookie (doit être unique et sécurisée)
+                .key("ENI-Enchere-2025-SecureKey-!@#$%^&*()_+")
+                // Durée de validité du cookie (24 heures)
+                .tokenValiditySeconds(86400))
+
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
                 .formLogin(f ->

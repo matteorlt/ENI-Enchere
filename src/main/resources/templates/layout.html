@@ -74,7 +74,7 @@
             <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">
                 <li class="layout-nav__item"><a data-th-href="@{/mon-profil(pseudo=${#authentication.name})}" class="layout-nav__link">Profil</a></li>
                 <li class="layout-nav__item"><a data-th-href="@{/vendre}" class="layout-nav__link">Vendre Un Article</a></li>
-                <li class="layout-nav__item"><a data-th-href="@{/vendeur/gestion-articles}" class="layout-nav__link">📦 Mes Articles</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/vendeur/gestion-articles}" class="layout-nav__link">Mes Articles</a></li>
                 <th:block data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
                     <li class="layout-nav__item"><a data-th-href="@{/admin/gestion-encheres}" class="layout-nav__link layout-nav__link--admin">🛡️ Administration</a></li>
                 </th:block>
