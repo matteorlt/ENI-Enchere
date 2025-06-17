@@ -20,7 +20,7 @@ public class AdresseDAOImpl implements AdresseDAO{
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
     private final static String FIND_BY_ID = "SELECT no_adresse, rue, code_postal, ville, adresse_eni from ADRESSES WHERE no_adresse = :no_adresse";
-    private final static String UPDATE = "UPDATE ADRESSE SET rue=:rue, code_postal=:code_postal, ville=:ville, adresse_eni=:adresse_eni WHERE no_adresse = :no_adresse";
+    private final static String UPDATE = "UPDATE ADRESSES SET rue=:rue, code_postal=:code_postal, ville=:ville, adresse_eni=:adresse_eni WHERE no_adresse = :no_adresse";
     private final static String INSERT = "INSERT INTO ADRESSES (rue, code_postal, ville, adresse_eni) values (:rue, :code_postal, :ville, :adresse_eni)";
     private final static String DELETE = "DELETE FROM ADRESSE where no_adresse=:no_adresse";
     private final static String SELECT_ALL = "SELECT * FROM ADRESSE";
@@ -76,9 +76,11 @@ public class AdresseDAOImpl implements AdresseDAO{
     @Override
     public void update(Adresse adresse) {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("no_adresse", adresse.getNo_adresse());
         namedParameters.addValue("rue", adresse.getRue());
-        namedParameters.addValue("cp", adresse.getCode_postal());
+        namedParameters.addValue("code_postal", adresse.getCode_postal());
         namedParameters.addValue("ville", adresse.getVille());
+        namedParameters.addValue("adresse_eni", adresse.isAdresse_eni());
 
         namedParameterJdbcTemplate.update(UPDATE, namedParameters);
     }

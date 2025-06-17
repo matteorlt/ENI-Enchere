@@ -80,6 +80,8 @@ utilisateur.setTelephone(telephone);
 
     }
 
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {

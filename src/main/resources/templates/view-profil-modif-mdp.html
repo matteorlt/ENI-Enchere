@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},scripts=~{::scripts})}"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -9,11 +9,10 @@
 <body>
 <main>
     <form class="form-container" id="form" data-th-action="@{/mon-profil/modifier-mot-de-passe(pseudo=${pseudo})}"
-          method="post"
-          data-th-object="${utilisateur}">
+          method="post">
         <h1>Modifier mon mot de passe</h1>
 
-        <div class="form-group">
+        <div class="form-group ">
             <label for="inputOldMdp">Mot de passe actuel* :</label>
             <input type="password" id="inputOldMdp" name="password"  required/>
         </div>
@@ -46,13 +45,10 @@
 
         <div class="button-group">
             <button type="submit" class="btn btn-primary disabled" id=btnSubmit>Enregistrer</button>
-            <a href="/mon-profil" class="btn btn-cancel-secondary">Annuler</a>
+            <button href="/mon-profil" class="btn btn-cancel-secondary">Annuler</button>
         </div>
 
     </form>
 </main>
-<th:block th:fragment="scripts">
-    <script th:src="@{/js/modif-mdp.js}"></script>
-</th:block>
 </body>
 </html>
