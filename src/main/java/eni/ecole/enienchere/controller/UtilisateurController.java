@@ -148,17 +148,22 @@ public class UtilisateurController {
             RedirectAttributes redirectAttributes,
             Model model) {
 
-        if (authentication == null) {
-            return "redirect:/";
-        }
+//        if (authentication == null) {
+//            return "redirect:/";
+//        }
+//
+//        var principal = authentication.getPrincipal();
+//
+//        if (!(principal instanceof Utilisateur) || !pseudo.equals(((Utilisateur) principal).getPseudo())) {
+//            return "redirect:/";
+//        }
+//
+        Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
+        int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
+        Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
+        model.addAttribute("utilisateur", utilisateur);
+        model.addAttribute("adresse", adresse);
 
-        var principal = authentication.getPrincipal();
-
-        if (!(principal instanceof Utilisateur) || !pseudo.equals(((Utilisateur) principal).getPseudo())) {
-            return "redirect:/";
-        }
-
-        Utilisateur utilisateur = (Utilisateur) principal;
 
 
         try {
