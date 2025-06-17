@@ -4,40 +4,42 @@
     <title>Administration des enchères</title>
 </head>
 <main>
-    <div class="container">
+    <div class="gestion-container">
         <h1>🛡️ Administration des enchères</h1>
-        <p class="subtitle">Gestion complète de toutes les enchères de la plateforme</p>
+        <p class="gestion-subtitle">Gestion complète de toutes les enchères de la plateforme</p>
         
         <!-- Messages d'erreur et de succès -->
-        <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
-        <div th:if="${succes}" class="alert alert-success" th:text="${succes}"></div>
-        <div th:if="${info}" class="alert alert-info" th:text="${info}"></div>
+        <div th:if="${erreur}" class="alert alert--danger" th:text="${erreur}"></div>
+        <div th:if="${succes}" class="alert alert--success" th:text="${succes}"></div>
+        <div th:if="${info}" class="alert alert--info" th:text="${info}"></div>
         
         <!-- Filtres de recherche -->
-        <div class="filters-section">
-            <h3>🔍 Filtres de recherche</h3>
-            <form method="get" th:action="@{/admin/gestion-encheres}" class="filters-form">
-                <div class="filter-group">
-                    <label for="recherche">Rechercher un article :</label>
+        <div class="gestion-filters">
+            <h3 class="gestion-filters__title">🔍 Filtres de recherche</h3>
+            <form method="get" th:action="@{/admin/gestion-encheres}" class="gestion-filters__form">
+                <div class="gestion-filters__group">
+                    <label for="recherche" class="gestion-filters__label">Rechercher un article :</label>
                     <input type="text" 
                            id="recherche" 
                            name="recherche" 
                            th:value="${recherche}" 
-                           placeholder="Nom de l'article...">
+                           placeholder="Nom de l'article..."
+                           class="gestion-filters__input">
                 </div>
                 
-                <div class="filter-group">
-                    <label for="vendeur">Filtrer par vendeur :</label>
+                <div class="gestion-filters__group">
+                    <label for="vendeur" class="gestion-filters__label">Filtrer par vendeur :</label>
                     <input type="text" 
                            id="vendeur" 
                            name="vendeur" 
                            th:value="${vendeur}" 
-                           placeholder="Pseudo du vendeur...">
+                           placeholder="Pseudo du vendeur..."
+                           class="gestion-filters__input">
                 </div>
                 
-                <div class="filter-group">
-                    <label for="statut">Filtrer par statut :</label>
-                    <select id="statut" name="statut">
+                <div class="gestion-filters__group">
+                    <label for="statut" class="gestion-filters__label">Filtrer par statut :</label>
+                    <select id="statut" name="statut" class="gestion-filters__select">
                         <option value="">Tous les statuts</option>
                         <option value="debut" th:selected="${statut == 'debut'}">💛 Pas commencé</option>
                         <option value="actif" th:selected="${statut == 'actif'}">💚 En cours</option>
@@ -45,28 +47,28 @@
                     </select>
                 </div>
                 
-                <div class="filter-buttons">
-                    <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
-                    <a th:href="@{/admin/gestion-encheres}" class="btn btn-secondary">🔄 Réinitialiser</a>
+                <div class="gestion-filters__buttons">
+                    <button type="submit" class="btn btn--primary">🔍 Rechercher</button>
+                    <a th:href="@{/admin/gestion-encheres}" class="btn btn--secondary">🔄 Réinitialiser</a>
                 </div>
             </form>
         </div>
         
         <!-- Statistiques -->
-        <div class="stats-section">
-            <div class="stat-card">
-                <h4>📊 Statistiques</h4>
-                <p><strong th:text="${#lists.size(articles)}">0</strong> enchères trouvées</p>
-                <p><strong th:text="${#lists.size(articles.?[date_debut_enchere > #dates.createNow()])}">0</strong> pas commencées</p>
-                <p><strong th:text="${#lists.size(articles.?[date_debut_enchere <= #dates.createNow() and date_fin_enchere > #dates.createNow()])}">0</strong> en cours</p>
-                <p><strong th:text="${#lists.size(articles.?[date_fin_enchere <= #dates.createNow()])}">0</strong> terminées</p>
-                <p><strong th:text="${#lists.size(articles.?[photo != null and photo != ''])}">0</strong> avec photos</p>
+        <div class="gestion-stats">
+            <div class="gestion-stats__card">
+                <h4 class="gestion-stats__title">📊 Statistiques</h4>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles)}">0</strong> enchères trouvées</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[date_debut_enchere > #dates.createNow()])}">0</strong> pas commencées</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[date_debut_enchere <= #dates.createNow() and date_fin_enchere > #dates.createNow()])}">0</strong> en cours</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[date_fin_enchere <= #dates.createNow()])}">0</strong> terminées</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[photo != null and photo != ''])}">0</strong> avec photos</p>
             </div>
         </div>
         
         <!-- Vérification si des articles existent -->
-        <div th:if="${articles == null or #lists.isEmpty(articles)}" class="no-articles">
-            <div class="alert alert-info">
+        <div th:if="${articles == null or #lists.isEmpty(articles)}" class="gestion-no-articles">
+            <div class="alert alert--info">
                 <h3>Aucune enchère trouvée</h3>
                 <p th:if="${recherche != null or vendeur != null or statut != null}">
                     Aucune enchère ne correspond à vos critères de recherche.
@@ -78,7 +80,7 @@
         </div>
         
         <!-- Liste des enchères -->
-        <div th:unless="${articles == null or #lists.isEmpty(articles)}" class="articles-grid">
+        <div th:unless="${articles == null or #lists.isEmpty(articles)}" class="gestion-grid">
             <div th:each="article : ${articles}" class="article-card">
                 
                 <!-- Informations actuelles de l'article -->

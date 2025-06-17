@@ -5,35 +5,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Profil</title>
-    <link rel="stylesheet" th:href="@{/css/form.css}">
+
 </head>
 <body>
-<div style="position: absolute; top: 30px; right: 40px; border: 2px solid #111; padding: 1rem 1.5rem; background: #fff; font-size: 1rem; text-align: left; min-width: 220px;">
+<div class="profil-header-box">
     <div>Date du jour : <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span></div>
     <strong>Participant : <span th:text="${utilisateur.pseudo}"></span></strong>
 </div>
 <main>
     <div class="form-container">
-        <h1 th:text="${utilisateur.pseudo}"></h1>
+        <h1 class="form-container__title" th:text="${utilisateur.pseudo}"></h1>
         <form>
             <div class="form-group">
-                <label>Prénom :</label>
-                <input type="text" th:value="${utilisateur.prenom}" readonly />
+                <label class="form-group__label">Prénom :</label>
+                <input type="text" th:value="${utilisateur.prenom}" readonly class="form-group__input" />
             </div>
             <div class="form-group">
-                <label>Nom :</label>
-                <input type="text" th:value="${utilisateur.nom}" readonly />
+                <label class="form-group__label">Nom :</label>
+                <input type="text" th:value="${utilisateur.nom}" readonly class="form-group__input" />
             </div>
             <div class="form-group">
-                <label>Email :</label>
-                <input type="text" th:value="${utilisateur.email}" readonly />
+                <label class="form-group__label">Email :</label>
+                <input type="text" th:value="${utilisateur.email}" readonly class="form-group__input" />
             </div>
             <div class="form-group">
-                <label>Téléphone :</label>
-                <input type="text" th:value="${utilisateur.telephone}" readonly />
+                <label class="form-group__label">Téléphone :</label>
+                <input type="text" th:value="${utilisateur.telephone}" readonly class="form-group__input" />
             </div>
-            <div class="button-group">
-                <a th:href="@{/}" class="btn btn-primary">Retour</a>
+            <div class="form-buttons">
+                <a th:href="@{/}" class="btn btn--primary">Retour</a>
             </div>
         </form>
     </div>

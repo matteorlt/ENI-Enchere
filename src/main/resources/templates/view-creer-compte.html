@@ -7,58 +7,58 @@
 </head>
 <main>
     <form class="form-container" data-th-action="@{/creer-compte}" data-th-object="${utilisateur}" method="post">
-        <h1>Inscription</h1>
+        <h1 class="form-container__title">Inscription</h1>
         
         <div class="form-group">
-            <label for="username">Nom d'utilisateur :</label>
-            <input type="text" id="username" data-th-field="*{pseudo}" required>
+            <label for="username" class="form-group__label">Nom d'utilisateur :</label>
+            <input type="text" id="username" data-th-field="*{pseudo}" required class="form-group__input">
         </div>
 
         <div class="form-group">
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" data-th-field="*{mot_de_passe}" required>
+            <label for="password" class="form-group__label">Mot de passe :</label>
+            <input type="password" id="password" data-th-field="*{mot_de_passe}" required class="form-group__input">
         </div>
 
         <div class="form-group">
-            <label for="nom">Nom :</label>
-            <input type="text" id="nom" data-th-field="*{nom}" required>
+            <label for="nom" class="form-group__label">Nom :</label>
+            <input type="text" id="nom" data-th-field="*{nom}" required class="form-group__input">
         </div>
 
         <div class="form-group">
-            <label for="prenom">Prénom :</label>
-            <input type="text" id="prenom" data-th-field="*{prenom}" required>
+            <label for="prenom" class="form-group__label">Prénom :</label>
+            <input type="text" id="prenom" data-th-field="*{prenom}" required class="form-group__input">
         </div>
 
         <div class="form-group">
-            <label for="inputEmail">Email :</label>
-            <input type="email" id="inputEmail" data-th-field="*{email}" required>
+            <label for="inputEmail" class="form-group__label">Email :</label>
+            <input type="email" id="inputEmail" data-th-field="*{email}" required class="form-group__input">
         </div>
 
         <div class="form-group">
-            <label for="inputTelephone">Téléphone :</label>
-            <input type="tel" id="inputTelephone" data-th-field="*{telephone}">
+            <label for="inputTelephone" class="form-group__label">Téléphone :</label>
+            <input type="tel" id="inputTelephone" data-th-field="*{telephone}" class="form-group__input">
         </div>
 
         <div class="form-group address-group">
             <div class="form-group">
-                <label for="inputAdresse">Adresse :</label>
-                <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required>
+                <label for="inputAdresse" class="form-group__label">Adresse :</label>
+                <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required class="form-group__input">
             </div>
-            <div class="address-row">
+            <div class="form-row">
                 <div class="form-group">
-                    <label for="inputCP">Code postal :</label>
-                    <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required>
+                    <label for="inputCP" class="form-group__label">Code postal :</label>
+                    <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required class="form-group__input">
                 </div>
                 <div class="form-group">
-                    <label for="inputVille">Ville :</label>
-                    <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required>
+                    <label for="inputVille" class="form-group__label">Ville :</label>
+                    <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required class="form-group__input">
                 </div>
             </div>
         </div>
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">S'inscrire</button>
-            <a href="/connexion" class="btn btn-secondary">Déjà inscrit ?</a>
+        <div class="form-buttons">
+            <button type="submit" class="btn btn--primary">S'inscrire</button>
+            <a href="/connexion" class="btn btn--secondary">Déjà inscrit ?</a>
         </div>
     </form>
 </main>

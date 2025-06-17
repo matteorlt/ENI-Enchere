@@ -7,68 +7,68 @@
     <title>Mon profil</title>
 </head>
 <body>
-<main>
-    <form class="form-container"
+<main class="profil-main">
+    <form class="form-container profil-form"
           method="post"
           data-th-object="${utilisateur}">
-        <h1>Mon profil</h1>
+        <h1 class="form-container__title">Mon profil</h1>
 
         <div class="form-group">
-            <label >Pseudo :</label>
-            <p data-th-text="*{pseudo}"></p>
+            <label class="form-group__label">Pseudo :</label>
+            <p class="form-group__value" data-th-text="*{pseudo}"></p>
             <input type="hidden" data-th-field="*{pseudo}"/>
         </div>
 
         <div class="form-group">
-            <label for="inputNom" >Nom* :</label>
-            <input type="text" id="inputNom" data-th-field="*{nom}" required/>
+            <label for="inputNom" class="form-group__label form-group__label--required">Nom* :</label>
+            <input type="text" id="inputNom" class="form-group__input" data-th-field="*{nom}" required/>
         </div>
 
         <div class="form-group">
-            <label for="inputPrenom">Prénom* :</label>
-            <input type="text" id="inputPrenom" data-th-field="*{prenom}" required/>
+            <label for="inputPrenom" class="form-group__label form-group__label--required">Prénom* :</label>
+            <input type="text" id="inputPrenom" class="form-group__input" data-th-field="*{prenom}" required/>
         </div>
 
         <div class="form-group">
-            <label for="inputEmail">Email* :</label>
-            <input type="email" id="inputEmail" data-th-field="*{email}" required/>
+            <label for="inputEmail" class="form-group__label form-group__label--required">Email* :</label>
+            <input type="email" id="inputEmail" class="form-group__input" data-th-field="*{email}" required/>
         </div>
 
         <div class="form-group">
-            <label for="inputTelephone">Téléphone :</label>
-            <input type="tel" id="inputTelephone" data-th-field="*{telephone}"/>
+            <label for="inputTelephone" class="form-group__label">Téléphone :</label>
+            <input type="tel" id="inputTelephone" class="form-group__input" data-th-field="*{telephone}"/>
         </div>
 
-        <div class="form-group address-group">
-            <div>
-                <label for="inputAdresse">Adresse* :</label>
-                <input type="text" id="inputAdresse" data-th-field="*{utilisateur.adresse.rue}" required/>
+        <div class="form-group form-group--address">
+            <div class="form-group__field">
+                <label for="inputAdresse" class="form-group__label form-group__label--required">Adresse* :</label>
+                <input type="text" id="inputAdresse" class="form-group__input" data-th-field="*{utilisateur.adresse.rue}" required/>
             </div>
-            <div class="address-row">
-                <div>
-                    <label for="inputCP">Code postal* :</label>
-                    <input type="text" id="inputCP" data-th-field="*{utilisateur.adresse.code_postal}" required/>
+            <div class="form-group__row">
+                <div class="form-group__field">
+                    <label for="inputCP" class="form-group__label form-group__label--required">Code postal* :</label>
+                    <input type="text" id="inputCP" class="form-group__input" data-th-field="*{utilisateur.adresse.code_postal}" required/>
                 </div>
-                <div>
-                    <label for="inputVille" >Ville* :</label>
-                    <input type="text" id="inputVille" data-th-field="*{utilisateur.adresse.ville}" required/>
+                <div class="form-group__field">
+                    <label for="inputVille" class="form-group__label form-group__label--required">Ville* :</label>
+                    <input type="text" id="inputVille" class="form-group__input" data-th-field="*{utilisateur.adresse.ville}" required/>
                 </div>
             </div>
         </div>
 
         <div class="form-group">
-            <label >Credit :</label>
-            <p data-th-text="*{credit}"></p>
+            <label class="form-group__label">Credit :</label>
+            <p class="form-group__value profil-form__credit" data-th-text="*{credit}"></p>
             <input type="hidden" data-th-field="*{credit}"/>
         </div>
 
-        <div class="button-group">
-            <a href="/profil/modifier-mot-de-passe" class="btn btn-secondary">Modifier mot de passe</a>
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
-            <a href="/profil" class="btn btn-cancel-secondary">Annuler</a>
+        <div class="form-actions">
+            <a href="/profil/modifier-mot-de-passe" class="btn btn--secondary">Modifier mot de passe</a>
+            <button type="submit" class="btn btn--primary">Enregistrer</button>
+            <a href="/profil" class="btn btn--cancel">Annuler</a>
 
 <!--            AJOUTER DU JS POUR UNE POP UP DE CONFIRMATION AVANT SUPPRESSION-->
-            <a href="/supprimer" class="btn btn-cancel">Supprimer mon compte</a>
+            <a href="/supprimer" class="btn btn--danger">Supprimer mon compte</a>
 <!--            ...............................................................-->
         </div>
 

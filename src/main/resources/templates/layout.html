@@ -2,11 +2,7 @@
 <html data-th-fragment="layout(contenu,titre)" lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" data-th-href="@{/css/general.css}">
-    <link rel="stylesheet" data-th-href="@{/css/layout.css}">
-    <link rel="stylesheet" data-th-href="@{/css/form.css}">
-    <link rel="stylesheet" data-th-href="@{/css/enchere.css}">
-    <link rel="stylesheet" data-th-href="@{/css/details.css}">
+    <link rel="stylesheet" data-th-href="@{/css/main.css}">
     <link rel="icon" type="image/png" data-th-href="@{/images/logoENI.png}">
     <title data-th-replace="${titre}">Layout</title>
 </head>
@@ -56,53 +52,53 @@
 </script>
 <body>
 
-<header>
-    <h1 id="nav-title">
+<header class="layout-header">
+    <h2 class="layout-header__nav-title">
         <a href="/" class="logo-link">
             <img src="/images/logoENI.png" alt="Logo ENI" class="nav-logo">
             <span>Les objets sont nos amis !!</span>
         </a>
-        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">
-            <div class="user-info">
-                <span>Bienvenue, </span>
-                <span data-th-text="${#authentication.name}"></span>
-                <th:block data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                    <span class="admin-badge">🛡️</span>
-                </th:block>
-            </div>
-        </th:block>
-    </h1>
-    <nav>
-        <ul>
-            <li><a href="/enchere">Enchere</a></li>
+<!--        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">-->
+<!--            <div class="layout-user-info">-->
+<!--                <span>Bienvenue, </span>-->
+<!--                <span data-th-text="${#authentication.name}" class="layout-user-info__pseudo"></span>-->
+<!--                <th:block data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">-->
+<!--                    <span class="layout-admin-badge">🛡️</span>-->
+<!--                </th:block>-->
+<!--            </div>-->
+<!--        </th:block>-->
+    </h2>
+    <nav class="layout-nav">
+        <ul class="layout-nav__list">
+            <li class="layout-nav__item"><a href="/enchere" class="layout-nav__link">Enchere</a></li>
             <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">
-                <li><a data-th-href="@{/mon-profil(pseudo=${#authentication.name})}">Profil</a></li>
-                <li><a data-th-href="@{/vendre}">Vendre Un Article</a></li>
-                <li><a data-th-href="@{/vendeur/gestion-articles}">📦 Mes Articles</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/mon-profil(pseudo=${#authentication.name})}" class="layout-nav__link">Profil</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/vendre}" class="layout-nav__link">Vendre Un Article</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/vendeur/gestion-articles}" class="layout-nav__link">📦 Mes Articles</a></li>
                 <th:block data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                    <li><a data-th-href="@{/admin/gestion-encheres}" class="admin-link">🛡️ Administration</a></li>
+                    <li class="layout-nav__item"><a data-th-href="@{/admin/gestion-encheres}" class="layout-nav__link layout-nav__link--admin">🛡️ Administration</a></li>
                 </th:block>
-                <li><a data-th-href="@{/deconnexion}">Se déconnecter</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/deconnexion}" class="layout-nav__link">Se déconnecter</a></li>
             </th:block>
             <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
-                <li><a data-th-href="@{/connexion}">Se connecter</a></li>
-                <li><a data-th-href="@{/creer-compte}">S'inscrire</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/connexion}" class="layout-nav__link">Se connecter</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/creer-compte}" class="layout-nav__link">S'inscrire</a></li>
             </th:block>
         </ul>
     </nav>
 </header>
 
-<main class="center-main" data-th-replace="${contenu}">
-    <section class="center-section">
+<main class="layout-main layout-main--center" data-th-replace="${contenu}">
+    <section class="section">
         <h1>Bienvenue sur ENI-Enchères</h1>
         <h2>Votre plateforme d'enchères en ligne</h2>
         <p>Découvrez des objets uniques et participez aux enchères !</p>
     </section>
 </main>
 
-<footer>
-    <div class="footer-content">
-        <p>&copy; ENI - Tous droits réservés</p>
+<footer class="layout-footer">
+    <div class="layout-footer__content">
+        <p class="layout-footer__text">&copy; ENI - Tous droits réservés</p>
         <div class="footer-links">
             <a href="/mentions-legales">Mentions légales</a>
             <a href="/contact">Contact</a>

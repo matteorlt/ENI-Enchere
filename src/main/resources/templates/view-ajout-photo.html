@@ -3,19 +3,19 @@
 <head>
     <title>Ajouter une photo</title>
 </head>
-<main>
-    <div class="container">
-        <h1>Ajouter une photo à votre article</h1>
+<main class="photo-main">
+    <div class="photo-container">
+        <h1 class="photo-container__title">Ajouter une photo à votre article</h1>
         
         <!-- Messages d'erreur et de succès -->
-        <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
-        <div th:if="${succes}" class="alert alert-success" th:text="${succes}"></div>
+        <div th:if="${erreur}" class="alert alert--danger" th:text="${erreur}"></div>
+        <div th:if="${succes}" class="alert alert--success" th:text="${succes}"></div>
 
-        <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data" class="photo-form">
+        <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data" class="form-container photo-form">
             
             <div class="form-group">
-                <label for="articleId">Article :</label>
-                <select id="articleId" name="articleId" required>
+                <label for="articleId" class="form-group__label form-group__label--required">Article :</label>
+                <select id="articleId" name="articleId" class="form-group__select" required>
                     <option value="">Sélectionnez un article</option>
                     <option th:each="article : ${articles}" 
                             th:value="${article.no_article}" 
@@ -25,36 +25,37 @@
             </div>
 
             <div class="form-group">
-                <label for="photo">Photo de l'article :</label>
+                <label for="photo" class="form-group__label form-group__label--required">Photo de l'article :</label>
                 <input type="file" 
                        id="photo" 
                        name="photo" 
+                       class="form-group__file"
                        accept="image/jpeg,image/jpg,image/png" 
                        onchange="previewImage(event)" 
                        required>
-                <small class="form-text">
+                <small class="form-group__help">
                     Formats acceptés : JPEG, JPG, PNG. Taille maximum : 5MB
                 </small>
             </div>
 
             <!-- Prévisualisation de l'image -->
-            <div class="form-group preview-container">
-                <label>Prévisualisation :</label>
+            <div class="form-group photo-form__preview">
+                <label class="form-group__label">Prévisualisation :</label>
                 <img id="imagePreview" 
                      src="#" 
                      alt="Prévisualisation de la photo" 
-                     class="image-preview" 
+                     class="photo-form__preview-image" 
                      style="display: none;">
-                <div id="noPreview" class="no-preview">
+                <div id="noPreview" class="photo-form__no-preview">
                     Aucune image sélectionnée
                 </div>
             </div>
 
-            <div class="form-buttons">
-                <button type="submit" class="btn btn-primary">
-                    Enregistrer la photo
+            <div class="form-actions">
+                <button type="submit" class="btn btn--primary">
+                    📷 Enregistrer la photo
                 </button>
-                <a th:href="@{/enchere}" class="btn btn-secondary">
+                <a th:href="@{/enchere}" class="btn btn--secondary">
                     Annuler
                 </a>
             </div>
