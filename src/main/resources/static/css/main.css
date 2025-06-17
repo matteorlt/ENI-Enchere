@@ -394,7 +394,7 @@ a:hover {
 }
 
 .form-group__textarea {
-    resize: vertical;
+    resize: both;
     min-height: 100px;
 }
 
@@ -543,7 +543,70 @@ a:hover {
 }
 
 /* ========================================
-   9. ENCHÈRES - PAGE PRINCIPALE
+   9. CONNEXION - FORMULAIRE DE LOGIN
+   ======================================== */
+
+.connexion-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 2rem 1rem;
+}
+
+.connexion-form {
+    max-width: 400px;
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.connexion-form .form-container__title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.connexion-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.connexion-form .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.connexion-form__forgot-link {
+    text-align: center;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.connexion-form__forgot-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.connexion-form__register {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.connexion-form__register .btn {
+    width: 100%;
+}
+
+/* ========================================
+   10. ENCHÈRES - PAGE PRINCIPALE
    ======================================== */
 
 .encheres-filters {
