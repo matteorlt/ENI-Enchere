@@ -42,16 +42,16 @@
     <div class="form-group address-group">
       <div>
         <label for="inputAdresse" >Adresse* :</label>
-        <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required/>
+        <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" readonly/>
       </div>
       <div class="address-row">
         <div>
           <label for="inputCP" >Code postal* :</label>
-          <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required/>
+          <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" readonly/>
         </div>
         <div>
           <label for="inputVille">Ville* :</label>
-          <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required/>
+          <input type="text" id="inputVille" data-th-field="*{adresse.ville}" readonly/>
         </div>
       </div>
     </div>
@@ -63,7 +63,7 @@
     </div>
 
     <div class="button-group">
-      <a href="/profil/modifier-mot-de-passe" class="btn btn-secondary">Modifier mon profil</a>
+      <a th:href="@{/mon-profil/modifier(pseudo=${#authentication.name})}" class="btn btn-secondary">Modifier mon profil</a>
       <a href="/profil/modifier-mot-de-passe" class="btn btn-secondary">Modifier mot de passe</a>
     </div>
 

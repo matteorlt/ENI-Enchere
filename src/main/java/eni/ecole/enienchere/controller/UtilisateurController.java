@@ -102,63 +102,63 @@ public class UtilisateurController {
                     return "view-mon-profil";
                 } catch (Exception e) {
                     logger.error("Erreur lors du chargement du formulaire de modification: {}");
-                    return "redirect:/accueil";
+                    return "redirect:/";
                 }
             }
         }
-        return "redirect:/accueil";
+        return "redirect:/";
 
     }
 
 
-//    @GetMapping("/mon-profil/modifier")
-//    public String modifierProfilUtilisateur(
-//            @RequestParam("pseudo") @NotBlank String pseudo,
-//            Model model,
-//            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
-//
-//        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-//            logger.warn("Tentative de modification non autorisée pour le pseudo: {}", pseudo);
-//            return "redirect:/accueil";
-//        }
-//
-//        try {
-//            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-//            model.addAttribute("utilisateur", utilisateur);
-//            return "view-profil-modif";
-//        } catch (Exception e) {
-//            logger.error("Erreur lors du chargement du formulaire de modification: {}", pseudo, e);
-//            return "redirect:/accueil";
-//        }
-//    }
-//
-//    @PostMapping("/mon-profil/modifier")
-//    public String mettreAJourUtilisateur(
-//            @RequestParam("pseudo") @NotBlank String pseudo,
-//            @ModelAttribute("utilisateurConnecte") @Valid Utilisateur utilisateurConnecte,
-//            BindingResult bindingResult,
-//            RedirectAttributes redirectAttributes) {
-//
-//        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-//            return "redirect:/accueil";
-//        }
-//
-//        if (bindingResult.hasErrors()) {
-//            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-//            return "redirect:/utilisateur/mon-profil/modifier?pseudo=" + pseudo;
-//        }
-//
-//        try {
-//            utilisateurService.update(utilisateurConnecte);
-//            logger.info("Profil mis à jour avec succès pour l'utilisateur: {}", pseudo);
-//            redirectAttributes.addFlashAttribute("successMessage", "Profil mis à jour avec succès");
-//        } catch (Exception e) {
-//            logger.error("Erreur lors de la mise à jour du profil: {}", pseudo, e);
-//            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la mise à jour");
-//        }
-//
-//        return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
-//    }
+    @GetMapping("/mon-profil/modifier")
+    public String modifierProfilUtilisateur(
+            @RequestParam("pseudo") @NotBlank String pseudo,
+            Model model,
+            Authentication authentication) {
+
+        if(authentication!=null) {
+            var principal = authentication.getPrincipal();
+
+            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
+
+                try {
+
+                    Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
+                    int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
+                    Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
+                    model.addAttribute("utilisateur", utilisateur);
+                    model.addAttribute("adresse", adresse);
+                    return "view-profil-modif";
+                } catch (Exception e) {
+                    logger.error("Erreur lors du chargement du formulaire de modification: {}");
+                    return "redirect:/";
+                }
+            }
+        }
+        return "redirect:/";
+
+
+
+
+    }
+
+    @PostMapping("/mon-profil/modifier")
+    public String mettreAJourUtilisateur(
+
+            Authentication authentication,
+            @ModelAttribute Utilisateur utilisateur, Principal principal) {
+
+
+
+        utilisateurService.update(utilisateur);
+
+
+
+
+
+        return "redirect:/mon-profil?pseudo=" + authentication.getName();
+    }
 //
 //    @GetMapping("/mon-profil/modifier-mot-de-passe")
 //    public String modifierMdp(
