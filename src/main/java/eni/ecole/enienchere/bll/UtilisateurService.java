@@ -13,7 +13,7 @@ public interface UtilisateurService extends UserDetailsService {
 
     Adresse consulterAdresseParId(int no_adresse);
 
-    void updateMdp(String pseudo, String mot_de_passe);
+    void updateMdp(Utilisateur utilisateur, String mot_de_passe);
 
     void updateAdresse(Adresse adresse, String rue, String cp, String ville);
 

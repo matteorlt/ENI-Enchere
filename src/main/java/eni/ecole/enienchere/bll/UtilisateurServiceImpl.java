@@ -40,8 +40,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public void updateMdp(String pseudo, String mot_de_passe) {
-        var utilisateur = utilisateurDAO.read(pseudo);
+    public void updateMdp(Utilisateur utilisateur, String mot_de_passe) {
         utilisateur.setMot_de_passe(mot_de_passe);
         utilisateurDAO.update(utilisateur);
     }
@@ -66,6 +65,7 @@ utilisateur.setTelephone(telephone);
 
     @Override
     public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
+        utilisateur.setCredit(10);
 
 
         utilisateurDAO.create(utilisateur);

@@ -72,6 +72,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.GET,"/").permitAll();
                     auth.requestMatchers("/creer-compte").permitAll();
                     auth.requestMatchers("/mon-profil/**").permitAll();
+                    auth.requestMatchers("/js/**").permitAll();
 
 
 
