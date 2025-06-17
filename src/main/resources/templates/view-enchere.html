@@ -36,6 +36,16 @@
                     </label>
                 </div>
                 
+                <div class="filtre-groupe">
+                    <label for="statut">Filtrer par statut :</label>
+                    <select id="statut" name="statut">
+                        <option value="">Tous les statuts</option>
+                        <option value="debut" th:selected="${statut == 'debut'}">💛 Pas commencé</option>
+                        <option value="actif" th:selected="${statut == 'actif'}">💚 En cours</option>
+                        <option value="termine" th:selected="${statut == 'termine'}">🔴 Terminé</option>
+                    </select>
+                </div>
+                
                 <div class="boutons-filtres">
                     <button type="submit" class="btn-rechercher">Rechercher</button>
                     <a th:href="@{/enchere}">
@@ -62,6 +72,14 @@
                          class="article-image default-image" />
                          
                     <h3 th:text="${enchere.nom_article}">Nom</h3>
+                    
+                    <!-- Affichage du statut temporel -->
+                    <p class="statut-enchere">
+                        <span th:if="${enchere.date_debut_enchere.after(new java.util.Date())}" class="statut-debut">💛 Pas commencé</span>
+                        <span th:if="${!enchere.date_debut_enchere.after(new java.util.Date()) && enchere.date_fin_enchere.after(new java.util.Date())}" class="statut-actif">💚 En cours</span>
+                        <span th:if="${!enchere.date_fin_enchere.after(new java.util.Date())}" class="statut-termine">🔴 Terminé</span>
+                    </p>
+                    
                     <p class="prix">Prix : <span th:text="${enchere.prix_vente != null ? enchere.prix_vente : enchere.prix_initial}">0</span> point(s)</p>
                     <p>Fin de l'enchère : <span th:text="${#dates.format(enchere.date_fin_enchere, 'dd/MM/yyyy')}">01/06/202X</span></p>
                     <p>Vendeur : <span th:text="${enchere.vendeur.pseudo}">vendeur</span></p>

@@ -128,21 +128,24 @@ public class AjoutPhotoController {
             
             // Filtrer par statut si spécifié
             if (statut != null && !statut.trim().isEmpty()) {
-                if ("actif".equals(statut)) {
+                java.util.Date maintenant = new java.util.Date();
+                
+                if ("debut".equals(statut)) {
+                    // Filtrer les enchères qui n'ont pas encore commencé (date de début dans le futur)
                     articles = articles.stream()
-                        .filter(a -> a.getStatut() == 1)
+                        .filter(a -> a.getDate_debut_enchere().after(maintenant))
+                        .collect(java.util.stream.Collectors.toList());
+                }
+                else if ("actif".equals(statut)) {
+                    // Filtrer les enchères en cours (date de début passée ET date de fin future)
+                    articles = articles.stream()
+                        .filter(a -> !a.getDate_debut_enchere().after(maintenant) && a.getDate_fin_enchere().after(maintenant))
                         .collect(java.util.stream.Collectors.toList());
                 }
                 else if ("termine".equals(statut)) {
+                    // Filtrer les enchères terminées (date de fin passée)
                     articles = articles.stream()
-                        .filter(a -> a.getStatut() == 0)
-                        .collect(java.util.stream.Collectors.toList());
-                }
-                else if ("debut".equals(statut)) {
-                    // Filtrer les enchères qui n'ont pas encore commencé (date de début dans le futur)
-                    java.util.Date maintenant = new java.util.Date();
-                    articles = articles.stream()
-                        .filter(a -> a.getDate_debut_enchere().after(maintenant))
+                        .filter(a -> !a.getDate_fin_enchere().after(maintenant))
                         .collect(java.util.stream.Collectors.toList());
                 }
             }

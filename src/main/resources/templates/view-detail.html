@@ -17,11 +17,13 @@
         <img th:if="${article.photo != null and article.photo != ''}" 
              th:src="@{'/images/articles/' + ${article.no_article}}"
              th:alt="${article.nom_article}"
-             class="article-photo-large" />
+             class="article-photo-large"
+            style="max-width: 300px"/>
         <img th:unless="${article.photo != null and article.photo != ''}" 
              src="/images/default.webp" 
              alt="Image par défaut" 
-             class="article-photo-large default-image" />
+             class="article-photo-large default-image"
+             style="max-width: 300px"/>
     </div>
     
     <div class="detail-table">

@@ -42,6 +42,7 @@ public class EnchereController {
     public String afficherEncheres(Model model,
                                    @RequestParam(name = "nom", required = false) String nom,
                                    @RequestParam(name = "categorie", required = false) String categorie,
+                                   @RequestParam(name = "statut", required = false) String statut,
                                    @RequestParam(name = "mesEncheres", required = false) Boolean mesEncheres,
                                    Principal principal) {
         var categories = categorieService.getAllCategories();
@@ -54,10 +55,35 @@ public class EnchereController {
             encheres = articleService.getArticlesFiltres(nom, categorie, null);
         }
         
+        // Filtrer par statut temporel si spécifié
+        if (statut != null && !statut.trim().isEmpty()) {
+            Date maintenant = new Date();
+            
+            if ("debut".equals(statut)) {
+                // Filtrer les enchères qui n'ont pas encore commencé (date de début dans le futur)
+                encheres = encheres.stream()
+                    .filter(a -> a.getDate_debut_enchere().after(maintenant))
+                    .collect(java.util.stream.Collectors.toList());
+            }
+            else if ("actif".equals(statut)) {
+                // Filtrer les enchères en cours (date de début passée ET date de fin future)
+                encheres = encheres.stream()
+                    .filter(a -> !a.getDate_debut_enchere().after(maintenant) && a.getDate_fin_enchere().after(maintenant))
+                    .collect(java.util.stream.Collectors.toList());
+            }
+            else if ("termine".equals(statut)) {
+                // Filtrer les enchères terminées (date de fin passée)
+                encheres = encheres.stream()
+                    .filter(a -> !a.getDate_fin_enchere().after(maintenant))
+                    .collect(java.util.stream.Collectors.toList());
+            }
+        }
+        
         model.addAttribute("encheres", encheres);
         model.addAttribute("categories", categories);
         model.addAttribute("nom", nom);
         model.addAttribute("categorie", categorie);
+        model.addAttribute("statut", statut);
         model.addAttribute("mesEncheres", mesEncheres);
         model.addAttribute("currentDate", java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         return "view-enchere";
