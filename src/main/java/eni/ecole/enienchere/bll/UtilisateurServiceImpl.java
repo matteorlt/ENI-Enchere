@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
 
-    UtilisateurDAO utilisateurDAO;
-    AdresseDAO adresseDAO;
+    private final UtilisateurDAO utilisateurDAO;
+    private final AdresseDAO adresseDAO;
 
     public UtilisateurServiceImpl(UtilisateurDAO utilisateurDAO, AdresseDAO adresseDAO) {
         this.utilisateurDAO = utilisateurDAO;
@@ -37,6 +37,30 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public Adresse consulterAdresseParId(int no_adresse) {
         return adresseDAO.read(no_adresse);
+    }
+
+    @Override
+    public void updateMdp(String pseudo, String mot_de_passe) {
+        var utilisateur = utilisateurDAO.read(pseudo);
+        utilisateur.setMot_de_passe(mot_de_passe);
+        utilisateurDAO.update(utilisateur);
+    }
+
+    @Override
+    public void updateAdresse(Adresse adresse, String rue, String cp, String ville) {
+        adresse.setRue(rue);
+        adresse.setCode_postal(cp);
+        adresse.setVille(ville);
+        adresseDAO.update(adresse);
+    }
+
+    @Override
+    public void modifUtilisateur(Utilisateur utilisateur, String nom, String prenom, String email, String telephone) {
+utilisateur.setNom(nom);
+utilisateur.setPrenom(prenom);
+utilisateur.setEmail(email);
+utilisateur.setTelephone(telephone);
+        this.update(utilisateur);
     }
 
 

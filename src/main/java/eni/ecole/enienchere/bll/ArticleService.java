@@ -1,6 +1,7 @@
 package eni.ecole.enienchere.bll;
 
 import eni.ecole.enienchere.bo.ArticleAVendre;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public interface ArticleService {
     List<ArticleAVendre> getArticlesByVendeur(Long vendeurId);
     List<ArticleAVendre> getArticlesByNom(String nom);
     List<ArticleAVendre> getArticlesByPrixInitial(Integer prixInitial);
+    List<ArticleAVendre> getArticlesFiltres(String nom, String categorie);
     
     // Méthodes de gestion
     void createArticle(ArticleAVendre article);
