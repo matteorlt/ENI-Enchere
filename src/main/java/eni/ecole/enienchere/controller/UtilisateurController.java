@@ -225,9 +225,9 @@ public class UtilisateurController {
     /// /    }
 //
     @GetMapping("/connexion")
-    String login(Model model) {
+    String login() {
         logger.info("Affichage du formulaire login");
-//        model.addAttribute("utilisateur", new Utilisateur());
+
 
         return "view-connexion";
     }
