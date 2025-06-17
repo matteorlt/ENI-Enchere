@@ -10,19 +10,19 @@
 <main>
     <form class="form-container"
           method="post"
-          th:object="${utilisateur}"
+
 
     data-th-action="@{/connexion}">
         <h1>Se connecter</h1>
 
         <div class="form-group">
             <label for="inputPseudo">Identifiant :</label>
-            <input type="text" id="inputPseudo" name="username" th:value="*{pseudo}" required/>
+            <input type="text" id="inputPseudo" name="username" required/>
         </div>
 
         <div class="form-group">
             <label for="inputMdp">Mot de passe :</label>
-            <input type="text" id="inputMdp" name="password" th:value="*{mot_de_passe}" required/>
+            <input type="text" id="inputMdp" name="password" required/>
         </div>
 
         <div class="button-group">

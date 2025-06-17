@@ -29,7 +29,7 @@ document.getElementById("inputMdp").addEventListener("input", function () {
 
 document.getElementById("inputConfirmMdp").addEventListener("input", function () {
 
-    if (ConfirmMdp.value == textePassword.value) {
+    if (ConfirmMdp.value == Mdp.value) {
         phraseConfirmMdp.style.visibility = "hidden";
     }
     else {
