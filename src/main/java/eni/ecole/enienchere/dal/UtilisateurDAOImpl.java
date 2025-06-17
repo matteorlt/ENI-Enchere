@@ -1,20 +1,29 @@
 package eni.ecole.enienchere.dal;
 
+import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Repository
 public class UtilisateurDAOImpl implements UtilisateurDAO{
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private final static String FIND_BY_PSEUDO = "SELECT pseudo, nom, prenom, email, telephone, credit, administrateur, no_adresse from UTILISATEURS WHERE pseudo = :pseudo";
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    private final static String FIND_BY_PSEUDO = "SELECT pseudo, nom, prenom, email, telephone, mot_de_passe, credit, administrateur, no_adresse from UTILISATEURS WHERE pseudo = :pseudo";
+
     private final static String UPDATE = "UPDATE UTILISATEURS SET nom=:nom, prenom=:prenom, email=:email, telephone=:telephone, mot_de_passe=:mot_de_passe, no_adresse=:no_adresse WHERE pseudo = :pseudo";
     private final static String UPDATE_CREDIT = "UPDATE UTILISATEURS SET credit = :credit WHERE pseudo = :pseudo";
     private final static String INSERT = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, telephone, mot_de_passe, credit, no_adresse ) values (:pseudo, :nom, :prenom, :email, :telephone, :mot_de_passe, :credit, :no_adresse )";

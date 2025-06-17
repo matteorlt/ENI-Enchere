@@ -7,64 +7,64 @@
   <title>Mon profil</title>
 </head>
 <body>
-<main class="profil-main">
-  <form class="form-container profil-form"
+<main>
+  <form class="form-container"
         method="post"
         data-th-object="${utilisateur}">
-    <h1 class="form-container__title">Mon profil</h1>
+    <h1>Mon profil</h1>
 
     <div class="form-group">
-      <label class="form-group__label">Pseudo :</label>
-      <p class="form-group__value" data-th-text="*{pseudo}"></p>
+      <label>Pseudo :</label>
+      <p data-th-text="*{pseudo}"></p>
       <input type="hidden" data-th-field="*{pseudo}" readonly/>
     </div>
 
     <div class="form-group">
-      <label for="inputNom" class="form-group__label">Nom* :</label>
-      <input type="text" id="inputNom" class="form-group__input form-group__input--readonly" data-th-field="*{nom}" readonly/>
+      <label for="inputNom" >Nom* :</label>
+      <input type="text" id="inputNom" data-th-field="*{nom}" readonly/>
     </div>
 
     <div class="form-group">
-      <label for="inputPrenom" class="form-group__label">Prénom* :</label>
-      <input type="text" id="inputPrenom" class="form-group__input form-group__input--readonly" data-th-field="*{prenom}" readonly/>
+      <label for="inputPrenom" >Prénom* :</label>
+      <input type="text" id="inputPrenom" data-th-field="*{prenom}" readonly/>
     </div>
 
     <div class="form-group">
-      <label for="inputEmail" class="form-group__label">Email* :</label>
-      <input type="email" id="inputEmail" class="form-group__input form-group__input--readonly" data-th-field="*{email}" readonly/>
+      <label for="inputEmail" >Email* :</label>
+      <input type="email" id="inputEmail" data-th-field="*{email}" readonly/>
     </div>
 
     <div class="form-group">
-      <label for="inputTelephone" class="form-group__label">Téléphone :</label>
-      <input type="tel" id="inputTelephone" class="form-group__input form-group__input--readonly" data-th-field="*{telephone}" readonly/>
+      <label for="inputTelephone" >Téléphone :</label>
+      <input type="tel" id="inputTelephone" data-th-field="*{telephone}" readonly/>
     </div>
 
-    <div class="form-group form-group--address">
-      <div class="form-group__field">
-        <label for="inputAdresse" class="form-group__label">Adresse* :</label>
-        <input type="text" id="inputAdresse" class="form-group__input" data-th-field="*{adresse.rue}" required/>
+    <div class="form-group address-group">
+      <div>
+        <label for="inputAdresse" >Adresse* :</label>
+        <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" readonly/>
       </div>
-      <div class="form-group__row">
-        <div class="form-group__field">
-          <label for="inputCP" class="form-group__label">Code postal* :</label>
-          <input type="text" id="inputCP" class="form-group__input" data-th-field="*{adresse.code_postal}" required/>
+      <div class="address-row">
+        <div>
+          <label for="inputCP" >Code postal* :</label>
+          <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" readonly/>
         </div>
-        <div class="form-group__field">
-          <label for="inputVille" class="form-group__label">Ville* :</label>
-          <input type="text" id="inputVille" class="form-group__input" data-th-field="*{adresse.ville}" required/>
+        <div>
+          <label for="inputVille">Ville* :</label>
+          <input type="text" id="inputVille" data-th-field="*{adresse.ville}" readonly/>
         </div>
       </div>
     </div>
 
     <div class="form-group">
-      <label class="form-group__label">Credit :</label>
-      <p class="form-group__value profil-form__credit" data-th-text="*{credit}"></p>
+      <label >Credit :</label>
+      <p data-th-text="*{credit}"></p>
       <input type="hidden" data-th-field="*{credit}" readonly/>
     </div>
 
-    <div class="form-actions">
-      <a href="/profil/modifier-mot-de-passe" class="btn btn--secondary">Modifier mon profil</a>
-      <a href="/profil/modifier-mot-de-passe" class="btn btn--secondary">Modifier mot de passe</a>
+    <div class="button-group">
+      <a th:href="@{/mon-profil/modifier(pseudo=${#authentication.name})}" class="btn btn-secondary">Modifier mon profil</a>
+      <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${#authentication.name})}" class="btn btn-secondary">Modifier mot de passe</a>
     </div>
 
   </form>
