@@ -12,6 +12,18 @@
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
     
+    <!-- Photo de l'article -->
+    <div class="article-photo-container">
+        <img th:if="${article.photo != null and article.photo != ''}" 
+             th:src="@{'/images/articles/' + ${article.no_article}}"
+             th:alt="${article.nom_article}"
+             class="article-photo-large" />
+        <img th:unless="${article.photo != null and article.photo != ''}" 
+             src="/images/default.webp" 
+             alt="Image par défaut" 
+             class="article-photo-large default-image" />
+    </div>
+    
     <div class="detail-table">
         <div class="row">
             <div class="cell label">Article :</div>
@@ -88,5 +100,36 @@
     </div>
 
 </main>
+
+<style>
+.article-photo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.article-photo-large {
+    max-width: 400px;
+    max-height: 300px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.article-photo-large.default-image {
+    opacity: 0.7;
+}
+
+.article-image {
+    max-width: 200px;
+    max-height: 150px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.article-image.default-image {
+    opacity: 0.6;
+}
+</style>
 </body>
 </html>

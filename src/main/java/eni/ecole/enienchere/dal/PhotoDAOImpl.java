@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +20,7 @@ public class PhotoDAOImpl implements PhotoDAO {
 
     private final JdbcTemplate jdbcTemplate;
     
-    @Value("${app.upload.dir:images/}")
+    @Value("${app.upload.dir:uploads/photos}")
     private String uploadDir;
 
     @Autowired
@@ -33,6 +34,7 @@ public class PhotoDAOImpl implements PhotoDAO {
             return null;
         }
 
+        InputStream inputStream = null;
         try {
             // Créer le répertoire s'il n'existe pas
             Path uploadPath = Paths.get(uploadDir);
@@ -49,8 +51,9 @@ public class PhotoDAOImpl implements PhotoDAO {
             
             Path filePath = uploadPath.resolve(filename);
             
-            // Sauvegarder le fichier
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            // Utiliser InputStream pour éviter les problèmes de fichiers temporaires
+            inputStream = file.getInputStream();
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             
             String photoPath = uploadDir + "/" + filename;
             
@@ -61,6 +64,16 @@ public class PhotoDAOImpl implements PhotoDAO {
             
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la sauvegarde de la photo", e);
+        } finally {
+            // S'assurer que l'InputStream est fermé
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // Log l'erreur mais ne pas interrompre le traitement
+                    System.err.println("Erreur lors de la fermeture de l'InputStream: " + e.getMessage());
+                }
+            }
         }
     }
 

@@ -70,6 +70,21 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public boolean deleteArticle(Integer articleId) {
+        try {
+            List<ArticleAVendre> articles = getArticleById(articleId);
+            if (!articles.isEmpty()) {
+                ArticleAVendre article = articles.get(0);
+                articleDAO.delete(article);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public boolean validateArticle(ArticleAVendre article) {
         if (article == null) {
             return false;

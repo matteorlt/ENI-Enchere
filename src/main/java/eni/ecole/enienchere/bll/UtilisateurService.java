@@ -9,6 +9,7 @@ public interface UtilisateurService extends UserDetailsService {
 
     Utilisateur consulterUtilisateurParPseudo(String pseudo);
 
+    Utilisateur getUtilisateurByPseudo(String pseudo);
 
     void update(Utilisateur utilisateur);
 

@@ -52,6 +52,11 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     }
 
     @Override
+    public Utilisateur getUtilisateurByPseudo(String pseudo) {
+        return consulterUtilisateurParPseudo(pseudo);
+    }
+
+    @Override
     public void update(Utilisateur utilisateur) {
         utilisateurDAO.update(utilisateur);
     }

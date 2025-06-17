@@ -19,6 +19,7 @@ public interface ArticleService {
     void createArticle(ArticleAVendre article);
     void updateArticle(ArticleAVendre article);
     void deleteArticle(ArticleAVendre article);
+    boolean deleteArticle(Integer articleId);
     
     // Méthodes de validation
     boolean validateArticle(ArticleAVendre article);

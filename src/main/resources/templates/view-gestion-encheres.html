@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Administration des enchères</title>
+</head>
+<main>
+    <div class="container">
+        <h1>🛡️ Administration des enchères</h1>
+        <p class="subtitle">Gestion complète de toutes les enchères de la plateforme</p>
+        
+        <!-- Messages d'erreur et de succès -->
+        <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
+        <div th:if="${succes}" class="alert alert-success" th:text="${succes}"></div>
+        <div th:if="${info}" class="alert alert-info" th:text="${info}"></div>
+        
+        <!-- Filtres de recherche -->
+        <div class="filters-section">
+            <h3>🔍 Filtres de recherche</h3>
+            <form method="get" th:action="@{/admin/gestion-encheres}" class="filters-form">
+                <div class="filter-group">
+                    <label for="recherche">Rechercher un article :</label>
+                    <input type="text" 
+                           id="recherche" 
+                           name="recherche" 
+                           th:value="${recherche}" 
+                           placeholder="Nom de l'article...">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="vendeur">Filtrer par vendeur :</label>
+                    <input type="text" 
+                           id="vendeur" 
+                           name="vendeur" 
+                           th:value="${vendeur}" 
+                           placeholder="Pseudo du vendeur...">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="statut">Filtrer par statut :</label>
+                    <select id="statut" name="statut">
+                        <option value="">Tous les statuts</option>
+                        <option value="debut" th:selected="${statut == 'debut'}">💛 Pas commencé</option>
+                        <option value="actif" th:selected="${statut == 'actif'}">💚 En cours</option>
+                        <option value="termine" th:selected="${statut == 'termine'}">🔴 Terminé</option>
+                    </select>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+                    <a th:href="@{/admin/gestion-encheres}" class="btn btn-secondary">🔄 Réinitialiser</a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <h4>📊 Statistiques</h4>
+                <p><strong th:text="${#lists.size(articles)}">0</strong> enchères trouvées</p>
+                <p><strong th:text="${#lists.size(articles.?[date_debut_enchere > #dates.createNow()])}">0</strong> pas commencées</p>
+                <p><strong th:text="${#lists.size(articles.?[date_debut_enchere <= #dates.createNow() and date_fin_enchere > #dates.createNow()])}">0</strong> en cours</p>
+                <p><strong th:text="${#lists.size(articles.?[date_fin_enchere <= #dates.createNow()])}">0</strong> terminées</p>
+                <p><strong th:text="${#lists.size(articles.?[photo != null and photo != ''])}">0</strong> avec photos</p>
+            </div>
+        </div>
+        
+        <!-- Vérification si des articles existent -->
+        <div th:if="${articles == null or #lists.isEmpty(articles)}" class="no-articles">
+            <div class="alert alert-info">
+                <h3>Aucune enchère trouvée</h3>
+                <p th:if="${recherche != null or vendeur != null or statut != null}">
+                    Aucune enchère ne correspond à vos critères de recherche.
+                </p>
+                <p th:unless="${recherche != null or vendeur != null or statut != null}">
+                    Aucune enchère n'existe encore sur la plateforme.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Liste des enchères -->
+        <div th:unless="${articles == null or #lists.isEmpty(articles)}" class="articles-grid">
+            <div th:each="article : ${articles}" class="article-card">
+                
+                <!-- Informations actuelles de l'article -->
+                <div class="article-info">
+                    <div class="article-header">
+                        <h3 th:text="${article.nom_article}">Nom de l'article</h3>
+                        <span class="article-id">#<span th:text="${article.no_article}">ID</span></span>
+                    </div>
+                    <p class="article-description" th:text="${article.description}">Description</p>
+                    <div class="article-details">
+                        <span class="prix">💰 <strong th:text="${article.prix_initial}">0</strong> points</span>
+                        <span class="categorie" th:text="${article.categorie.libelle}">Catégorie</span>
+                        <span class="vendeur">👤 <strong th:text="${article.vendeur.pseudo}">Vendeur</strong></span>
+                        
+                        <!-- Statut dynamique basé sur les dates -->
+                        <th:block th:if="${article.date_debut_enchere > #dates.createNow()}">
+                            <span class="statut statut-pas-commence">💛 Pas commencé</span>
+                        </th:block>
+                        <th:block th:unless="${article.date_debut_enchere > #dates.createNow()}">
+                            <th:block th:if="${article.date_fin_enchere > #dates.createNow()}">
+                                <span class="statut statut-actif">💚 En cours</span>
+                            </th:block>
+                            <th:block th:unless="${article.date_fin_enchere > #dates.createNow()}">
+                                <span class="statut statut-termine">🔴 Terminé</span>
+                            </th:block>
+                        </th:block>
+                    </div>
+                    <div class="article-dates">
+                        <small>📅 Début : <span th:text="${#dates.format(article.date_debut_enchere, 'dd/MM/yyyy HH:mm')}">Date</span></small><br>
+                        <small>🏁 Fin : <span th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy HH:mm')}">Date</span></small>
+                    </div>
+                </div>
+                
+                <!-- Photo actuelle -->
+                <div class="photo-current">
+                    <h4>📷 Photo actuelle</h4>
+                    <div th:if="${article.photo != null and article.photo != ''}">
+                        <img th:src="@{'/images/articles/' + ${article.no_article}}" 
+                             th:alt="${article.nom_article}"
+                             class="article-photo" />
+                        <div class="photo-status has-photo">✅ Photo présente</div>
+                    </div>
+                    <div th:unless="${article.photo != null and article.photo != ''}" class="no-photo">
+                        <img src="/images/default.webp" 
+                             alt="Aucune photo" 
+                             class="article-photo default-photo" />
+                        <div class="photo-status no-photo-status">❌ Aucune photo</div>
+                    </div>
+                </div>
+                
+                <!-- Formulaire de modification -->
+                <div class="modification-section">
+                    <h4>✏️ Modifier l'enchère</h4>
+                    
+                    <form th:action="@{'/admin/gestion-encheres/modifier/' + ${article.no_article}}" 
+                          method="post" 
+                          enctype="multipart/form-data" 
+                          class="modification-form">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label th:for="'nom-' + ${article.no_article}">Nom de l'article :</label>
+                                <input type="text" 
+                                       th:id="'nom-' + ${article.no_article}"
+                                       name="nom" 
+                                       th:value="${article.nom_article}"
+                                       class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label th:for="'prix-' + ${article.no_article}">Prix initial (points) :</label>
+                                <input type="number" 
+                                       th:id="'prix-' + ${article.no_article}"
+                                       name="prix" 
+                                       th:value="${article.prix_initial}"
+                                       min="1"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label th:for="'description-' + ${article.no_article}">Description :</label>
+                            <textarea th:id="'description-' + ${article.no_article}"
+                                      name="description" 
+                                      rows="3"
+                                      class="form-control"
+                                      th:text="${article.description}"></textarea>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label th:for="'photo-' + ${article.no_article}">Nouvelle photo :</label>
+                                <input type="file" 
+                                       th:id="'photo-' + ${article.no_article}"
+                                       name="photo" 
+                                       accept="image/jpeg,image/jpg,image/png" 
+                                       th:onchange="'previewImage(event, ' + ${article.no_article} + ')'"
+                                       class="form-control">
+                                <small class="form-text">📎 Formats : JPEG, JPG, PNG • Max : 5MB</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Prévisualisation -->
+                        <div class="preview-container">
+                            <img th:id="'preview-' + ${article.no_article}" 
+                                 src="#" 
+                                 alt="Prévisualisation" 
+                                 class="preview-image" 
+                                 style="display: none;">
+                        </div>
+                        
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">
+                                ✅ Sauvegarder les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Actions dangereuses -->
+                <div class="danger-section">
+                    <h4>⚠️ Actions dangereuses</h4>
+                    <form th:action="@{'/admin/gestion-encheres/supprimer/' + ${article.no_article}}" 
+                          method="post" 
+                          class="delete-form">
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Supprimer définitivement l'enchère
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons de navigation -->
+        <div class="navigation-buttons">
+            <a th:href="@{/enchere}" class="btn btn-secondary">⬅️ Retour aux enchères</a>
+            <a th:href="@{/admin/gestion-encheres}" class="btn btn-info">🔄 Actualiser</a>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(event, articleId) {
+            const input = event.target;
+            const preview = document.getElementById('preview-' + articleId);
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // Validation des formulaires
+        document.querySelectorAll('.modification-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const fileInput = this.querySelector('input[type="file"]');
+                
+                if (fileInput.files && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    
+                    if (file.size > maxSize) {
+                        e.preventDefault();
+                        alert('⚠️ La taille du fichier ne doit pas dépasser 5MB');
+                        return;
+                    }
+                    
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        e.preventDefault();
+                        alert('⚠️ Seuls les fichiers JPEG, JPG et PNG sont autorisés');
+                        return;
+                    }
+                }
+            });
+        });
+
+        // Confirmation personnalisée pour la suppression
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const articleName = this.closest('.article-card').querySelector('h3').textContent;
+                const confirmation = prompt(
+                    `⚠️ SUPPRESSION DÉFINITIVE ⚠️\n\n` +
+                    `Vous êtes sur le point de supprimer l'enchère :\n"${articleName}"\n\n` +
+                    `Cette action est IRRÉVERSIBLE !\n\n` +
+                    `Pour confirmer, tapez exactement : SUPPRIMER`
+                );
+                
+                if (confirmation === 'SUPPRIMER') {
+                    this.submit();
+                } else if (confirmation !== null) {
+                    alert('❌ Suppression annulée - Confirmation incorrecte');
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .filters-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .filters-section h3 {
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .filters-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .filter-group input,
+        .filter-group select {
+            padding: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+        }
+        
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #fff;
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+            background: white;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .stats-section {
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card h4 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .stat-card p {
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+        
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(800px, 1fr));
+            gap: 40px;
+            margin: 30px 0;
+        }
+        
+        .article-card {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .article-header h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin: 0;
+            font-weight: bold;
+        }
+        
+        .article-id {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .article-description {
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+        
+        .article-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .article-details span {
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        
+        .prix {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        
+        .categorie {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-color: #bbdefb;
+        }
+        
+        .vendeur {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border-color: #ce93d8;
+        }
+        
+        .statut-actif {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .statut-termine {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        
+        .statut-pas-commence {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+        
+        .article-dates {
+            margin-bottom: 25px;
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+        
+        .photo-current {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .photo-current h4 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 1.2em;
+        }
+        
+        .article-photo {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border: 3px solid #dee2e6;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .default-photo {
+            opacity: 0.5;
+            border-style: dashed;
+        }
+        
+        .photo-status {
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
+            max-width: 200px;
+        }
+        
+        .has-photo {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .no-photo-status {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .modification-section {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .modification-section h4 {
+            margin-bottom: 20px;
+            color: #856404;
+            font-size: 1.2em;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        
+        .form-control {
+            padding: 12px;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        }
+        
+        .form-text {
+            color: #6c757d;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .preview-image {
+            width: 100%;
+            max-width: 250px;
+            height: 180px;
+            object-fit: cover;
+            border: 3px solid #28a745;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        .danger-section {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .danger-section h4 {
+            margin-bottom: 15px;
+            color: #721c24;
+            font-size: 1.1em;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108,117,125,0.4);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(23,162,184,0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.4);
+        }
+        
+        .form-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .alert {
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 1.05em;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            border: 2px solid #bee5eb;
+            color: #0c5460;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .navigation-buttons {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 3px solid #dee2e6;
+        }
+        
+        .navigation-buttons .btn {
+            margin: 0 20px;
+        }
+        
+        .no-articles {
+            text-align: center;
+            margin: 60px 0;
+        }
+        
+        @media (max-width: 1200px) {
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-form {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            
+            .filter-buttons {
+                grid-column: 1 / -1;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .filters-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .article-details {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</main>
+</html> 
