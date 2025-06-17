@@ -95,6 +95,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
     @Override
     public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
+        utilisateur.setCredit(10);
         utilisateurDAO.create(utilisateur);
         return utilisateur.getPseudo();
     }
@@ -102,6 +103,11 @@ public class UtilisateurServiceImpl implements UtilisateurService{
     @Override
     public void enregistrerUneAdresse(Adresse adresse) {
         adresseDAO.create(adresse);
+    }
+
+    @Override
+    public void updateCredit(String pseudo, int nouveauCredit) {
+        utilisateurDAO.updateCredit(pseudo, nouveauCredit);
     }
 
 }

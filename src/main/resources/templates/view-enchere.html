@@ -29,9 +29,13 @@
                     </select>
                 </div>
                 
-                <div class="filtre-groupe">
+                <div class="filtre-groupe" th:if="${#authorization.expression('isAuthenticated()')}">
                     <label for="mesEncheres">
                         <input type="checkbox" id="mesEncheres" name="mesEncheres" th:checked="${mesEncheres}">
+                        Mes ventes
+                    </label>
+                    <label for="mesEncheresFaites">
+                        <input type="checkbox" id="mesEncheresFaites" name="mesEncheresFaites" th:checked="${mesEncheresFaites}">
                         Mes enchères
                     </label>
                 </div>
@@ -92,5 +96,27 @@
     </main>
 
     <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+        // Empêcher que les deux checkboxes "Mes ventes" et "Mes enchères" soient cochées en même temps
+        document.addEventListener('DOMContentLoaded', function() {
+            const mesEncheres = document.getElementById('mesEncheres');
+            const mesEncheresFaites = document.getElementById('mesEncheresFaites');
+            
+            if (mesEncheres && mesEncheresFaites) {
+                mesEncheres.addEventListener('change', function() {
+                    if (this.checked) {
+                        mesEncheresFaites.checked = false;
+                    }
+                });
+                
+                mesEncheresFaites.addEventListener('change', function() {
+                    if (this.checked) {
+                        mesEncheres.checked = false;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

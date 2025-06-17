@@ -198,4 +198,9 @@ public class ArticleServiceImpl implements ArticleService {
             return articleDAO.findByNomAndCategorieAndVendeur(nom, categorie, vendeurPseudo);
         }
     }
+
+    @Override
+    public List<ArticleAVendre> getArticlesAvecEncheresDe(String pseudoUtilisateur) {
+        return articleDAO.findArticlesAvecEncheresDe(pseudoUtilisateur);
+    }
 } 

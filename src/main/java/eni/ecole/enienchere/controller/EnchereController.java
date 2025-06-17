@@ -44,14 +44,38 @@ public class EnchereController {
                                    @RequestParam(name = "categorie", required = false) String categorie,
                                    @RequestParam(name = "statut", required = false) String statut,
                                    @RequestParam(name = "mesEncheres", required = false) Boolean mesEncheres,
+                                   @RequestParam(name = "mesEncheresFaites", required = false) Boolean mesEncheresFaites,
                                    Principal principal) {
         var categories = categorieService.getAllCategories();
         List<ArticleAVendre> encheres;
         
-        if (mesEncheres != null && mesEncheres && principal != null) {
+        if (principal != null) {
             Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
-            encheres = articleService.getArticlesFiltres(nom, categorie, utilisateur.getPseudo());
+            
+            if (mesEncheres != null && mesEncheres) {
+                // Afficher les articles que l'utilisateur vend
+                encheres = articleService.getArticlesFiltres(nom, categorie, utilisateur.getPseudo());
+            } else if (mesEncheresFaites != null && mesEncheresFaites) {
+                // Afficher les articles sur lesquels l'utilisateur a enchéri
+                encheres = articleService.getArticlesAvecEncheresDe(utilisateur.getPseudo());
+                
+                // Appliquer les filtres supplémentaires si nécessaire
+                if (nom != null && !nom.trim().isEmpty()) {
+                    encheres = encheres.stream()
+                        .filter(a -> a.getNom_article().toLowerCase().contains(nom.toLowerCase()))
+                        .collect(java.util.stream.Collectors.toList());
+                }
+                if (categorie != null && !categorie.trim().isEmpty()) {
+                    encheres = encheres.stream()
+                        .filter(a -> a.getCategorie().getLibelle().equals(categorie))
+                        .collect(java.util.stream.Collectors.toList());
+                }
+            } else {
+                // Afficher toutes les enchères avec filtres
+                encheres = articleService.getArticlesFiltres(nom, categorie, null);
+            }
         } else {
+            // Utilisateur non connecté : afficher toutes les enchères
             encheres = articleService.getArticlesFiltres(nom, categorie, null);
         }
         
@@ -85,6 +109,7 @@ public class EnchereController {
         model.addAttribute("categorie", categorie);
         model.addAttribute("statut", statut);
         model.addAttribute("mesEncheres", mesEncheres);
+        model.addAttribute("mesEncheresFaites", mesEncheresFaites);
         model.addAttribute("currentDate", java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         return "view-enchere";
     }
@@ -121,8 +146,34 @@ public class EnchereController {
                 Utilisateur utilisateurConnecte = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
                 boolean peutEncherir = !article.getVendeur().getPseudo().equals(utilisateurConnecte.getPseudo());
                 model.addAttribute("peutEncherir", peutEncherir);
+                model.addAttribute("creditUtilisateur", utilisateurConnecte.getCredit());
             } else {
                 model.addAttribute("peutEncherir", false);
+                model.addAttribute("creditUtilisateur", 0);
+            }
+            
+            // Vérifier si l'enchère est terminée et récupérer le gagnant
+            Date maintenant = new Date();
+            boolean enchereTerminee = article.getDate_fin_enchere().before(maintenant);
+            model.addAttribute("enchereTerminee", enchereTerminee);
+            
+            if (enchereTerminee) {
+                // Récupérer la meilleure enchère pour connaître le gagnant
+                try {
+                    Enchere enchereGagnante = enchereService.getHighestBid(noArticle);
+                    if (enchereGagnante != null && enchereGagnante.getAcquereur() != null) {
+                        model.addAttribute("gagnant", enchereGagnante.getAcquereur());
+                        model.addAttribute("prixFinal", enchereGagnante.getMontant_enchere());
+                    } else {
+                        // Aucune enchère, l'article n'a pas été vendu
+                        model.addAttribute("gagnant", null);
+                        model.addAttribute("prixFinal", null);
+                    }
+                } catch (Exception e) {
+                    // Aucune enchère trouvée
+                    model.addAttribute("gagnant", null);
+                    model.addAttribute("prixFinal", null);
+                }
             }
             
             return "view-detail";
@@ -186,6 +237,37 @@ public class EnchereController {
                 return "redirect:/details?no_article=" + noArticle;
             }
             
+            // Vérifier que l'utilisateur a suffisamment de crédit
+            if (acquereur.getCredit() < montant) {
+                redirectAttributes.addFlashAttribute("error", 
+                    "Crédit insuffisant. Vous avez " + acquereur.getCredit() + " points, mais l'enchère nécessite " + montant + " points.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            
+            // Vérifier que l'utilisateur n'a pas déjà la meilleure enchère
+            if (meilleureEnchere != null && meilleureEnchere.getAcquereur() != null) {
+                if (meilleureEnchere.getAcquereur().getPseudo().equals(acquereur.getPseudo())) {
+                    redirectAttributes.addFlashAttribute("error", 
+                        "Vous avez déjà la meilleure enchère sur cet article. Vous ne pouvez pas réenchérir.");
+                    return "redirect:/details?no_article=" + noArticle;
+                }
+            }
+            
+            // Rembourser l'ancien enchérisseur s'il y en a un
+            if (meilleureEnchere != null && meilleureEnchere.getAcquereur() != null) {
+                String pseudoAncienEncherisseur = meilleureEnchere.getAcquereur().getPseudo();
+                // Récupérer les informations complètes et à jour de l'ancien enchérisseur
+                Utilisateur ancienEncherisseurComplet = utilisateurService.consulterUtilisateurParPseudo(pseudoAncienEncherisseur);
+                if (ancienEncherisseurComplet != null) {
+                    int nouveauCreditAncien = ancienEncherisseurComplet.getCredit() + meilleureEnchere.getMontant_enchere();
+                    utilisateurService.updateCredit(pseudoAncienEncherisseur, nouveauCreditAncien);
+                }
+            }
+            
+            // Débiter le nouveau enchérisseur
+            int nouveauCreditAcquereur = acquereur.getCredit() - montant;
+            utilisateurService.updateCredit(acquereur.getPseudo(), nouveauCreditAcquereur);
+            
             // Créer l'enchère
             Enchere enchere = new Enchere();
             enchere.setDate_enchere(LocalDateTime.now());
@@ -200,7 +282,7 @@ public class EnchereController {
             articleService.updateArticle(article);
             
             redirectAttributes.addFlashAttribute("success", 
-                "Votre enchère de " + montant + " points a été enregistrée avec succès !");
+                "Votre enchère de " + montant + " points a été enregistrée avec succès ! Votre nouveau solde : " + nouveauCreditAcquereur + " points.");
                 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", 

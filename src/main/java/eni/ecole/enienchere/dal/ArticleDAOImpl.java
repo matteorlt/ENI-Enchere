@@ -190,4 +190,17 @@ public class ArticleDAOImpl implements ArticleDAO {
         
         return namedParameterJdbcTemplate.query(sql.toString(), params, articleRowMapper);
     }
+
+    @Override
+    public List<ArticleAVendre> findArticlesAvecEncheresDe(String pseudoUtilisateur) {
+        String sql = "SELECT DISTINCT a.*, c.libelle, u.pseudo, u.nom, u.prenom, u.email, u.telephone, " +
+                "ad.no_adresse, ad.rue, ad.code_postal, ad.ville " +
+                "FROM ARTICLES_A_VENDRE a " +
+                "JOIN CATEGORIES c ON a.no_categorie = c.no_categorie " +
+                "JOIN UTILISATEURS u ON a.id_utilisateur = u.pseudo " +
+                "LEFT JOIN ADRESSES ad ON a.no_adresse_retrait = ad.no_adresse " +
+                "JOIN ENCHERES e ON a.no_article = e.no_article " +
+                "WHERE e.id_utilisateur = ?";
+        return jdbcTemplate.query(sql, articleRowMapper, pseudoUtilisateur);
+    }
 }

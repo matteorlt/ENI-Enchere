@@ -12,10 +12,10 @@ public class DaoEnchereImpl implements DaoEnchere {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    private final String SELECT_ALL = "SELECT * FROM ENCHERES";
-    private final String SELECT_BY_ARTICLE = "SELECT * FROM ENCHERES WHERE no_article = :no_article ORDER BY montant_enchere DESC";
-    private final String SELECT_BY_USER = "SELECT * FROM ENCHERES WHERE id_utilisateur = :id_utilisateur";
-    private final String SELECT_HIGHEST_BID = "SELECT TOP 1 * FROM ENCHERES WHERE no_article = :no_article ORDER BY montant_enchere DESC";
+    private final String SELECT_ALL = "SELECT e.date_enchere, e.montant_enchere, e.no_article, e.id_utilisateur, u.pseudo, u.nom, u.prenom, u.email, u.telephone, u.credit, u.administrateur, u.no_adresse FROM ENCHERES e LEFT JOIN UTILISATEURS u ON e.id_utilisateur = u.pseudo";
+    private final String SELECT_BY_ARTICLE = "SELECT e.date_enchere, e.montant_enchere, e.no_article, e.id_utilisateur, u.pseudo, u.nom, u.prenom, u.email, u.telephone, u.credit, u.administrateur, u.no_adresse FROM ENCHERES e LEFT JOIN UTILISATEURS u ON e.id_utilisateur = u.pseudo WHERE e.no_article = :no_article ORDER BY e.montant_enchere DESC";
+    private final String SELECT_BY_USER = "SELECT e.date_enchere, e.montant_enchere, e.no_article, e.id_utilisateur, u.pseudo, u.nom, u.prenom, u.email, u.telephone, u.credit, u.administrateur, u.no_adresse FROM ENCHERES e LEFT JOIN UTILISATEURS u ON e.id_utilisateur = u.pseudo WHERE e.id_utilisateur = :id_utilisateur";
+    private final String SELECT_HIGHEST_BID = "SELECT TOP 1 e.date_enchere, e.montant_enchere, e.no_article, e.id_utilisateur, u.pseudo, u.nom, u.prenom, u.email, u.telephone, u.credit, u.administrateur, u.no_adresse FROM ENCHERES e LEFT JOIN UTILISATEURS u ON e.id_utilisateur = u.pseudo WHERE e.no_article = :no_article ORDER BY e.montant_enchere DESC";
     private final String INSERT = "INSERT INTO ENCHERES (id_utilisateur, no_article, montant_enchere, date_enchere) VALUES (:id_utilisateur, :no_article, :montant_enchere, :date_enchere)";
     private final String UPDATE = "UPDATE ENCHERES SET montant_enchere = :montant_enchere, date_enchere = :date_enchere WHERE id_utilisateur = :id_utilisateur AND no_article = :no_article";
     private final String DELETE = "DELETE FROM ENCHERES WHERE id_utilisateur = :id_utilisateur AND no_article = :no_article AND montant_enchere = :montant_enchere";

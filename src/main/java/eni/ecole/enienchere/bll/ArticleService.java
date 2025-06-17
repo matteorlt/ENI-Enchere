@@ -14,6 +14,7 @@ public interface ArticleService {
     List<ArticleAVendre> getArticlesByNom(String nom);
     List<ArticleAVendre> getArticlesByPrixInitial(Integer prixInitial);
     List<ArticleAVendre> getArticlesFiltres(String nom, String categorie, String vendeurPseudo);
+    List<ArticleAVendre> getArticlesAvecEncheresDe(String pseudoUtilisateur);
     
     // Méthodes de gestion
     void createArticle(ArticleAVendre article);

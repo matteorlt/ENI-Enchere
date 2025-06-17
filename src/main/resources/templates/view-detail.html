@@ -44,11 +44,14 @@
             <div class="cell value" th:text="${article.description}" colspan="3"></div>
             <div class="cell label">Fin de l'enchère :</div>
             <div class="cell value" th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy HH:mm')}"></div>
-            <div class="cell label">Temps restant :</div>
+            <div class="cell label">Statut :</div>
             <div class="cell value">
-                <div id="countdown" th:data-date-fin="${dateFinFormatted}">
-                    Chargement...
-                </div>
+                <span th:if="${enchereTerminee}" class="statut-termine-detail">🔴 Terminée</span>
+                <span th:unless="${enchereTerminee}">
+                    <div id="countdown" th:data-date-fin="${dateFinFormatted}">
+                        Chargement...
+                    </div>
+                </span>
             </div>
         </div>
     </div>
@@ -63,8 +66,35 @@
             <a data-th-href="@{/profil(pseudo=${article.vendeur.pseudo})}" class="value" th:text="${article.vendeur.pseudo}"></a>
         </div>
         
-        <!-- Formulaire d'enchère -->
-        <div th:if="${peutEncherir}" class="enchere-section">
+        <!-- Affichage du gagnant si l'enchère est terminée -->
+        <div th:if="${enchereTerminee}" class="enchere-section">
+            <div class="enchere-terminee">
+                <h3 class="enchere-terminee-titre">🏆 Enchère terminée</h3>
+                
+                <div th:if="${gagnant != null}" class="gagnant-info">
+                    <div class="gagnant-card">
+                        <h4>🎉 Gagnant de l'enchère</h4>
+                        <p class="gagnant-pseudo"><strong th:text="${gagnant.pseudo}">Pseudo du gagnant</strong></p>
+                        <p class="prix-final">Prix final : <strong th:text="${prixFinal} + ' points'">0 points</strong></p>
+                    </div>
+                </div>
+                
+                <div th:unless="${gagnant != null}" class="pas-de-gagnant">
+                    <div class="alert alert-info">
+                        <h4>📭 Aucune enchère</h4>
+                        <p>Cet article n'a reçu aucune enchère et n'a pas été vendu.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulaire d'enchère (seulement si l'enchère n'est pas terminée) -->
+        <div th:if="${!enchereTerminee and peutEncherir}" class="enchere-section">
+            <div class="credit-info">
+                <span class="credit-label">💰 Votre crédit :</span>
+                <span class="credit-value" th:text="${creditUtilisateur} + ' points'">0 points</span>
+            </div>
+            
             <form th:action="@{/enchere/soumettre}" method="post" class="enchere-form">
                 <input type="hidden" name="no_article" th:value="${article.no_article}">
                 
@@ -74,19 +104,23 @@
                            id="montant_propose" 
                            name="montant_propose" 
                            th:min="${montantMinimum}" 
+                           th:max="${creditUtilisateur}"
                            th:placeholder="'Minimum : ' + ${montantMinimum} + ' points'"
                            required>
-                    <span class="montant-info">Minimum : <span th:text="${montantMinimum}"></span> points</span>
+                    <span class="montant-info">Minimum : <span th:text="${montantMinimum}"></span> points | Maximum : <span th:text="${creditUtilisateur}"></span> points</span>
                 </div>
                 
                 <div class="button-detail">
-                    <button type="submit" class="btn btn-primary">Enchérir</button>
+                    <button type="submit" class="btn btn-primary" th:disabled="${creditUtilisateur < montantMinimum}">
+                        <span th:if="${creditUtilisateur >= montantMinimum}">Enchérir</span>
+                        <span th:unless="${creditUtilisateur >= montantMinimum}">Crédit insuffisant</span>
+                    </button>
                 </div>
             </form>
         </div>
         
-        <!-- Message si l'utilisateur ne peut pas enchérir -->
-        <div th:unless="${peutEncherir}" class="enchere-section">
+        <!-- Message si l'utilisateur ne peut pas enchérir (et enchère pas terminée) -->
+        <div th:if="${!enchereTerminee and !peutEncherir}" class="enchere-section">
             <div th:if="${#authorization.expression('isAuthenticated()')}" class="alert alert-info">
                 Vous ne pouvez pas enchérir sur votre propre article.
             </div>
@@ -131,6 +165,100 @@
 
 .article-image.default-image {
     opacity: 0.6;
+}
+
+.credit-info {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.credit-label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.credit-value {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.1em;
+}
+
+.montant-info {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.btn:disabled {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.enchere-terminee {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 2px solid #dee2e6;
+}
+
+.enchere-terminee-titre {
+    color: #495057;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.gagnant-card {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+}
+
+.gagnant-card h4 {
+    color: #155724;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.gagnant-pseudo {
+    font-size: 1.2em;
+    color: #155724;
+    margin: 10px 0;
+}
+
+.prix-final {
+    font-size: 1.1em;
+    color: #155724;
+    margin: 10px 0;
+}
+
+.pas-de-gagnant .alert {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    color: #856404;
+}
+
+.pas-de-gagnant h4 {
+    color: #856404;
+    margin-bottom: 10px;
+}
+
+.statut-termine-detail {
+    font-weight: bold;
+    color: #dc3545;
+    background-color: #f8d7da;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
 }
 </style>
 </body>

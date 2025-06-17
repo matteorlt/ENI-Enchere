@@ -16,4 +16,5 @@ public interface ArticleDAO {
     List<ArticleAVendre> findByPrixInitial(Integer prixInitial);
     List<ArticleAVendre> findByNomAndCategorie(String nom, String categorie);
     List<ArticleAVendre> findByNomAndCategorieAndVendeur(String nom, String categorie, String vendeurPseudo);
+    List<ArticleAVendre> findArticlesAvecEncheresDe(String pseudoUtilisateur);
 }
