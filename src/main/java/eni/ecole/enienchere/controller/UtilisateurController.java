@@ -181,7 +181,7 @@ public class UtilisateurController {
 
             } catch (Exception e) {
                 logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}",e);
-                redirectAttributes.addFlashAttribute("successMessage", "Erreur lors de la mise à jour du mot de passe");
+                redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
                 return "view-profil-modif-mdp";
             }
        }
