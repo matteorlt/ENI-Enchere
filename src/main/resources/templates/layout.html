@@ -1,14 +1,59 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-th-fragment="layout(contenu, titre)">
+<html data-th-fragment="layout(contenu,titre)" lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/general.css}">
-    <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/form.css}">
-    <link rel="stylesheet" th:href="@{/css/details.css}">
-    <link rel="icon" type="image/png" th:href="@{/images/logoENI.png}">
-    <title th:replace="${titre}">ENI-Enchères</title>
+    <link rel="stylesheet" data-th-href="@{/css/general.css}">
+    <link rel="stylesheet" data-th-href="@{/css/layout.css}">
+    <link rel="stylesheet" data-th-href="@{/css/form.css}">
+    <link rel="stylesheet" data-th-href="@{/css/enchere.css}">
+    <link rel="stylesheet" data-th-href="@{/css/details.css}">
+    <link rel="icon" type="image/png" data-th-href="@{/images/logoENI.png}">
+    <title data-th-replace="${titre}">Layout</title>
 </head>
+<script th:inline="javascript">
+    console.log('Script chargé !');
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+        function updateCountdown() {
+            const countdownElement = document.getElementById('countdown');
+
+            if (!countdownElement) {
+                return;
+            }
+
+            const dateFinStr = countdownElement.getAttribute('data-date-fin');
+
+            if (!dateFinStr) {
+                countdownElement.innerHTML = "Erreur: pas de date";
+                return;
+            }
+
+            // Conversion de la date en timestamp
+            const dateFin = new Date(dateFinStr);
+            const maintenant = new Date();
+
+            const difference = dateFin - maintenant;
+
+            if (difference <= 0) {
+                countdownElement.innerHTML = "L'enchère est terminée";
+                return;
+            }
+
+            const jours = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const heures = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const secondes = Math.floor((difference % (1000 * 60)) / 1000);
+
+            countdownElement.innerHTML = `${jours}j ${heures}h ${minutes}m ${secondes}s`;
+        }
+
+        // Mettre à jour toutes les secondes
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    });
+</script>
 <body>
 
 <header>
@@ -17,25 +62,30 @@
             <img src="/images/logoENI.png" alt="Logo ENI" class="nav-logo">
             <span>Les objets sont nos amis !!</span>
         </a>
-<!--        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">-->
-<!--            <p data-th-text="${#authentication.name}"></p>-->
-<!--            <a data-th-href="@{/logout}" >Se déconnecter</a>-->
-<!--        </th:block>-->
-<!--        <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">-->
-<!--            <a data-th-href="@{/login}" >Se connecter</a>-->
-<!--        </th:block>-->
-
+        <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">
+            <div class="user-info">
+                <span>Bienvenue, </span>
+                <span data-th-text="${#authentication.name}"></span>
+            </div>
+        </th:block>
     </h1>
     <nav>
         <ul>
-            <li><a href="/enchere">Enchère</a></li>
-            <li><a href="/profil">Profil</a></li>
-            <li><a href="/vendre">Vendre Un Article</a></li>
+            <li><a href="/enchere">Enchere</a></li>
+            <th:block data-th-if="${#authorization.expression('isAuthenticated()')}">
+                <li><a data-th-href="@{/mon-profil(pseudo=${#authentication.name})}">Profil</a></li>
+                <li><a data-th-href="@{/vendre}">Vendre Un Article</a></li>
+                <li><a data-th-href="@{/deconnexion}">Se déconnecter</a></li>
+            </th:block>
+            <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
+                <li><a data-th-href="@{/connexion}">Se connecter</a></li>
+                <li><a data-th-href="@{/creer-compte}">S'inscrire</a></li>
+            </th:block>
         </ul>
     </nav>
 </header>
 
-<main class="center-main" th:replace="${contenu}">
+<main class="center-main" data-th-replace="${contenu}">
     <section class="center-section">
         <h1>Bienvenue sur ENI-Enchères</h1>
         <h2>Votre plateforme d'enchères en ligne</h2>

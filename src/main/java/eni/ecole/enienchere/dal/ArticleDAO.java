@@ -11,8 +11,9 @@ public interface ArticleDAO {
     void delete(ArticleAVendre article);
     List<ArticleAVendre> findAll();
     List<ArticleAVendre> findByCategorie(Integer categorieId);
-    List<ArticleAVendre> findByVendeur(Long vendeurId);
+    List<ArticleAVendre> findByVendeur(String vendeurPseudo);
     List<ArticleAVendre> findByNom(String nom);
     List<ArticleAVendre> findByPrixInitial(Integer prixInitial);
     List<ArticleAVendre> findByNomAndCategorie(String nom, String categorie);
+    List<ArticleAVendre> findByNomAndCategorieAndVendeur(String nom, String categorie, String vendeurPseudo);
 }

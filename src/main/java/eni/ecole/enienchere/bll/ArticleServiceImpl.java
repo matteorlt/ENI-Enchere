@@ -32,8 +32,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleAVendre> getArticlesByVendeur(Long vendeurId) {
-        return articleDAO.findByVendeur(vendeurId);
+    public List<ArticleAVendre> getArticlesByVendeur(String vendeurPseudo) {
+        return articleDAO.findByVendeur(vendeurPseudo);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void updateArticle(ArticleAVendre article) {
-        if (validateArticle(article)) {
+        if (validateArticleForUpdate(article)) {
             articleDAO.update(article);
         } else {
             throw new IllegalArgumentException("L'article n'est pas valide");
@@ -123,8 +123,64 @@ public class ArticleServiceImpl implements ArticleService {
         return true;
     }
 
+    /**
+     * Validation spécifique pour la mise à jour d'un article existant
+     * Ne vérifie pas que la date de début soit dans le futur
+     */
+    private boolean validateArticleForUpdate(ArticleAVendre article) {
+        if (article == null) {
+            return false;
+        }
+
+        // Validation du nom
+        if (article.getNom_article() == null || article.getNom_article().trim().isEmpty()) {
+            return false;
+        }
+
+        // Validation de la description
+        if (article.getDescription() == null || article.getDescription().trim().isEmpty()) {
+            return false;
+        }
+
+        // Validation des dates
+        if (article.getDate_debut_enchere() == null || article.getDate_fin_enchere() == null) {
+            return false;
+        }
+
+        // La date de fin doit être après la date de début
+        if (article.getDate_fin_enchere().before(article.getDate_debut_enchere())) {
+            return false;
+        }
+
+        // Validation des prix
+        if (article.getPrix_initial() <= 0) {
+            return false;
+        }
+
+        // Le prix de vente doit être supérieur ou égal au prix initial
+        if (article.getPrix_vente() > 0 && article.getPrix_vente() < article.getPrix_initial()) {
+            return false;
+        }
+
+        // Validation du vendeur
+        if (article.getVendeur() == null) {
+            return false;
+        }
+
+        // Validation de la catégorie
+        if (article.getCategorie() == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
-    public List<ArticleAVendre> getArticlesFiltres(String nom, String categorie) {
-        return articleDAO.findByNomAndCategorie(nom, categorie);
+    public List<ArticleAVendre> getArticlesFiltres(String nom, String categorie, String vendeurPseudo) {
+        if ((nom == null || nom.isEmpty()) && (categorie == null || categorie.isEmpty()) && (vendeurPseudo == null || vendeurPseudo.isEmpty())) {
+            return articleDAO.findAll();
+        } else {
+            return articleDAO.findByNomAndCategorieAndVendeur(nom, categorie, vendeurPseudo);
+        }
     }
 } 

@@ -110,7 +110,7 @@ public class ArticleDAOImpl implements ArticleDAO {
     }
 
     @Override
-    public List<ArticleAVendre> findByVendeur(Long vendeurId) {
+    public List<ArticleAVendre> findByVendeur(String vendeurPseudo) {
         String sql = "SELECT a.*, c.libelle, u.pseudo, u.nom, u.prenom, u.email, u.telephone, " +
                 "ad.no_adresse, ad.rue, ad.code_postal, ad.ville " +
                 "FROM ARTICLES_A_VENDRE a " +
@@ -118,7 +118,7 @@ public class ArticleDAOImpl implements ArticleDAO {
                 "JOIN UTILISATEURS u ON a.id_utilisateur = u.pseudo " +
                 "LEFT JOIN ADRESSES ad ON a.no_adresse_retrait = ad.no_adresse " +
                 "WHERE a.id_utilisateur = ?";
-        return jdbcTemplate.query(sql, articleRowMapper, vendeurId);
+        return jdbcTemplate.query(sql, articleRowMapper, vendeurPseudo);
     }
 
     @Override
@@ -162,6 +162,32 @@ public class ArticleDAOImpl implements ArticleDAO {
             sql.append(" AND c.libelle = :categorie");
             params.addValue("categorie", categorie);
         }
+        return namedParameterJdbcTemplate.query(sql.toString(), params, articleRowMapper);
+    }
+
+    @Override
+    public List<ArticleAVendre> findByNomAndCategorieAndVendeur(String nom, String categorie, String vendeurPseudo) {
+        StringBuilder sql = new StringBuilder("SELECT a.*, c.libelle, u.pseudo, u.nom, u.prenom, u.email, u.telephone, " +
+                "ad.no_adresse, ad.rue, ad.code_postal, ad.ville " +
+                "FROM ARTICLES_A_VENDRE a " +
+                "JOIN CATEGORIES c ON a.no_categorie = c.no_categorie " +
+                "JOIN UTILISATEURS u ON a.id_utilisateur = u.pseudo " +
+                "LEFT JOIN ADRESSES ad ON a.no_adresse_retrait = ad.no_adresse WHERE 1=1");
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        
+        if (nom != null && !nom.isEmpty()) {
+            sql.append(" AND a.nom_article LIKE :nom");
+            params.addValue("nom", "%" + nom + "%");
+        }
+        if (categorie != null && !categorie.isEmpty()) {
+            sql.append(" AND c.libelle = :categorie");
+            params.addValue("categorie", categorie);
+        }
+        if (vendeurPseudo != null && !vendeurPseudo.isEmpty()) {
+            sql.append(" AND a.id_utilisateur = :vendeurPseudo");
+            params.addValue("vendeurPseudo", vendeurPseudo);
+        }
+        
         return namedParameterJdbcTemplate.query(sql.toString(), params, articleRowMapper);
     }
 }

@@ -2,66 +2,164 @@ package eni.ecole.enienchere.controller;
 
 import eni.ecole.enienchere.bll.ArticleService;
 import eni.ecole.enienchere.bll.CategorieService;
+import eni.ecole.enienchere.bll.EnchereService;
+import eni.ecole.enienchere.bll.UtilisateurService;
+import eni.ecole.enienchere.bo.Adresse;
 import eni.ecole.enienchere.bo.ArticleAVendre;
+import eni.ecole.enienchere.bo.Categorie;
 import eni.ecole.enienchere.bo.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
+import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Controller
-@RequestMapping("/vendre")public class NouvelleVenteController {
+public class NouvelleVenteController {
 
     private final ArticleService articleService;
+    private final EnchereService enchereService;
+    private final UtilisateurService utilisateurService;
     private final CategorieService categorieService;
 
     @Autowired
-
-    public NouvelleVenteController(ArticleService articleService, CategorieService categorieService) {
+    public NouvelleVenteController(ArticleService articleService, 
+                                 EnchereService enchereService, 
+                                 UtilisateurService utilisateurService,
+                                 CategorieService categorieService) {
         this.articleService = articleService;
-    }   this.categorieService = categorieService;    }
+        this.enchereService = enchereService;
+        this.utilisateurService = utilisateurService;
+        this.categorieService = categorieService;
+    }
 
-@GetMapping
-public String afficherFormulaire(Model model) {
+    @GetMapping("/vendre")
+    public String afficherFormulaireVente(Model model, Principal principal) {
+        try {
+            if (principal == null) {
+                return "redirect:/login";
+            }
 
-    model.addAttribute("categories", categorieService.getAllCategories());
-    return "view-nouvelle-vente";    }
+            ArticleAVendre article = new ArticleAVendre();
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+            
+            if (utilisateur == null) {
+                model.addAttribute("error", "Utilisateur non trouvé");
+                return "error";
+            }
 
-@PostMapping
-public String creerVente(@RequestParam String nomArticle,
-                         @RequestParam String description,
-                         @RequestParam int categorieId, @RequestParam int miseAPrix,
-                         @RequestParam LocalDateTime dateDebut,
-                         @RequestParam LocalDateTime dateFin, HttpSession session, RedirectAttributes redirectAttributes) {
+            model.addAttribute("article", article);
+            model.addAttribute("utilisateur", utilisateur);
+            model.addAttribute("categories", categorieService.getAllCategories());
+            return "view-nouvelle-vente";
+        } catch (Exception e) {
+            model.addAttribute("error", "Une erreur est survenue lors du chargement du formulaire : " + e.getMessage());
+            return "error";
+        }
+    }
 
-    Utilisateur vendeur = (Utilisateur) session.getAttribute("user");
+    @PostMapping("/vendre")
+    public String traiterFormulaire(@RequestParam("nomArticle") String nomArticle,
+                                  @RequestParam("categorie") Integer categorieId,
+                                  @RequestParam("description") String description,
+                                  @RequestParam("miseAPrix") Integer miseAPrix,
+                                  @RequestParam("dateDebut") String dateDebutStr,
+                                  @RequestParam("dateFin") String dateFinStr,
+                                  @RequestParam("retrait") Long adresseRetraitId,
+                                  @RequestParam("action") String action,
+                                  Principal principal,
+                                  RedirectAttributes redirectAttributes) {
+        
+        if (principal == null) {
+            return "redirect:/login";
+        }
 
-    if (vendeur == null) {
-        redirectAttributes.addFlashAttribute("error", "Vous devez être connecté pour vendre un article");
-        return "redirect:/login";        }
+        if ("annuler".equals(action)) {
+            return "redirect:/";
+        }
+        
+        if ("annulerVente".equals(action)) {
+            return "redirect:/vendre";
+        }
 
-    try {            ArticleAVendre article = new ArticleAVendre();
+        try {
+            // Validation des données
+            if (nomArticle == null || nomArticle.trim().isEmpty()) {
+                throw new IllegalArgumentException("Le nom de l'article est requis");
+            }
+            if (description == null || description.trim().isEmpty()) {
+                throw new IllegalArgumentException("La description est requise");
+            }
+            if (miseAPrix <= 0) {
+                throw new IllegalArgumentException("La mise à prix doit être supérieure à 0");
+            }
 
-        article.setNomArticle(nomArticle);
-        article.setDescription(description);
-        article.setPrixInitial(miseAPrix);
-        article.setDateDebutEncheres(dateDebut);
-        article.setDateFinEncheres(dateFin);
-        article.setVendeur(vendeur);
-        article.setCategorie(new Categorie(categorieId));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateDebut = dateFormat.parse(dateDebutStr);
+            Date dateFin = dateFormat.parse(dateFinStr);
+            Date aujourdhui = new Date();
 
-        article.setStatut(0); // Non débuté
-        // articleService.validateArticle(article);
-        // articleService.saveArticle(article);
-        // redirectAttributes.addFlashAttribute("success", "Votre article a été mis en vente avec succès");
-        //
-        // return "redirect:/articles";        } catch (IllegalArgumentException e) {
-        // redirectAttributes.addFlashAttribute("error", e.getMessage());            return "redirect:/vendre";
-        // }    }}
+            if (dateDebut.before(aujourdhui)) {
+                throw new IllegalArgumentException("La date de début doit être dans le futur");
+            }
+            if (dateFin.before(dateDebut)) {
+                throw new IllegalArgumentException("La date de fin doit être après la date de début");
+            }
+
+            // Récupération et configuration du vendeur
+            Utilisateur vendeur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+            if (vendeur == null) {
+                throw new IllegalArgumentException("Utilisateur non trouvé");
+            }
+
+            // Configuration de la catégorie
+            Categorie categorie = categorieService.getCategorieById(categorieId);
+            if (categorie == null) {
+                throw new IllegalArgumentException("Catégorie non trouvée");
+            }
+
+            // Configuration de l'adresse de retrait
+            Adresse adresseRetrait = new Adresse();
+            adresseRetrait.setNo_adresse(adresseRetraitId);
+
+            // Création de l'article
+            ArticleAVendre article = new ArticleAVendre();
+            article.setNom_article(nomArticle);
+            article.setDescription(description);
+            article.setPrix_initial(miseAPrix);
+            article.setDate_debut_enchere(dateDebut);
+            article.setDate_fin_enchere(dateFin);
+            article.setVendeur(vendeur);
+            article.setCategorie(categorie);
+            article.setAdresse_retrait(adresseRetrait);
+            article.setStatut(1); // Statut actif
+
+            articleService.createArticle(article);
+            
+            redirectAttributes.addFlashAttribute("success", "Votre article a été mis en vente avec succès !");
+            return "redirect:/enchere";
+            
+        } catch (ParseException e) {
+            redirectAttributes.addFlashAttribute("error", "Format de date invalide : " + e.getMessage());
+            return "redirect:/vendre";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/vendre";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Une erreur est survenue lors de la création de l'article : " + e.getMessage());
+            return "redirect:/vendre";
+        }
+    }
+}
+
+
+
+
 
 
 

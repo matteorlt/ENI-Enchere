@@ -295,4 +295,21 @@ nav a:focus,
 .nav-logo {
     height: 40px;
     margin-right: 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.user-info span:first-child {
+    margin-right: 5px;
+}
+
+.user-info span:last-child {
+    font-weight: bold;
+    color: #2c3e50;
 } 

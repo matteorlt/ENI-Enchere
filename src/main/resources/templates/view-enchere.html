@@ -5,40 +5,64 @@
 <head>
     <title>Liste des enchères</title>
 </head>
-<main>
- <section>
-     <h4>Filtres :</h4>
-     <form method="get" th:action="@{/encheres}">
-         <input type="text" name="nom" placeholder="Le nom de l'article contient" th:value="${nom}"> <br><br>
- 
-         <label for="categorie">Catégorie :</label>
-         <select name="categorie" id="categorie">
-             <option value="">Toutes</option>
-             <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
-         </select><br><br>
- 
-         <div>
-             <button type="submit">Rechercher</button>
-             <a th:href="@{/encheres}"><button type="button">Annuler</button></a>
-         </div>
-     </form>
- </section>
- 
- <section>
-     <h2>Liste des enchères</h2>
-     <div th:each="enchere : ${encheres}">
-         <div style="border: 1px solid black; margin: 10px; padding: 10px;">
-             <img src="/images/DD_Pic.jpg" alt="Disque Dur" class="nav-logo">
-             <h3 th:text="${enchere.nom_article}">Nom</h3>
-             <p>Prix : <span th:text="${enchere.prix_vente != null ? enchere.prix_vente : enchere.prix_initial}">0</span> point(s)</p>
-             <p>Fin de l'enchère : <span th:text="${#dates.format(enchere.date_fin_enchere, 'dd/MM/yyyy')}">01/06/202X</span></p>
-             <p>Vendeur : <span th:text="${enchere.vendeur.pseudo}">vendeur</span></p>
-         </div>
-     </div>
-     <div th:if="${encheres == null or #lists.isEmpty(encheres)}">
-         <p>Aucune enchère trouvée.</p>
-     </div>
- </section>
+<body>
+    <div th:replace="~{layout :: header}"></div>
 
-</main>
+    <main>
+        <section class="filtres-section">
+            <h4>Filtres :</h4>
+            <form method="get" th:action="@{/enchere}" class="filtres-form">
+                <div class="filtre-groupe">
+                    <label for="nom">Le nom de l'article contient :</label>
+                    <input type="text" id="nom" name="nom" th:value="${nom}" placeholder="Rechercher...">
+                </div>
+                
+                <div class="filtre-groupe">
+                    <label for="categorie">Catégorie :</label>
+                    <select name="categorie" id="categorie">
+                        <option value="">Toutes les catégories</option>
+                        <option th:each="cat : ${categories}" 
+                                th:value="${cat.libelle}" 
+                                th:text="${cat.libelle}"
+                                th:selected="${cat.libelle == categorie}">
+                        </option>
+                    </select>
+                </div>
+                
+                <div class="filtre-groupe">
+                    <label for="mesEncheres">
+                        <input type="checkbox" id="mesEncheres" name="mesEncheres" th:checked="${mesEncheres}">
+                        Mes enchères
+                    </label>
+                </div>
+                
+                <div class="boutons-filtres">
+                    <button type="submit" class="btn-rechercher">Rechercher</button>
+                    <a th:href="@{/enchere}">
+                        <button type="button" class="btn-annuler">Annuler</button>
+                    </a>
+                </div>
+            </form>
+        </section>
+        
+        <section>
+            <h2>Liste des enchères</h2>
+            <div th:each="enchere : ${encheres}">
+                <a th:href="@{/details(no_article=${enchere.no_article})}" class="article-card">
+                    <img th:src="@{/images/{photo}(photo=${enchere.photo})}" alt="Image de l'article" class="nav-logo" th:if="${enchere.photo != null and enchere.photo != ''}" />
+                    <img src="/images/default.webp" alt="Image par défaut" class="nav-logo" th:if="${enchere.photo == null or enchere.photo == ''}" />
+                    <h3 th:text="${enchere.nom_article}">Nom</h3>
+                    <p class="prix">Prix : <span th:text="${enchere.prix_vente != null ? enchere.prix_vente : enchere.prix_initial}">0</span> point(s)</p>
+                    <p>Fin de l'enchère : <span th:text="${#dates.format(enchere.date_fin_enchere, 'dd/MM/yyyy')}">01/06/202X</span></p>
+                    <p>Vendeur : <span th:text="${enchere.vendeur.pseudo}">vendeur</span></p>
+                </a>
+            </div>
+            <div th:if="${encheres == null or #lists.isEmpty(encheres)}">
+                <p>Aucune enchère trouvée.</p>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+</body>
 </html>

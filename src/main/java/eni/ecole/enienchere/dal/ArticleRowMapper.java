@@ -22,6 +22,7 @@ public class ArticleRowMapper implements RowMapper<ArticleAVendre> {
         article.setStatut(rs.getInt("statut_enchere"));
         article.setPrix_initial(rs.getInt("prix_initial"));
         article.setPrix_vente(rs.getInt("prix_vente"));
+        article.setPhoto(rs.getString("photo"));
         
         // Mapping de la catégorie
         Categorie categorie = new Categorie();
