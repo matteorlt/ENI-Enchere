@@ -149,9 +149,12 @@ public class UtilisateurController {
             Authentication authentication,
             @ModelAttribute Utilisateur utilisateur, Principal principal) {
 
+        Utilisateur utilisateurAModifier = (Utilisateur) principal ;
 
 
-        utilisateurService.update(utilisateur);
+
+
+        utilisateurService.modifUtilisateur(utilisateurAModifier, utilisateur.getNom(),utilisateur.getPrenom(),utilisateur.getEmail(), utilisateur.getTelephone());
 
 
 
