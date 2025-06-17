@@ -109,7 +109,7 @@ public class AjoutPhotoController {
 
         try {
             // Vérifier si l'utilisateur est administrateur
-            Utilisateur utilisateur = utilisateurService.getUtilisateurByPseudo(principal.getName());
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
             if (utilisateur == null || !utilisateur.isAdministrateur()) {
                 return "redirect:/enchere?erreur=acces_refuse";
             }
@@ -178,7 +178,7 @@ public class AjoutPhotoController {
 
         try {
             // Vérifier si l'utilisateur est administrateur
-            Utilisateur utilisateur = utilisateurService.getUtilisateurByPseudo(principal.getName());
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
             if (utilisateur == null || !utilisateur.isAdministrateur()) {
                 redirectAttributes.addFlashAttribute("erreur", "Accès refusé - Droits administrateur requis");
                 return "redirect:/enchere";
@@ -261,7 +261,7 @@ public class AjoutPhotoController {
 
         try {
             // Vérifier si l'utilisateur est administrateur
-            Utilisateur utilisateur = utilisateurService.getUtilisateurByPseudo(principal.getName());
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
             if (utilisateur == null || !utilisateur.isAdministrateur()) {
                 redirectAttributes.addFlashAttribute("erreur", "Accès refusé - Droits administrateur requis");
                 return "redirect:/enchere";

@@ -13,9 +13,9 @@ public class CustomErrorController implements ErrorController {
     public String handleError(HttpServletRequest request, Model model) {
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
         Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
-        
+
         String errorMessage = "Une erreur inattendue s'est produite.";
-        
+
         if (statusCode != null) {
             switch (statusCode) {
                 case 404:
@@ -31,14 +31,14 @@ public class CustomErrorController implements ErrorController {
                     errorMessage = "Une erreur s'est produite (code " + statusCode + ").";
             }
         }
-        
+
         if (exception != null) {
             errorMessage += " Détails : " + exception.getMessage();
         }
-        
+
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("statusCode", statusCode);
-        
+
         return "error";
     }
-} 
+}

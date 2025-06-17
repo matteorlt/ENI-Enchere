@@ -43,7 +43,7 @@ public class GestionVendeurController {
 
         try {
             // Récupérer l'utilisateur connecté
-            Utilisateur utilisateur = utilisateurService.getUtilisateurByPseudo(principal.getName());
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
             if (utilisateur == null) {
                 return "redirect:/connexion";
             }
@@ -108,7 +108,7 @@ public class GestionVendeurController {
 
         try {
             // Vérifier que l'utilisateur est connecté
-            Utilisateur utilisateur = utilisateurService.getUtilisateurByPseudo(principal.getName());
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
             if (utilisateur == null) {
                 redirectAttributes.addFlashAttribute("erreur", "Utilisateur non trouvé");
                 return "redirect:/vendeur/gestion-articles";
@@ -197,7 +197,7 @@ public class GestionVendeurController {
 
         try {
             // Vérifier que l'utilisateur est connecté
-            Utilisateur utilisateur = utilisateurService.getUtilisateurByPseudo(principal.getName());
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
             if (utilisateur == null) {
                 redirectAttributes.addFlashAttribute("erreur", "Utilisateur non trouvé");
                 return "redirect:/vendeur/gestion-articles";
