@@ -100,12 +100,12 @@
 }
 
 .btn-cancel-secondary {
-    background-color: rgba(255, 255, 255, 0.27);
+    background-color: rgb(108, 108, 108);
     color: white;
 }
 
 .btn-cancel-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.14);
+    background-color: rgb(92, 92, 92);
 }
 
 .btn-cancel {

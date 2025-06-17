@@ -57,16 +57,10 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label >Credit :</label>
-            <p data-th-text="*{credit}"></p>
-            <input type="hidden" data-th-field="*{credit}"/>
-        </div>
-
         <div class="button-group">
             <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${#authentication.name})}" class="btn btn-secondary">Modifier mot de passe</a>
             <button type="submit" class="btn btn-primary">Enregistrer</button>
-            <a th:href="@{/mon-profil(pseudo=${#authentication.name})}" class="btn btn-cancel-secondary">Annuler</a>
+            <button th:href="@{/mon-profil(pseudo=${#authentication.name})}" class="btn btn-cancel-secondary">Annuler</button>
 
 <!--            AJOUTER DU JS POUR UNE POP UP DE CONFIRMATION AVANT SUPPRESSION-->
             <a href="/supprimer" class="btn btn-cancel">Supprimer mon compte</a>
