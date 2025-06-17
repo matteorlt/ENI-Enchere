@@ -145,6 +145,7 @@ public class UtilisateurController {
                Authentication authentication,
                Principal principal,
                RedirectAttributes redirectAttributes,
+               Model model,
                @RequestParam("password") @NotBlank String ancienMotDePasse,
                @RequestParam("newPassword") @NotBlank String nouveauMotDePasse,
                @RequestParam("confirmNewPassword") @NotBlank String confirmationMotDePasse) {
@@ -152,19 +153,22 @@ public class UtilisateurController {
            var utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
 
            if (!nouveauMotDePasse.equals(confirmationMotDePasse)) {
-               redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe doit être identique à celui entré dans le champ de confirmation");
+               model.addAttribute("errorMessage", "Le nouveau mot de passe doit être identique à celui entré dans le champ de confirmation");
+               model.addAttribute("utilisateur", utilisateurAModifier);
                return "view-profil-modif-mdp";
            }
 
            // Vérification de l'ancien mot de passe
            if (!passwordEncoder.matches(ancienMotDePasse, utilisateurAModifier.getMot_de_passe())) {
-               redirectAttributes.addFlashAttribute("errorMessage", "Mot de passe incorrect");
+               model.addAttribute("errorMessage", "Mot de passe incorrect");
+               model.addAttribute("utilisateur", utilisateurAModifier);
                return "view-profil-modif-mdp";
            }
 
            // Vérification que le nouveau mot de passe est différent de l'ancien
            if (passwordEncoder.matches(nouveauMotDePasse, utilisateurAModifier.getMot_de_passe())) {
-               redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe et l'ancien sont identiques");
+               model.addAttribute("errorMessage", "Le nouveau mot de passe et l'ancien sont identiques");
+               model.addAttribute("utilisateur", utilisateurAModifier);
                return "view-profil-modif-mdp";
            }
 
@@ -177,11 +181,12 @@ public class UtilisateurController {
 
                 redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
 
-                return "redirect:/mon-profil?pseudo=" + authentication.getName();
+                return "redirect:/mon-profil?pseudo=" + principal.getName();
 
             } catch (Exception e) {
                 logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}",e);
-                redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
+                model.addAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
+                model.addAttribute("utilisateur", utilisateurAModifier);
                 return "view-profil-modif-mdp";
             }
        }
@@ -193,7 +198,6 @@ public class UtilisateurController {
 
         return "view-connexion";
     }
-
 
     @GetMapping("/creer-compte")
     public String registerGet(Model model) {
