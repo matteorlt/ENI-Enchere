@@ -1,48 +1,122 @@
 <!DOCTYPE html>
-<html lang="en"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Ajouter une photo</title>
+    <link rel="stylesheet" data-th-href="@{css/photo.css}">
 </head>
-
-<body>
-<header>
-    <div>
-        <span>(Logo) Eni-Encheres</span>
-        <nav>
-            <a th:href="@{/}">Accueil</a>
-            <a th:href="@{/vendre}">Vendre un article</a>
-            <a th:href="@{/profil}">Mon profil</a>
-            <a th:href="@{/logout}">Se déconnecter</a>
-
-        </nav>
-    </div>
-
-    <div>
-        <p>Date du jour : <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></span></p>
-        <p>Participant : <span th:text="${participant}"></span></p>
-    </div>
-</header>
-
-
 <main>
-    <h2>Ajouter une photo</h2>
-    <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data">
-        <label>Photo de l'article :</label>
+    <div class="container">
+        <h1>Ajouter une photo à votre article</h1>
+        
+        <!-- Messages d'erreur et de succès -->
+        <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
+        <div th:if="${succes}" class="alert alert-success" th:text="${succes}"></div>
 
-        <input type="file" name="photo" accept="image/*" onchange="previewImage" required>
+        <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data" class="photo-form">
+            
+            <div class="form-group">
+                <label for="articleId">Article :</label>
+                <select id="articleId" name="articleId" required>
+                    <option value="">Sélectionnez un article</option>
+                    <option th:each="article : ${articles}" 
+                            th:value="${article.no_article}" 
+                            th:text="${article.nom_article}">
+                    </option>
+                </select>
+            </div>
 
-        <br><br>
+            <div class="form-group">
+                <label for="photo">Photo de l'article :</label>
+                <input type="file" 
+                       id="photo" 
+                       name="photo" 
+                       accept="image/jpeg,image/jpg,image/png" 
+                       onchange="previewImage(event)" 
+                       required>
+                <small class="form-text">
+                    Formats acceptés : JPEG, JPG, PNG. Taille maximum : 5MB
+                </small>
+            </div>
 
-        <img src="#" alt="photo" style="max-width: 100px; display: block;">
+            <!-- Prévisualisation de l'image -->
+            <div class="form-group preview-container">
+                <label>Prévisualisation :</label>
+                <img id="imagePreview" 
+                     src="#" 
+                     alt="Prévisualisation de la photo" 
+                     class="image-preview" 
+                     style="display: none;">
+                <div id="noPreview" class="no-preview">
+                    Aucune image sélectionnée
+                </div>
+            </div>
 
-        <br><br>
-        <button type="submit">Enregistrer la photo</button>
-        <button type="button">Annuler</button>
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer la photo
+                </button>
+                <a th:href="@{/enchere}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+        </form>
+    </div>
 
-    </form>
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('imagePreview');
+            const noPreview = document.getElementById('noPreview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    noPreview.style.display = 'none';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+                noPreview.style.display = 'block';
+            }
+        }
+        
+        // Validation côté client
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('photo');
+            const articleSelect = document.getElementById('articleId');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Veuillez sélectionner une photo');
+                return;
+            }
+            
+            if (!articleSelect.value) {
+                e.preventDefault();
+                alert('Veuillez sélectionner un article');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file.size > maxSize) {
+                e.preventDefault();
+                alert('La taille du fichier ne doit pas dépasser 5MB');
+                return;
+            }
+            
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                e.preventDefault();
+                alert('Seuls les fichiers JPEG, JPG et PNG sont autorisés');
+                return;
+            }
+        });
+    </script>
 </main>
-</body>
 </html>
