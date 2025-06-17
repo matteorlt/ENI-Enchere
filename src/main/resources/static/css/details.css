@@ -190,3 +190,125 @@ body {
     color: #dc3545;
     font-size: 1.1em;
 }
+.article-photo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.article-photo-large {
+    max-width: 400px;
+    max-height: 300px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.article-photo-large.default-image {
+    opacity: 0.7;
+}
+
+.article-image {
+    max-width: 200px;
+    max-height: 150px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.article-image.default-image {
+    opacity: 0.6;
+}
+
+.credit-info {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.credit-label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.credit-value {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.1em;
+}
+
+.montant-info {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.btn:disabled {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.enchere-terminee {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 2px solid #dee2e6;
+}
+
+.enchere-terminee-titre {
+    color: #495057;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.gagnant-card {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+}
+
+.gagnant-card h4 {
+    color: #155724;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.gagnant-pseudo {
+    font-size: 1.2em;
+    color: #155724;
+    margin: 10px 0;
+}
+
+.prix-final {
+    font-size: 1.1em;
+    color: #155724;
+    margin: 10px 0;
+}
+
+.pas-de-gagnant .alert {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    color: #856404;
+}
+
+.pas-de-gagnant h4 {
+    color: #856404;
+    margin-bottom: 10px;
+}
+
+.statut-termine-detail {
+    font-weight: bold;
+    color: #dc3545;
+    background-color: #f8d7da;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
+}
