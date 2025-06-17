@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestion de mes articles</title>
+    <link rel="stylesheet" data-th-href="@{/css/gestion-enchere.css}"/>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="gestion-container">
+        <div class="header-section">
+            <h1 class="page-title">📦 Gestion de mes articles</h1>
+            <p class="page-subtitle">Gérez vos articles en vente</p>
+        </div>
+
+        <!-- Messages d'alerte -->
+        <div th:if="${succes}" class="alert alert-success" th:text="${succes}"></div>
+        <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
+        <div th:if="${info}" class="alert alert-info" th:text="${info}"></div>
+
+        <!-- Section de filtrage -->
+        <div class="filter-section">
+            <h3>🔍 Filtres de recherche</h3>
+            <form method="get" th:action="@{/vendeur/gestion-articles}" class="filter-form">
+                <div class="filter-group">
+                    <label for="recherche">Nom de l'article :</label>
+                    <input type="text" id="recherche" name="recherche" th:value="${recherche}" 
+                           placeholder="Rechercher par nom...">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="statut">Statut :</label>
+                    <select id="statut" name="statut">
+                        <option value="">Tous les statuts</option>
+                        <option value="debut" th:selected="${statut == 'debut'}">💛 Pas commencé</option>
+                        <option value="actif" th:selected="${statut == 'actif'}">💚 En cours</option>
+                        <option value="termine" th:selected="${statut == 'termine'}">🔴 Terminé</option>
+                    </select>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+                    <a th:href="@{/vendeur/gestion-articles}" class="btn btn-secondary">🔄 Réinitialiser</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Section des statistiques -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <h4>📊 Statistiques de mes articles</h4>
+                <p><strong th:text="${#lists.size(articles)}">0</strong> articles au total</p>
+                <p><strong th:text="${#lists.size(articles.?[date_debut_enchere > #dates.createNow()])}">0</strong> pas commencés</p>
+                <p><strong th:text="${#lists.size(articles.?[date_debut_enchere <= #dates.createNow() and date_fin_enchere > #dates.createNow()])}">0</strong> en cours</p>
+                <p><strong th:text="${#lists.size(articles.?[date_fin_enchere <= #dates.createNow()])}">0</strong> terminés</p>
+                <p><strong th:text="${#lists.size(articles.?[photo != null and photo != ''])}">0</strong> avec photos</p>
+            </div>
+        </div>
+        
+        <!-- Vérification si des articles existent -->
+        <div th:if="${articles == null or #lists.isEmpty(articles)}" class="no-articles">
+            <div class="alert alert-info">
+                <h3>📦 Aucun article trouvé</h3>
+                <p th:if="${recherche != null or statut != null}">
+                    Aucun de vos articles ne correspond aux critères de recherche.
+                </p>
+                <p th:unless="${recherche != null or statut != null}">
+                    Vous n'avez pas encore créé d'articles.
+                </p>
+                <a th:href="@{/vendre}" class="btn btn-primary">➕ Créer un nouvel article</a>
+            </div>
+        </div>
+        
+        <!-- Liste des articles -->
+        <div th:unless="${articles == null or #lists.isEmpty(articles)}" class="articles-grid">
+            <div th:each="article : ${articles}" class="article-card">
+                
+                <!-- Informations actuelles de l'article -->
+                <div class="article-info">
+                    <div class="article-header">
+                        <h3 th:text="${article.nom_article}">Nom de l'article</h3>
+                        <span class="article-id">#<span th:text="${article.no_article}">ID</span></span>
+                    </div>
+                    <p class="article-description" th:text="${article.description}">Description</p>
+                    <div class="article-details">
+                        <span class="prix">💰 <strong th:text="${article.prix_initial}">0</strong> points</span>
+                        <span class="categorie" th:text="${article.categorie.libelle}">Catégorie</span>
+                        
+                        <!-- Statut dynamique basé sur les dates -->
+                        <th:block th:if="${article.date_debut_enchere > #dates.createNow()}">
+                            <span class="statut statut-pas-commence">💛 Pas commencé</span>
+                        </th:block>
+                        <th:block th:unless="${article.date_debut_enchere > #dates.createNow()}">
+                            <th:block th:if="${article.date_fin_enchere > #dates.createNow()}">
+                                <span class="statut statut-actif">💚 En cours</span>
+                            </th:block>
+                            <th:block th:unless="${article.date_fin_enchere > #dates.createNow()}">
+                                <span class="statut statut-termine">🔴 Terminé</span>
+                            </th:block>
+                        </th:block>
+                        
+                        <span class="dates">
+                            📅 Du <span th:text="${#dates.format(article.date_debut_enchere, 'dd/MM/yyyy')}">01/01/2024</span>
+                            au <span th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy')}">31/12/2024</span>
+                        </span>
+                    </div>
+                    
+                    <!-- Photo actuelle -->
+                    <div class="article-photo">
+                        <img th:if="${article.photo != null and article.photo != ''}" 
+                             th:src="@{'/images/articles/' + ${article.no_article}}"
+                             th:alt="${article.nom_article}"
+                             class="current-photo"/>
+                        <div th:unless="${article.photo != null and article.photo != ''}" class="no-photo">
+                            📷 Aucune photo
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Formulaire de modification -->
+                <div class="modification-section">
+                    <h4>✏️ Modifier l'article</h4>
+                    <form th:action="@{'/vendeur/gestion-articles/modifier/' + ${article.no_article}}" 
+                          method="post" 
+                          enctype="multipart/form-data" 
+                          class="modification-form">
+                        
+                        <div class="form-group">
+                            <label for="nom">Nom de l'article :</label>
+                            <input type="text" 
+                                   th:id="'nom-' + ${article.no_article}" 
+                                   name="nom" 
+                                   th:value="${article.nom_article}"
+                                   maxlength="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Description :</label>
+                            <textarea th:id="'description-' + ${article.no_article}" 
+                                      name="description" 
+                                      rows="3" 
+                                      maxlength="500" 
+                                      th:text="${article.description}"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prix">Prix initial :</label>
+                            <input type="number" 
+                                   th:id="'prix-' + ${article.no_article}" 
+                                   name="prix" 
+                                   th:value="${article.prix_initial}"
+                                   min="1" 
+                                   max="10000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="photo">Nouvelle photo :</label>
+                            <input type="file" 
+                                   th:id="'photo-' + ${article.no_article}" 
+                                   name="photo" 
+                                   accept="image/jpeg,image/jpg,image/png">
+                            <small class="form-help">Formats acceptés : JPEG, JPG, PNG (max 5MB)</small>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">💾 Sauvegarder</button>
+                            <a th:href="@{'/details?no_article=' + ${article.no_article}}" 
+                               class="btn btn-info" target="_blank">👁️ Voir l'article</a>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Section de suppression (seulement si pas commencé) -->
+                <div th:if="${article.date_debut_enchere > #dates.createNow()}" class="danger-section">
+                    <h4>⚠️ Zone de danger</h4>
+                    <p>Vous pouvez supprimer cet article car l'enchère n'a pas encore commencé.</p>
+                    <form th:action="@{'/vendeur/gestion-articles/supprimer/' + ${article.no_article}}" 
+                          method="post" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.')">
+                        <button type="submit" class="btn btn-danger">🗑️ Supprimer l'article</button>
+                    </form>
+                </div>
+                
+                <!-- Message si suppression impossible -->
+                <div th:unless="${article.date_debut_enchere > #dates.createNow()}" class="info-section">
+                    <p class="info-message">
+                        ℹ️ Impossible de supprimer cet article car l'enchère a déjà commencé ou est terminée.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bouton pour créer un nouvel article -->
+        <div class="action-section">
+            <a th:href="@{/vendre}" class="btn btn-primary btn-large">➕ Créer un nouvel article</a>
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+</body>
+</html> 
