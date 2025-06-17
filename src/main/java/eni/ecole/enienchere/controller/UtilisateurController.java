@@ -110,7 +110,6 @@ public class UtilisateurController {
 
     }
 
-
     @GetMapping("/mon-profil/modifier")
     public String modifierProfilUtilisateur(
             @RequestParam("pseudo") @NotBlank String pseudo,
@@ -123,7 +122,6 @@ public class UtilisateurController {
             if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
 
                 try {
-
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                     int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
                     Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
@@ -132,81 +130,112 @@ public class UtilisateurController {
                     return "view-profil-modif";
                 } catch (Exception e) {
                     logger.error("Erreur lors du chargement du formulaire de modification: {}");
+                    return "redirect:/accueil";
+                }
+            }
+        }
+        return "redirect:/accueil";
+    }
+
+    @PostMapping("/mon-profil/modifier")
+    public String mettreAJourUtilisateur(
+            Authentication authentication,
+            @ModelAttribute Utilisateur utilisateur, Model model, Principal principal) {
+
+        try {
+// Mise à jour en base de données
+            Utilisateur utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName()) ;
+            utilisateurService.modifUtilisateur(utilisateurAModifier, utilisateur.getNom(),utilisateur.getPrenom(),utilisateur.getEmail(), utilisateur.getTelephone());
+            return "redirect:/mon-profil?pseudo=" + authentication.getName();
+
+        } catch (Exception e) {
+            logger.error("Erreur lors de la mise à jour de l'utilisateur: {}",e);
+            model.addAttribute("utilisateur", utilisateur);
+            model.addAttribute("errorMessage", "Erreur lors de la mise à jour du profil");
+            return "view-profil-modif";
+        }
+    }
+
+
+    @GetMapping("/mon-profil/modifier-mot-de-passe")
+    public String modifierMdp(
+            @RequestParam("pseudo") @NotBlank String pseudo,
+            Model model,
+            Authentication authentication) {
+
+        if(authentication!=null) {
+            var principal = authentication.getPrincipal();
+
+            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
+
+                try {
+                    model.addAttribute("utilisateur", principal);
+                    return "view-profil-modif-mdp";
+                } catch (Exception e) {
+                    logger.error("Erreur lors du chargement du formulaire de modification de mot de passe: {}");
                     return "redirect:/";
                 }
             }
         }
         return "redirect:/";
+    }}
 
 
 
-
-    }
-
-    @PostMapping("/mon-profil/modifier")
-    public String mettreAJourUtilisateur(
-
+    @PostMapping("/mon-profil/modifier-mot-de-passe")
+    public String mettreAJourMdp(
+            @RequestParam("pseudo") @NotBlank String pseudo,
+            @RequestParam("password") @NotBlank String ancienMotDePasse,
+            @RequestParam("newPassword") @NotBlank String nouveauMotDePasse,
+            @RequestParam("confirmNewPassword") @NotBlank String confirmationMotDePasse,
+            @ModelAttribute Utilisateur utilisateur,
             Authentication authentication,
-            @ModelAttribute Utilisateur utilisateur, Principal principal) {
-
-        Utilisateur utilisateurAModifier = (Utilisateur) principal ;
-
+            RedirectAttributes redirectAttributes,
+            Model model, Principal principal) {
 
 
+                Utilisateur utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName()) ;
 
-        utilisateurService.modifUtilisateur(utilisateurAModifier, utilisateur.getNom(),utilisateur.getPrenom(),utilisateur.getEmail(), utilisateur.getTelephone());
+                if (!nouveauMotDePasse.equals(confirmationMotDePasse)) {
+            model.addAttribute("utilisateur", utilisateur);
+            model.addAttribute("errorMessage", "Les nouveaux mots de passe ne correspondent pas");
+            return "view-profil-modif-mdp";
+        }
 
+        // Vérification de l'ancien mot de passe
+        if (!passwordEncoder.matches(ancienMotDePasse, utilisateur.getMot_de_passe())) {
+            model.addAttribute("utilisateur", utilisateur);
+            model.addAttribute("errorMessage", "L'ancien mot de passe est incorrect");
+            return "view-profil-modif-mdp";
+        }
 
+        // Vérification que le nouveau mot de passe est différent de l'ancien
+        if (passwordEncoder.matches(nouveauMotDePasse, utilisateur.getMot_de_passe())) {
+            model.addAttribute("utilisateur", utilisateur);
+            model.addAttribute("errorMessage", "Le nouveau mot de passe doit être différent de l'ancien");
+            return "view-profil-modif-mdp";
+        }
 
+        try {
+            // Encodage du nouveau mot de passe
+            String nouveauMotDePasseEncode = passwordEncoder.encode(nouveauMotDePasse);
 
+            // Mise à jour en base de données
+            utilisateurService.updateMdp(utilisateurAModifier, nouveauMotDePasseEncode);
 
-        return "redirect:/mon-profil?pseudo=" + authentication.getName();
+            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}");
+            redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
+
+            return "redirect:/mon-profil?pseudo=" + pseudo;
+
+        } catch (Exception e) {
+            logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}");
+            model.addAttribute("utilisateur", utilisateur);
+            model.addAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
+            return "view-profil-modif-mdp";
+        }
     }
-//
-//    @GetMapping("/mon-profil/modifier-mot-de-passe")
-//    public String modifierMdp(
-//            @RequestParam("pseudo") @NotBlank String pseudo,
-//            Model model,
-//            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
-//
-//        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-//            return "redirect:/accueil";
-//        }
-//
-//        try {
-//            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-//            model.addAttribute("utilisateur", utilisateur);
-//            return "view-profil-modif-mdp";
-//        } catch (Exception e) {
-//            logger.error("Erreur lors du chargement du formulaire de modification de mot de passe: {}", pseudo, e);
-//            return "redirect:/accueil";
-//        }
-//    }
-//
 
-    /// /    @PostMapping("/mon-profil/modifier-mot-de-passe")
-    /// /    public String mettreAJourMdp(
-    /// /            @RequestParam("pseudo") @NotBlank String pseudo,
-    /// /            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte,
-    /// /            @RequestParam("mot_de_passe") @NotBlank @Size(min = 8) String motDePasse,
-    /// /            RedirectAttributes redirectAttributes) {
-    /// /
-    /// /        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-    /// /            return "redirect:/accueil";
-    /// /        }
-    /// /
-    /// /        try {
-    /// /            utilisateurService.updateMdp(utilisateurConnecte, motDePasse);
-    /// /            logger.info("Mot de passe mis à jour avec succès pour l'utilisateur: {}", pseudo);
-    /// /            redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
-    /// /        } catch (Exception e) {
-    /// /            logger.error("Erreur lors de la mise à jour du mot de passe: {}", pseudo, e);
-    /// /            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
-    /// /        }
-    /// /
-    /// /        return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
-    /// /    }
-//
     @GetMapping("/connexion")
     String login(Model model) {
         logger.info("Affichage du formulaire login");
@@ -241,8 +270,7 @@ public class UtilisateurController {
     /// /    }
 
     @PostMapping("/creer-compte")
-    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request, Principal principal) {
-
+    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request) {
         var password = utilisateur.getMot_de_passe();
 
         utilisateur.setMot_de_passe(passwordEncoder.encode(password));
