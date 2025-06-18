@@ -10,8 +10,9 @@
 <main>
     <form class="form-container"
           method="post"
-          data-th-object="${utilisateur}"
-          data-th-action="@{/connexion}">
+
+
+    data-th-action="@{/connexion}">
         <h1>Se connecter</h1>
 
         <div class="form-group">
@@ -21,14 +22,14 @@
 
         <div class="form-group">
             <label for="inputMdp">Mot de passe :</label>
-            <input type="password" id="inputMdp" name="password" required/>
+            <input type="text" id="inputMdp" name="password" required/>
         </div>
 
         <div class="button-group">
-            <button type="submit" class="btn btn-primary">Se connecter</button>
+            <button type="submit" class="btn btn-primary" >Se connecter</button>
             <a href="/" >Mot de passe oublié</a>
         </div>
-
+        <button type="submit">Se connecter1</button>
         <div>
             <a href="/creer-compte" class="btn btn-secondary">Créer un compte</a>
         </div>
