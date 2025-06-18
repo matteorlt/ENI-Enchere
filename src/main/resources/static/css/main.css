@@ -742,7 +742,439 @@ a:hover {
 }
 
 /* ========================================
-   10. DÉTAILS D'ENCHÈRE
+   10. GESTION DES ENCHÈRES (ADMIN)
+   ======================================== */
+
+/* Container principal */
+.gestion-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+}
+
+.gestion-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Filtres de recherche */
+.gestion-filters {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.gestion-filters__title {
+    color: #495057;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.gestion-filters__form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.gestion-filters__group {
+    display: flex;
+    flex-direction: column;
+}
+
+.gestion-filters__label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.gestion-filters__input,
+.gestion-filters__select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+.gestion-filters__input:focus,
+.gestion-filters__select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.gestion-filters__buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+}
+
+/* Statistiques */
+.gestion-stats {
+    margin-bottom: 2rem;
+}
+
+.gestion-stats__card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.gestion-stats__title {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.gestion-stats__item {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    opacity: 0.95;
+}
+
+.gestion-stats__item strong {
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+/* Grille des articles */
+.gestion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Cartes d'articles */
+.article-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    border-color: #667eea;
+}
+
+/* En-tête de l'article */
+.article-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.article-header h3 {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin: 0;
+    font-weight: 700;
+    flex: 1;
+}
+
+.article-id {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Informations de l'article */
+.article-info {
+    margin-bottom: 2rem;
+}
+
+.article-description {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.article-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.article-details span {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 2px solid transparent;
+}
+
+.prix {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.categorie {
+    background: #e3f2fd;
+    color: #1565c0;
+    border-color: #bbdefb;
+}
+
+.vendeur {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    border-color: #ce93d8;
+}
+
+/* Statuts */
+.statut-actif {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.statut-termine {
+    background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+    color: white;
+}
+
+.statut-pas-commence {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: white;
+}
+
+.article-dates {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    border-left: 4px solid #667eea;
+}
+
+.article-dates small {
+    color: #6c757d;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+/* Photo actuelle */
+.photo-current {
+    margin-bottom: 2rem;
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 2px dashed #dee2e6;
+}
+
+.photo-current h4 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.article-photo {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.article-photo:hover {
+    transform: scale(1.05);
+}
+
+.default-photo {
+    opacity: 0.6;
+    filter: grayscale(100%);
+}
+
+.photo-status {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.has-photo {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.no-photo-status {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Section de modification */
+.modification-section {
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #e3f2fd 0%, #e8f5e8 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 2px solid #e3f2fd;
+}
+
+.modification-section h4 {
+    color: #1565c0;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.modification-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    padding: 0.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+/* Prévisualisation */
+.preview-container {
+    margin-top: 1rem;
+}
+
+.preview-image {
+    max-width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Actions dangereuses */
+.danger-section {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 2px solid #f5c6cb;
+    margin-bottom: 1rem;
+}
+
+.danger-section h4 {
+    color: #721c24;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.delete-form {
+    margin: 0;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+/* Pas d'articles */
+.gestion-no-articles {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+/* Boutons de navigation */
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+}
+
+/* ========================================
+   11. DÉTAILS D'ENCHÈRE
    ======================================== */
 
 .detail-container {
@@ -1523,6 +1955,55 @@ a:hover {
     
     .profil-main {
         min-height: unset;
+    }
+
+    /* Styles responsive pour la gestion des enchères */
+    .gestion-container {
+        padding: 1rem;
+    }
+
+    .gestion-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .article-card {
+        padding: 1.5rem;
+    }
+
+    .article-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        text-align: left;
+    }
+
+    .article-details {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modification-section {
+        padding: 1.5rem;
+    }
+
+    .navigation-buttons {
+        flex-direction: column;
+    }
+
+    .gestion-filters {
+        padding: 1.5rem;
+    }
+
+    .gestion-filters__buttons {
+        flex-direction: column;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .danger-section {
+        padding: 1rem;
     }
 }
 
