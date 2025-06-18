@@ -34,13 +34,11 @@ public class UtilisateurController {
     private final PasswordEncoder passwordEncoder;
 
     private final UtilisateurService utilisateurService;
-    private final AdresseDAOImpl adresseDAOImpl;
 
     public UtilisateurController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UtilisateurService utilisateurService, AdresseDAOImpl adresseDAOImpl) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.utilisateurService = utilisateurService;
-        this.adresseDAOImpl = adresseDAOImpl;
     }
 
 
