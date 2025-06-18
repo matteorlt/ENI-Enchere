@@ -329,6 +329,16 @@ footer p:hover {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    /* Masquer le titre du site sur mobile */
+    .layout-header .navbar-brand span {
+        display: none;
+    }
+    
+    /* Réduire la marge du logo quand le texte est masqué */
+    .layout-header .nav-logo {
+        margin-right: 0;
+    }
+    
     header h1 {
         font-size: 1.5rem;
         padding: 0 0.5rem;

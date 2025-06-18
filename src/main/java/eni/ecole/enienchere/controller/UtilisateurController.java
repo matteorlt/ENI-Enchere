@@ -86,14 +86,13 @@ public class UtilisateurController {
             @RequestParam("pseudo") @NotBlank String pseudo,
             Model model, Authentication authentication) {
 
-
         if (authentication != null) {
-            var principal = authentication.getPrincipal();
-
-            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
-
+            // Utiliser getName() qui retourne le username (pseudo)
+            String pseudoConnecte = authentication.getName();
+            
+            // Vérifier que l'utilisateur connecté accède à son propre profil
+            if (pseudo.equals(pseudoConnecte)) {
                 try {
-
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                     int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
                     Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
@@ -101,13 +100,12 @@ public class UtilisateurController {
                     model.addAttribute("adresse", adresse);
                     return "view-mon-profil";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification: {}");
+                    logger.error("Erreur lors du chargement du profil pour: " + pseudo, e);
                     return "redirect:/";
                 }
             }
         }
         return "redirect:/";
-
     }
 
 
@@ -118,12 +116,10 @@ public class UtilisateurController {
             Authentication authentication) {
 
         if (authentication != null) {
-            var principal = authentication.getPrincipal();
-
-            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
-
+            String pseudoConnecte = authentication.getName();
+            
+            if (pseudo.equals(pseudoConnecte)) {
                 try {
-
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                     int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
                     Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
@@ -131,14 +127,12 @@ public class UtilisateurController {
                     model.addAttribute("adresse", adresse);
                     return "view-profil-modif";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification: {}");
+                    logger.error("Erreur lors du chargement du formulaire de modification pour: " + pseudo, e);
                     return "redirect:/";
                 }
             }
         }
         return "redirect:/";
-
-
     }
 
     @PostMapping("/mon-profil/modifier")
@@ -162,17 +156,15 @@ public class UtilisateurController {
             Model model,
             Authentication authentication) {
         if (authentication != null) {
-            var principal = authentication.getPrincipal();
-
-            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
-
-
+            String pseudoConnecte = authentication.getName();
+            
+            if (pseudo.equals(pseudoConnecte)) {
                 try {
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                     model.addAttribute("utilisateur", utilisateur);
                     return "view-profil-modif-mdp";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification de mot de passe: {");
+                    logger.error("Erreur lors du chargement du formulaire de modification de mot de passe pour: " + pseudo, e);
                     return "redirect:/";
                 }
             }
