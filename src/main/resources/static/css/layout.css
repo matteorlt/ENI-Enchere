@@ -295,4 +295,47 @@ nav a:focus,
 .nav-logo {
     height: 40px;
     margin-right: 10px;
-} 
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.user-info span:first-child {
+    margin-right: 5px;
+}
+
+.user-info span:last-child {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.admin-badge {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-left: 10px;
+    box-shadow: 0 2px 8px rgba(255,107,107,0.3);
+}
+
+.admin-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    padding: 8px 15px !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+    box-shadow: 0 3px 10px rgba(102,126,234,0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.admin-link:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(102,126,234,0.5) !important;
+}

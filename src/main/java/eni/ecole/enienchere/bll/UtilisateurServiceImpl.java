@@ -46,7 +46,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public void updateAdresse(Adresse adresse, String rue, String cp, String ville) {
+    public void updateAdresse(Utilisateur utilisateur, String rue, String cp, String ville) {
+        Adresse adresse=utilisateur.getAdresse();
         adresse.setRue(rue);
         adresse.setCode_postal(cp);
         adresse.setVille(ville);
@@ -95,5 +96,10 @@ utilisateur.setTelephone(telephone);
         }
 
 
+    }
+
+    @Override
+    public void updateCredit(String pseudo, int nouveauCredit) {
+        utilisateurDAO.updateCredit(pseudo, nouveauCredit);
     }
 }

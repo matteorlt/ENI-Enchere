@@ -9,7 +9,7 @@ document.getElementById("inputMdp").addEventListener("input", function () {
     let forceMdpFort = document.getElementById("fort")
     let regex = /^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$/;
 
-    forceMdpFaible.style.visibility = "visible";
+        forceMdpFaible.style.visibility = "visible";
 
     if (Mdp.value.match(regex)) {
         phraseMdp.classList.remove("red");
@@ -25,6 +25,10 @@ document.getElementById("inputMdp").addEventListener("input", function () {
             forceMdpFort.style.visibility = "visible";
         }
     }
+    else {
+        forceMdpMoyen.style.visibility = "hidden";
+        forceMdpFort.style.visibility = "hidden";
+    }
 })
 
 document.getElementById("inputConfirmMdp").addEventListener("input", function () {
@@ -37,9 +41,10 @@ document.getElementById("inputConfirmMdp").addEventListener("input", function ()
     }
 })
 
+
 document.getElementById("form").addEventListener("input", function () {
     let buttonEnable = document.getElementById("btnSubmit");
-    let champValide = document.querySelectorAll(":valid");
+    let champValide = document.querySelectorAll(".input-field:valid");
     if (champValide.length == 8) {
         buttonEnable.classList.remove("disabled");
     }

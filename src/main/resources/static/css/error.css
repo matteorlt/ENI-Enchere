@@ -1,0 +1,32 @@
+.error-container {
+    text-align: center;
+    padding: 50px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.error-code {
+    font-size: 72px;
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+.error-message {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
+}
+.error-details {
+    color: #666;
+    margin-bottom: 30px;
+}
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.back-button:hover {
+    background-color: #0056b3;
+}

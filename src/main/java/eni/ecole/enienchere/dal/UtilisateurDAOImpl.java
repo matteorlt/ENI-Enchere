@@ -25,6 +25,7 @@ public class UtilisateurDAOImpl implements UtilisateurDAO{
     private final static String FIND_BY_PSEUDO = "SELECT * from UTILISATEURS join ROLES on UTILISATEURS.administrateur=ROLES.IS_ADMIN WHERE pseudo = ?";
 
     private final static String UPDATE = "UPDATE UTILISATEURS SET nom=:nom, prenom=:prenom, email=:email, telephone=:telephone, mot_de_passe=:mot_de_passe, no_adresse=:no_adresse WHERE pseudo = :pseudo";
+    private final static String UPDATE_CREDIT = "UPDATE UTILISATEURS SET credit = :credit WHERE pseudo = :pseudo";
     private final static String INSERT = "INSERT INTO UTILISATEURS (pseudo, nom, prenom, email, telephone, mot_de_passe, credit, no_adresse ) values (:pseudo, :nom, :prenom, :email, :telephone, :mot_de_passe, :credit, :no_adresse )";
     private final static String DELETE = "DELETE FROM UTILISATEURS where pseudo=:pseudo";
     private final static String SELECT_ALL = "SELECT * FROM UTILISATEURS";
@@ -118,5 +119,14 @@ public class UtilisateurDAOImpl implements UtilisateurDAO{
 
         namedParameterJdbcTemplate.update(DELETE, namedParameters);
 
+    }
+
+    @Override
+    public void updateCredit(String pseudo, int nouveauCredit) {
+        var namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("pseudo", pseudo);
+        namedParameters.addValue("credit", nouveauCredit);
+
+        namedParameterJdbcTemplate.update(UPDATE_CREDIT, namedParameters);
     }
 }

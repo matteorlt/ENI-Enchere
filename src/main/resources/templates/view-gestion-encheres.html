@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Administration des enchères</title>
+</head>
+<main>
+    <div class="gestion-container">
+        <h1>🛡️ Administration des enchères</h1>
+        <p class="gestion-subtitle">Gestion complète de toutes les enchères de la plateforme</p>
+        
+        <!-- Messages d'erreur et de succès -->
+        <div th:if="${erreur}" class="alert alert--danger" th:text="${erreur}"></div>
+        <div th:if="${succes}" class="alert alert--success" th:text="${succes}"></div>
+        <div th:if="${info}" class="alert alert--info" th:text="${info}"></div>
+        
+        <!-- Filtres de recherche -->
+        <div class="gestion-filters">
+            <h3 class="gestion-filters__title">🔍 Filtres de recherche</h3>
+            <form method="get" th:action="@{/admin/gestion-encheres}" class="gestion-filters__form">
+                <div class="gestion-filters__group">
+                    <label for="recherche" class="gestion-filters__label">Rechercher un article :</label>
+                    <input type="text" 
+                           id="recherche" 
+                           name="recherche" 
+                           th:value="${recherche}" 
+                           placeholder="Nom de l'article..."
+                           class="gestion-filters__input">
+                </div>
+                
+                <div class="gestion-filters__group">
+                    <label for="vendeur" class="gestion-filters__label">Filtrer par vendeur :</label>
+                    <input type="text" 
+                           id="vendeur" 
+                           name="vendeur" 
+                           th:value="${vendeur}" 
+                           placeholder="Pseudo du vendeur..."
+                           class="gestion-filters__input">
+                </div>
+                
+                <div class="gestion-filters__group">
+                    <label for="statut" class="gestion-filters__label">Filtrer par statut :</label>
+                    <select id="statut" name="statut" class="gestion-filters__select">
+                        <option value="">Tous les statuts</option>
+                        <option value="debut" th:selected="${statut == 'debut'}">💛 Pas commencé</option>
+                        <option value="actif" th:selected="${statut == 'actif'}">💚 En cours</option>
+                        <option value="termine" th:selected="${statut == 'termine'}">🔴 Terminé</option>
+                    </select>
+                </div>
+                
+                <div class="gestion-filters__buttons">
+                    <button type="submit" class="btn btn--primary">🔍 Rechercher</button>
+                    <a th:href="@{/admin/gestion-encheres}" class="btn btn--secondary">🔄 Réinitialiser</a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="gestion-stats">
+            <div class="gestion-stats__card">
+                <h4 class="gestion-stats__title">📊 Statistiques</h4>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles)}">0</strong> enchères trouvées</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[date_debut_enchere > #dates.createNow()])}">0</strong> pas commencées</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[date_debut_enchere <= #dates.createNow() and date_fin_enchere > #dates.createNow()])}">0</strong> en cours</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[date_fin_enchere <= #dates.createNow()])}">0</strong> terminées</p>
+                <p class="gestion-stats__item"><strong th:text="${#lists.size(articles.?[photo != null and photo != ''])}">0</strong> avec photos</p>
+            </div>
+        </div>
+        
+        <!-- Vérification si des articles existent -->
+        <div th:if="${articles == null or #lists.isEmpty(articles)}" class="gestion-no-articles">
+            <div class="alert alert--info">
+                <h3>Aucune enchère trouvée</h3>
+                <p th:if="${recherche != null or vendeur != null or statut != null}">
+                    Aucune enchère ne correspond à vos critères de recherche.
+                </p>
+                <p th:unless="${recherche != null or vendeur != null or statut != null}">
+                    Aucune enchère n'existe encore sur la plateforme.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Liste des enchères -->
+        <div th:unless="${articles == null or #lists.isEmpty(articles)}" class="gestion-grid">
+            <div th:each="article : ${articles}" class="article-card">
+                
+                <!-- Informations actuelles de l'article -->
+                <div class="article-info">
+                    <div class="article-header">
+                        <h3 th:text="${article.nom_article}">Nom de l'article</h3>
+                        <span class="article-id">#<span th:text="${article.no_article}">ID</span></span>
+                    </div>
+                    <p class="article-description" th:text="${article.description}">Description</p>
+                    <div class="article-details">
+                        <span class="prix">💰 <strong th:text="${article.prix_initial}">0</strong> points</span>
+                        <span class="categorie" th:text="${article.categorie.libelle}">Catégorie</span>
+                        <span class="vendeur">👤 <strong th:text="${article.vendeur.pseudo}">Vendeur</strong></span>
+                        
+                        <!-- Statut dynamique basé sur les dates -->
+                        <th:block th:if="${article.date_debut_enchere > #dates.createNow()}">
+                            <span class="statut statut-pas-commence">💛 Pas commencé</span>
+                        </th:block>
+                        <th:block th:unless="${article.date_debut_enchere > #dates.createNow()}">
+                            <th:block th:if="${article.date_fin_enchere > #dates.createNow()}">
+                                <span class="statut statut-actif">💚 En cours</span>
+                            </th:block>
+                            <th:block th:unless="${article.date_fin_enchere > #dates.createNow()}">
+                                <span class="statut statut-termine">🔴 Terminé</span>
+                            </th:block>
+                        </th:block>
+                    </div>
+                    <div class="article-dates">
+                        <small>📅 Début : <span th:text="${#dates.format(article.date_debut_enchere, 'dd/MM/yyyy HH:mm')}">Date</span></small><br>
+                        <small>🏁 Fin : <span th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy HH:mm')}">Date</span></small>
+                    </div>
+                </div>
+                
+                <!-- Photo actuelle -->
+                <div class="photo-current">
+                    <h4>📷 Photo actuelle</h4>
+                    <div th:if="${article.photo != null and article.photo != ''}">
+                        <img th:src="@{'/images/articles/' + ${article.no_article}}" 
+                             th:alt="${article.nom_article}"
+                             class="article-photo" />
+                        <div class="photo-status has-photo">✅ Photo présente</div>
+                    </div>
+                    <div th:unless="${article.photo != null and article.photo != ''}" class="no-photo">
+                        <img src="/images/default.webp" 
+                             alt="Aucune photo" 
+                             class="article-photo default-photo" />
+                        <div class="photo-status no-photo-status">❌ Aucune photo</div>
+                    </div>
+                </div>
+                
+                <!-- Formulaire de modification -->
+                <div class="modification-section">
+                    <h4>✏️ Modifier l'enchère</h4>
+                    
+                    <form th:action="@{'/admin/gestion-encheres/modifier/' + ${article.no_article}}" 
+                          method="post" 
+                          enctype="multipart/form-data" 
+                          class="modification-form">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label th:for="'nom-' + ${article.no_article}">Nom de l'article :</label>
+                                <input type="text" 
+                                       th:id="'nom-' + ${article.no_article}"
+                                       name="nom" 
+                                       th:value="${article.nom_article}"
+                                       class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label th:for="'prix-' + ${article.no_article}">Prix initial (points) :</label>
+                                <input type="number" 
+                                       th:id="'prix-' + ${article.no_article}"
+                                       name="prix" 
+                                       th:value="${article.prix_initial}"
+                                       min="1"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label th:for="'description-' + ${article.no_article}">Description :</label>
+                            <textarea th:id="'description-' + ${article.no_article}"
+                                      name="description" 
+                                      rows="3"
+                                      class="form-control"
+                                      th:text="${article.description}"></textarea>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label th:for="'photo-' + ${article.no_article}">Nouvelle photo :</label>
+                                <input type="file" 
+                                       th:id="'photo-' + ${article.no_article}"
+                                       name="photo" 
+                                       accept="image/jpeg,image/jpg,image/png" 
+                                       th:onchange="'previewImage(event, ' + ${article.no_article} + ')'"
+                                       class="form-control">
+                                <small class="form-text">📎 Formats : JPEG, JPG, PNG • Max : 5MB</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Prévisualisation -->
+                        <div class="preview-container">
+                            <img th:id="'preview-' + ${article.no_article}" 
+                                 src="#" 
+                                 alt="Prévisualisation" 
+                                 class="preview-image" 
+                                 style="display: none;">
+                        </div>
+                        
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">
+                                ✅ Sauvegarder les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Actions dangereuses -->
+                <div class="danger-section">
+                    <h4>⚠️ Actions dangereuses</h4>
+                    <form th:action="@{'/admin/gestion-encheres/supprimer/' + ${article.no_article}}" 
+                          method="post" 
+                          class="delete-form">
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Supprimer définitivement l'enchère
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons de navigation -->
+        <div class="navigation-buttons">
+            <a th:href="@{/enchere}" class="btn btn-secondary">⬅️ Retour aux enchères</a>
+            <a th:href="@{/admin/gestion-encheres}" class="btn btn-info">🔄 Actualiser</a>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(event, articleId) {
+            const input = event.target;
+            const preview = document.getElementById('preview-' + articleId);
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // Validation des formulaires
+        document.querySelectorAll('.modification-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const fileInput = this.querySelector('input[type="file"]');
+                
+                if (fileInput.files && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    
+                    if (file.size > maxSize) {
+                        e.preventDefault();
+                        alert('⚠️ La taille du fichier ne doit pas dépasser 5MB');
+                        return;
+                    }
+                    
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        e.preventDefault();
+                        alert('⚠️ Seuls les fichiers JPEG, JPG et PNG sont autorisés');
+                        return;
+                    }
+                }
+            });
+        });
+
+        // Confirmation personnalisée pour la suppression
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const articleName = this.closest('.article-card').querySelector('h3').textContent;
+                const confirmation = prompt(
+                    `⚠️ SUPPRESSION DÉFINITIVE ⚠️\n\n` +
+                    `Vous êtes sur le point de supprimer l'enchère :\n"${articleName}"\n\n` +
+                    `Cette action est IRRÉVERSIBLE !\n\n` +
+                    `Pour confirmer, tapez exactement : SUPPRIMER`
+                );
+                
+                if (confirmation === 'SUPPRIMER') {
+                    this.submit();
+                } else if (confirmation !== null) {
+                    alert('❌ Suppression annulée - Confirmation incorrecte');
+                }
+            });
+        });
+    </script>
+</main>
+</html> 

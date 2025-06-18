@@ -15,14 +15,15 @@ public interface UtilisateurService extends UserDetailsService {
 
     void updateMdp(Utilisateur utilisateur, String mot_de_passe);
 
-    void updateAdresse(Adresse adresse, String rue, String cp, String ville);
+    void updateAdresse(Utilisateur utilisateur, String rue, String cp, String ville);
 
     void modifUtilisateur(Utilisateur utilisateur, String nom, String prenom, String email, String telephone);
-
 
     String enregistrerUnUtilisateur(Utilisateur utilisateur);
 
     void enregistrerUneAdresse(Adresse adresse);
+
+    void updateCredit(String pseudo, int nouveauCredit);
 
 
 }
