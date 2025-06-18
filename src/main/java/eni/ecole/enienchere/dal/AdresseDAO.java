@@ -10,5 +10,7 @@ public interface AdresseDAO {
     void create(Adresse adresse);
     Adresse read(int no_adresse);
     List<Adresse> readAll();
+    List<Adresse> getAdressesENI();
     void update(Adresse adresse);
-    void delete(int no_adresse);}
+    void delete(int no_adresse);
+}

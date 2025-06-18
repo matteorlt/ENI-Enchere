@@ -1,54 +1,60 @@
 <!DOCTYPE html>
-<html lang="en"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+<html lang="fr"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='profil')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Modifier mon profil</title>
+    <title>Modifier mon mot de passe</title>
 </head>
 <body>
 <main>
-    <form class="form-container" id="form" data-th-action="@{/mon-profil/modifier-mot-de-passe(pseudo=${pseudo})}"
-          method="post">
-        <h1>Modifier mon mot de passe</h1>
+    <div class="profil-container">
+        <form class="form-container" id="form" 
+              th:action="@{/mon-profil/modifier-mot-de-passe(pseudo=${utilisateur.pseudo})}"
+              method="post">
+            
+            <h1>Modifier mon mot de passe</h1>
 
-        <div class="form-group ">
-            <label for="inputOldMdp">Mot de passe actuel* :</label>
-            <input type="password" id="inputOldMdp" name="password"  required/>
-        </div>
-
-        <div class="form-group">
-            <label for="inputMdp">Nouveau mot de passe* :</label>
-            <input type="password" id="inputMdp" name="newPassword" required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
-        </div>
-        <p class="small" id="textMdp">Au moins un symbole, un chiffre, ainsi que 8 caractères minimum</p>
-        <div class="forceMdp" id="forceMdp">
-            <div class="hidden" id="faible">
-                <div class="barreCouleur"></div>
-                <span class="texteForceMdp">Faible</span>
+            <div class="form-group">
+                <label for="inputOldMdp">Mot de passe actuel* :</label>
+                <input type="password" class="form-control" id="inputOldMdp" name="password" required/>
             </div>
-            <div class="hidden" id="moyen">
-                <div class="barreCouleur"></div>
-                <span class="texteForceMdp">Moyen</span>
+
+            <div class="form-group">
+                <label for="inputMdp">Nouveau mot de passe* :</label>
+                <input type="password" class="form-control" id="inputMdp" name="newPassword" 
+                       required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
             </div>
-            <div class="hidden" id="fort">
-                <div class="barreCouleur"></div>
-                <span class="texteForceMdp">Fort</span>
+            <p class="form-text text-muted" id="textMdp">Au moins un symbole, un chiffre, ainsi que 8 caractères minimum</p>
+            
+            <div class="forceMdp" id="forceMdp">
+                <div class="hidden" id="faible">
+                    <div class="barreCouleur"></div>
+                    <span class="texteForceMdp">Faible</span>
+                </div>
+                <div class="hidden" id="moyen">
+                    <div class="barreCouleur"></div>
+                    <span class="texteForceMdp">Moyen</span>
+                </div>
+                <div class="hidden" id="fort">
+                    <div class="barreCouleur"></div>
+                    <span class="texteForceMdp">Fort</span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="inputConfirmMdp">Confirmer mot de passe* :</label>
-            <input type="password" id="inputConfirmMdp" name="confirmNewPassword" required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
-        </div>
-        <p class="small red hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>
+            <div class="form-group">
+                <label for="inputConfirmMdp">Confirmer mot de passe* :</label>
+                <input type="password" class="form-control" id="inputConfirmMdp" name="confirmNewPassword" 
+                       required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
+            </div>
+            <p class="form-text text-danger hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary disabled" id=btnSubmit>Enregistrer</button>
-            <a th:href="@{/mon-profil(pseudo=${utilisateur.getPseudo()})}" class="btn btn-cancel-secondary">Annuler</a>
-        </div>
-    </form>
-
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary disabled" id="btnSubmit">Enregistrer</button>
+                <a th:href="@{/mon-profil(pseudo=${utilisateur.pseudo})}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
 </main>
 </body>
 </html>

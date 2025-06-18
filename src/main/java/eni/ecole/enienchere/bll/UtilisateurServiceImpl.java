@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
 
@@ -22,10 +24,28 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public Utilisateur consulterUtilisateurParPseudo(String pseudo) {
         var utilisateur = utilisateurDAO.read(pseudo);
-        var adresse = adresseDAO.read((int) utilisateur.getAdresse().getNo_adresse());
-        utilisateur.setAdresse(adresse);
-
-
+        
+        // Vérifier que l'utilisateur existe
+        if (utilisateur == null) {
+            return null;
+        }
+        
+        // Vérifier que l'utilisateur a une adresse associée
+        if (utilisateur.getAdresse() == null) {
+            return utilisateur; // Retourner l'utilisateur même sans adresse
+        }
+        
+        try {
+            // Récupérer les détails complets de l'adresse
+            var adresse = adresseDAO.read((int) utilisateur.getAdresse().getNo_adresse());
+            if (adresse != null) {
+                utilisateur.setAdresse(adresse);
+            }
+        } catch (Exception e) {
+            // Log l'erreur mais ne pas faire échouer complètement
+            System.err.println("Erreur lors de la récupération de l'adresse pour l'utilisateur " + pseudo + ": " + e.getMessage());
+        }
+        
         return utilisateur;
     }
 
@@ -100,5 +120,10 @@ utilisateur.setTelephone(telephone);
         }
 
 
+    }
+
+    @Override
+    public List<Adresse> getAdressesENI() {
+        return adresseDAO.getAdressesENI();
     }
 }

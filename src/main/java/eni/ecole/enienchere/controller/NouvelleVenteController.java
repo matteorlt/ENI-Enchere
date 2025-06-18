@@ -56,6 +56,7 @@ public class NouvelleVenteController {
             model.addAttribute("article", article);
             model.addAttribute("utilisateur", utilisateur);
             model.addAttribute("categories", categorieService.getAllCategories());
+            model.addAttribute("adressesENI", utilisateurService.getAdressesENI());
             return "view-nouvelle-vente";
         } catch (Exception e) {
             model.addAttribute("error", "Une erreur est survenue lors du chargement du formulaire : " + e.getMessage());

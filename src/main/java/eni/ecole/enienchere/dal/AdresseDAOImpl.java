@@ -24,6 +24,7 @@ public class AdresseDAOImpl implements AdresseDAO{
     private final static String INSERT = "INSERT INTO ADRESSES (rue, code_postal, ville, adresse_eni) values (:rue, :code_postal, :ville, :adresse_eni)";
     private final static String DELETE = "DELETE FROM ADRESSE where no_adresse=:no_adresse";
     private final static String SELECT_ALL = "SELECT * FROM ADRESSE";
+    private final static String SELECT_ENI_ADDRESSES = "SELECT no_adresse, rue, code_postal, ville, adresse_eni FROM ADRESSES WHERE adresse_eni = 1";
     private final static String FIND_ID = "SELECT no_adresse from ADRESSES WHERE rue = :rue AND code_postal=:code_postal AND ville=:ville  ";
 
 
@@ -71,6 +72,11 @@ public class AdresseDAOImpl implements AdresseDAO{
     @Override
     public List<Adresse> readAll() {
         return List.of();
+    }
+
+    @Override
+    public List<Adresse> getAdressesENI() {
+        return namedParameterJdbcTemplate.query(SELECT_ENI_ADDRESSES, new AdresseRowMapper());
     }
 
     @Override

@@ -5,6 +5,8 @@ import eni.ecole.enienchere.bo.Utilisateur;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 public interface UtilisateurService extends UserDetailsService {
 
     Utilisateur consulterUtilisateurParPseudo(String pseudo);
@@ -12,6 +14,8 @@ public interface UtilisateurService extends UserDetailsService {
     void update(Utilisateur utilisateur);
 
     Adresse consulterAdresseParId(int no_adresse);
+
+    List<Adresse> getAdressesENI();
 
     void updateMdp(Utilisateur utilisateur, String mot_de_passe);
 
@@ -24,6 +28,5 @@ public interface UtilisateurService extends UserDetailsService {
     void enregistrerUneAdresse(Adresse adresse);
 
     void updateCredit(String pseudo, int nouveauCredit);
-
 
 }

@@ -122,10 +122,29 @@ public class UtilisateurController {
             if (pseudo.equals(pseudoConnecte)) {
                 try {
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-                    int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
-                    Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
+                    
+                    // Vérifier que l'utilisateur existe
+                    if (utilisateur == null) {
+                        logger.error("Utilisateur non trouvé: " + pseudo);
+                        return "redirect:/";
+                    }
+                    
+                    // Vérifier que l'adresse existe
+                    if (utilisateur.getAdresse() == null) {
+                        logger.warn("Aucune adresse trouvée pour l'utilisateur: " + pseudo + ", création d'une adresse vide");
+                        utilisateur.setAdresse(new Adresse());
+                    } else {
+                        long no_adresse = utilisateur.getAdresse().getNo_adresse();
+                        Adresse adresse = utilisateurService.consulterAdresseParId((int) no_adresse);
+                        
+                        // Si l'adresse complète n'est pas trouvée, garder l'adresse partielle
+                        if (adresse != null) {
+                            utilisateur.setAdresse(adresse);
+                        }
+                    }
+                    
                     model.addAttribute("utilisateur", utilisateur);
-                    model.addAttribute("adresse", adresse);
+                    model.addAttribute("pseudo", pseudo);
                     return "view-profil-modif";
                 } catch (Exception e) {
                     logger.error("Erreur lors du chargement du formulaire de modification pour: " + pseudo, e);
@@ -162,7 +181,15 @@ public class UtilisateurController {
             if (pseudo.equals(pseudoConnecte)) {
                 try {
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
+                    
+                    // Vérifier que l'utilisateur existe
+                    if (utilisateur == null) {
+                        logger.error("Utilisateur non trouvé: " + pseudo);
+                        return "redirect:/";
+                    }
+                    
                     model.addAttribute("utilisateur", utilisateur);
+                    model.addAttribute("pseudo", pseudo);
                     return "view-profil-modif-mdp";
                 } catch (Exception e) {
                     logger.error("Erreur lors du chargement du formulaire de modification de mot de passe pour: " + pseudo, e);

@@ -55,21 +55,17 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label">Lieu de retrait :</label>
-                        <div th:if="${utilisateur?.adresse}" class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">📍 Adresse de retrait</h6>
-                                <p class="card-text">
-                                    <span th:text="${utilisateur.adresse.rue}"></span><br>
-                                    <span th:text="${utilisateur.adresse.code_postal}"></span>
-                                    <span th:text="${utilisateur.adresse.ville}"></span>
-                                </p>
-                                <input type="hidden" name="retrait" th:value="${utilisateur.adresse.no_adresse}">
-                            </div>
-                        </div>
-                        <div th:unless="${utilisateur?.adresse}" class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            Vous devez avoir une adresse de retrait pour vendre un article.
+                        <label for="adresseRetrait" class="form-label">Lieu de retrait <span class="text-danger">*</span></label>
+                        <select id="adresseRetrait" name="retrait" class="form-select" required>
+                            <option value="">Sélectionnez un lieu de retrait</option>
+                            <option th:each="adresse : ${adressesENI}"
+                                    th:value="${adresse.no_adresse}"
+                                    th:text="${adresse.rue + ', ' + adresse.code_postal + ' ' + adresse.ville}">
+                            </option>
+                        </select>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Choisissez le site ENI où l'acheteur pourra récupérer l'article.
                         </div>
                     </div>
 
@@ -77,11 +73,13 @@
                         <button type="submit" name="action" value="enregistrer" class="btn btn-primary me-md-2">
                             💾 Enregistrer la vente
                         </button>
-                        <button type="submit" name="action" value="annulerVente" class="btn btn-secondary">
-                            ❌ Annuler
-                        </button>
                     </div>
                 </form>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="/" class="btn btn-secondary">
+                    ❌ Annuler
+                </a>
+                </div>
             </div>
         </div>
     </div>
