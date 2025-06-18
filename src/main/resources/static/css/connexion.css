@@ -1,0 +1,61 @@
+/* ========================================
+   CONNEXION.CSS - Styles pour la page de connexion
+   ======================================== */
+
+.connexion-main {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container {
+    background: white;
+    border-radius: var(--eni-border-radius);
+    box-shadow: var(--eni-shadow-lg);
+    padding: 2rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.connexion-form__forgot-link {
+    color: var(--eni-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.connexion-form__forgot-link:hover {
+    text-decoration: underline;
+}
+
+/* Effet de focus renforcé pour les champs de connexion */
+.connexion-main .form-control:focus {
+    border-color: var(--eni-primary);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+/* Animation d'apparition */
+.connexion-main .form-container {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+} 

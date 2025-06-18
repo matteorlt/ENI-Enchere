@@ -1,0 +1,117 @@
+/* ========================================
+   ENCHERES.CSS - Styles pour la page des enchères
+   ======================================== */
+
+/* Filtres */
+.encheres-filters {
+    background: white;
+    border-radius: var(--eni-border-radius);
+    box-shadow: var(--eni-shadow);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Cartes d'enchères */
+.encheres-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: var(--eni-shadow);
+    border-radius: var(--eni-border-radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+}
+
+.encheres-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--eni-shadow-lg);
+    text-decoration: none;
+    color: inherit;
+}
+
+.encheres-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.encheres-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.encheres-card .card-title {
+    color: var(--eni-primary);
+    font-weight: 600;
+}
+
+.encheres-card .card-text {
+    color: #6c757d;
+}
+
+/* Badges de statut */
+.encheres-status {
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.375rem 0.75rem;
+    border-radius: 50px;
+}
+
+.encheres-status--pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.encheres-status--active {
+    background-color: #28a745;
+    color: white;
+}
+
+.encheres-status--finished {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Effet de zoom sur les images */
+.encheres-card .card-img-top {
+    transition: all 0.3s ease;
+}
+
+.encheres-card:hover .card-img-top {
+    transform: scale(1.02);
+}
+
+/* Animation d'apparition en cascade */
+.encheres-card {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.encheres-card:nth-child(1) { animation-delay: 0.1s; }
+.encheres-card:nth-child(2) { animation-delay: 0.2s; }
+.encheres-card:nth-child(3) { animation-delay: 0.3s; }
+.encheres-card:nth-child(4) { animation-delay: 0.4s; }
+.encheres-card:nth-child(5) { animation-delay: 0.5s; }
+.encheres-card:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .encheres-card .card-img-top {
+        height: 150px;
+    }
+    
+    .encheres-filters {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+} 
