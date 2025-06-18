@@ -50,16 +50,16 @@
     <div class="form-group form-group--address">
       <div class="form-group__field">
         <label for="inputAdresse" class="form-group__label">Adresse* :</label>
-        <input type="text" id="inputAdresse" class="form-group__input" data-th-field="*{adresse.rue}" required/>
+        <input type="text" id="inputAdresse" class="form-group__input form-group__input--readonly" data-th-field="*{adresse.rue}" readonly/>
       </div>
       <div class="form-group__row">
         <div class="form-group__field">
           <label for="inputCP" class="form-group__label">Code postal* :</label>
-          <input type="text" id="inputCP" class="form-group__input" data-th-field="*{adresse.code_postal}" required/>
+          <input type="text" id="inputCP" class="form-group__input form-group__input--readonly" data-th-field="*{adresse.code_postal}" readonly/>
         </div>
         <div class="form-group__field">
           <label for="inputVille" class="form-group__label">Ville* :</label>
-          <input type="text" id="inputVille" class="form-group__input" data-th-field="*{adresse.ville}" required/>
+          <input type="text" id="inputVille" class="form-group__input form-group__input--readonly" data-th-field="*{adresse.ville}" readonly/>
         </div>
       </div>
     </div>

@@ -80,7 +80,7 @@
                 <th:block data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
                     <li class="layout-nav__item"><a data-th-href="@{/admin/gestion-encheres}" class="layout-nav__link layout-nav__link--admin">🛡️ Administration</a></li>
                 </th:block>
-                <li class="layout-nav__item"><a data-th-href="@{/deconnexion}" class="layout-nav__link">Se déconnecter</a></li>
+                <li class="layout-nav__item"><a data-th-href="@{/logout}" class="layout-nav__link">Se déconnecter</a></li>
             </th:block>
             <th:block data-th-if="${!#authorization.expression('isAuthenticated()')}">
                 <li class="layout-nav__item"><a data-th-href="@{/connexion}" class="layout-nav__link">Se connecter</a></li>
