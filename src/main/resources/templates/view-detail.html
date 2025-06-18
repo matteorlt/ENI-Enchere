@@ -109,7 +109,7 @@
                 </div>
                 
                 <div class="form-buttons">
-                    <button type="submit" class="btn btn--primary" th:disabled="${creditUtilisateur < montantMinimum}">
+                    <button type="submit" class="btn btn--primary" th:disabled="${creditUtilisateur < montantMinimum}" name="action" value="encherir">
                         <span th:if="${creditUtilisateur >= montantMinimum}">Enchérir</span>
                         <span th:unless="${creditUtilisateur >= montantMinimum}">Crédit insuffisant</span>
                     </button>
@@ -127,8 +127,12 @@
                 <a th:href="@{/connexion}" class="btn btn--secondary">Se connecter</a>
             </div>
         </div>
-        
+
         <div class="form-buttons">
+            <form th:if="${enchereTerminee and gagnant != null and #authentication.name == gagnant.pseudo}" method="post" th:action="@{/enchere/soumettre}">
+                <input type="hidden" name="no_article" value="${article.noArticle}">
+                <button type="submit" name="action" value="confirmer_retrait">Retrait effectué</button>
+            </form>
             <a th:href="@{/enchere}" class="btn btn--secondary">Retour à la liste</a>
         </div>
     </div>

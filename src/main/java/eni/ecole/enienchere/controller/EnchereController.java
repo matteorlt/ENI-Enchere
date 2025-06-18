@@ -48,27 +48,27 @@ public class EnchereController {
                                    Principal principal) {
         var categories = categorieService.getAllCategories();
         List<ArticleAVendre> encheres;
-        
+
         if (principal != null) {
             Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
-            
+
             if (mesEncheres != null && mesEncheres) {
                 // Afficher les articles que l'utilisateur vend
                 encheres = articleService.getArticlesFiltres(nom, categorie, utilisateur.getPseudo());
             } else if (mesEncheresFaites != null && mesEncheresFaites) {
                 // Afficher les articles sur lesquels l'utilisateur a enchéri
                 encheres = articleService.getArticlesAvecEncheresDe(utilisateur.getPseudo());
-                
+
                 // Appliquer les filtres supplémentaires si nécessaire
                 if (nom != null && !nom.trim().isEmpty()) {
                     encheres = encheres.stream()
-                        .filter(a -> a.getNom_article().toLowerCase().contains(nom.toLowerCase()))
-                        .collect(java.util.stream.Collectors.toList());
+                            .filter(a -> a.getNom_article().toLowerCase().contains(nom.toLowerCase()))
+                            .collect(java.util.stream.Collectors.toList());
                 }
                 if (categorie != null && !categorie.trim().isEmpty()) {
                     encheres = encheres.stream()
-                        .filter(a -> a.getCategorie().getLibelle().equals(categorie))
-                        .collect(java.util.stream.Collectors.toList());
+                            .filter(a -> a.getCategorie().getLibelle().equals(categorie))
+                            .collect(java.util.stream.Collectors.toList());
                 }
             } else {
                 // Afficher toutes les enchères avec filtres
@@ -78,31 +78,29 @@ public class EnchereController {
             // Utilisateur non connecté : afficher toutes les enchères
             encheres = articleService.getArticlesFiltres(nom, categorie, null);
         }
-        
+
         // Filtrer par statut temporel si spécifié
         if (statut != null && !statut.trim().isEmpty()) {
             Date maintenant = new Date();
-            
+
             if ("debut".equals(statut)) {
                 // Filtrer les enchères qui n'ont pas encore commencé (date de début dans le futur)
                 encheres = encheres.stream()
-                    .filter(a -> a.getDate_debut_enchere().after(maintenant))
-                    .collect(java.util.stream.Collectors.toList());
-            }
-            else if ("actif".equals(statut)) {
+                        .filter(a -> a.getDate_debut_enchere().after(maintenant))
+                        .collect(java.util.stream.Collectors.toList());
+            } else if ("actif".equals(statut)) {
                 // Filtrer les enchères en cours (date de début passée ET date de fin future)
                 encheres = encheres.stream()
-                    .filter(a -> !a.getDate_debut_enchere().after(maintenant) && a.getDate_fin_enchere().after(maintenant))
-                    .collect(java.util.stream.Collectors.toList());
-            }
-            else if ("termine".equals(statut)) {
+                        .filter(a -> !a.getDate_debut_enchere().after(maintenant) && a.getDate_fin_enchere().after(maintenant))
+                        .collect(java.util.stream.Collectors.toList());
+            } else if ("termine".equals(statut)) {
                 // Filtrer les enchères terminées (date de fin passée)
                 encheres = encheres.stream()
-                    .filter(a -> !a.getDate_fin_enchere().after(maintenant))
-                    .collect(java.util.stream.Collectors.toList());
+                        .filter(a -> !a.getDate_fin_enchere().after(maintenant))
+                        .collect(java.util.stream.Collectors.toList());
             }
         }
-        
+
         model.addAttribute("encheres", encheres);
         model.addAttribute("categories", categories);
         model.addAttribute("nom", nom);
@@ -120,12 +118,12 @@ public class EnchereController {
         if (articles != null && !articles.isEmpty()) {
             ArticleAVendre article = articles.get(0);
             model.addAttribute("article", article);
-            
+
             // Formatage de la date pour JavaScript
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String dateFinFormatted = sdf.format(article.getDate_fin_enchere());
             model.addAttribute("dateFinFormatted", dateFinFormatted);
-            
+
             // Récupérer la meilleure enchère actuelle
             try {
                 Enchere meilleureEnchere = enchereService.getHighestBid(noArticle);
@@ -140,7 +138,7 @@ public class EnchereController {
                 model.addAttribute("meilleureOffre", article.getPrix_initial());
                 model.addAttribute("montantMinimum", article.getPrix_initial() + 1);
             }
-            
+
             // Vérifier si l'utilisateur peut enchérir
             if (principal != null) {
                 Utilisateur utilisateurConnecte = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
@@ -151,12 +149,12 @@ public class EnchereController {
                 model.addAttribute("peutEncherir", false);
                 model.addAttribute("creditUtilisateur", 0);
             }
-            
+
             // Vérifier si l'enchère est terminée et récupérer le gagnant
             Date maintenant = new Date();
             boolean enchereTerminee = article.getDate_fin_enchere().before(maintenant);
             model.addAttribute("enchereTerminee", enchereTerminee);
-            
+
             if (enchereTerminee) {
                 // Récupérer la meilleure enchère pour connaître le gagnant
                 try {
@@ -175,7 +173,7 @@ public class EnchereController {
                     model.addAttribute("prixFinal", null);
                 }
             }
-            
+
             return "view-detail";
         }
         return "redirect:/";
@@ -183,15 +181,30 @@ public class EnchereController {
 
     @PostMapping("/enchere/soumettre")
     public String soumettreEnchere(@RequestParam("no_article") Integer noArticle,
-                                 @RequestParam("montant_propose") Integer montant,
-                                 Principal principal,
-                                 RedirectAttributes redirectAttributes) {
-        
+                                   @RequestParam(value = "montant_propose", required = false) Integer montant,
+                                   @RequestParam(value = "action", required = false) String action,
+                                   Principal principal,
+                                   RedirectAttributes redirectAttributes) {
+// Vérification de l'action à effectuer
+        if ("encherir".equals(action)) {
+            if (montant == null) {
+                redirectAttributes.addFlashAttribute("error", "Le montant de l'enchère est requis.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            return traiterEnchere(noArticle, montant, principal, redirectAttributes);
+        } else if ("confirmer_retrait".equals(action)) {
+            return traiterConfirmationRetrait(noArticle, principal, redirectAttributes);
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Action non reconnue: " + action);
+            return "redirect:/details?no_article=" + noArticle;
+        }
+    }
+
+    private String traiterEnchere(Integer noArticle, Integer montant, Principal principal, RedirectAttributes redirectAttributes) {
         if (principal == null) {
             redirectAttributes.addFlashAttribute("error", "Vous devez être connecté pour enchérir.");
             return "redirect:/details?no_article=" + noArticle;
         }
-        
         try {
             // Récupérer l'article
             List<ArticleAVendre> articles = articleService.getArticleById(noArticle);
@@ -199,23 +212,20 @@ public class EnchereController {
                 redirectAttributes.addFlashAttribute("error", "Article non trouvé.");
                 return "redirect:/enchere";
             }
-            
             ArticleAVendre article = articles.get(0);
             Utilisateur acquereur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
-            
+
             // Vérifier que l'utilisateur n'est pas le vendeur
             if (article.getVendeur().getPseudo().equals(acquereur.getPseudo())) {
                 redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas enchérir sur votre propre article.");
                 return "redirect:/details?no_article=" + noArticle;
             }
-            
             // Vérifier que l'enchère n'est pas terminée
             Date maintenant = new Date();
             if (article.getDate_fin_enchere().before(maintenant)) {
                 redirectAttributes.addFlashAttribute("error", "Cette enchère est terminée.");
                 return "redirect:/details?no_article=" + noArticle;
             }
-            
             // Vérifier le montant minimum
             Enchere meilleureEnchere = null;
             try {
@@ -223,36 +233,31 @@ public class EnchereController {
             } catch (Exception e) {
                 // Pas d'enchère existante
             }
-            
             int montantMinimum;
             if (meilleureEnchere != null) {
                 montantMinimum = meilleureEnchere.getMontant_enchere() + 1;
             } else {
                 montantMinimum = article.getPrix_initial() + 1;
             }
-            
             if (montant < montantMinimum) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "Votre enchère doit être d'au moins " + montantMinimum + " points.");
+                redirectAttributes.addFlashAttribute("error",
+                        "Votre enchère doit être d'au moins " + montantMinimum + " points.");
                 return "redirect:/details?no_article=" + noArticle;
             }
-            
             // Vérifier que l'utilisateur a suffisamment de crédit
             if (acquereur.getCredit() < montant) {
-                redirectAttributes.addFlashAttribute("error", 
-                    "Crédit insuffisant. Vous avez " + acquereur.getCredit() + " points, mais l'enchère nécessite " + montant + " points.");
+                redirectAttributes.addFlashAttribute("error",
+                        "Crédit insuffisant. Vous avez " + acquereur.getCredit() + " points, mais l'enchère nécessite " + montant + " points.");
                 return "redirect:/details?no_article=" + noArticle;
             }
-            
             // Vérifier que l'utilisateur n'a pas déjà la meilleure enchère
             if (meilleureEnchere != null && meilleureEnchere.getAcquereur() != null) {
                 if (meilleureEnchere.getAcquereur().getPseudo().equals(acquereur.getPseudo())) {
-                    redirectAttributes.addFlashAttribute("error", 
-                        "Vous avez déjà la meilleure enchère sur cet article. Vous ne pouvez pas réenchérir.");
+                    redirectAttributes.addFlashAttribute("error",
+                            "Vous avez déjà la meilleure enchère sur cet article. Vous ne pouvez pas réenchérir.");
                     return "redirect:/details?no_article=" + noArticle;
                 }
             }
-            
             // Rembourser l'ancien enchérisseur s'il y en a un
             if (meilleureEnchere != null && meilleureEnchere.getAcquereur() != null) {
                 String pseudoAncienEncherisseur = meilleureEnchere.getAcquereur().getPseudo();
@@ -263,36 +268,93 @@ public class EnchereController {
                     utilisateurService.updateCredit(pseudoAncienEncherisseur, nouveauCreditAncien);
                 }
             }
-            
             // Débiter le nouveau enchérisseur
             int nouveauCreditAcquereur = acquereur.getCredit() - montant;
             utilisateurService.updateCredit(acquereur.getPseudo(), nouveauCreditAcquereur);
-            
+
             // Créer l'enchère
             Enchere enchere = new Enchere();
             enchere.setDate_enchere(LocalDateTime.now());
             enchere.setMontant_enchere(montant);
             enchere.setArticleAVendre(article);
             enchere.setAcquereur(acquereur);
-            
+
             enchereService.createEnchere(enchere);
-            
+
             // Mettre à jour le prix de vente de l'article
             article.setPrix_vente(montant);
             articleService.updateArticle(article);
-            
-            redirectAttributes.addFlashAttribute("success", 
-                "Votre enchère de " + montant + " points a été enregistrée avec succès ! Votre nouveau solde : " + nouveauCreditAcquereur + " points.");
-                
+
+            redirectAttributes.addFlashAttribute("success",
+                    "Votre enchère de " + montant + " points a été enregistrée avec succès ! Votre nouveau solde : " + nouveauCreditAcquereur + " points.");
+
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", 
-                "Une erreur est survenue lors de l'enregistrement de votre enchère : " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error",
+                    "Une erreur est survenue lors de l'enregistrement de votre enchère : " + e.getMessage());
         }
-        
         return "redirect:/details?no_article=" + noArticle;
     }
 
+    private String traiterConfirmationRetrait(Integer noArticle, Principal principal, RedirectAttributes redirectAttributes) {
+        if (principal == null) {
+            redirectAttributes.addFlashAttribute("error", "Vous devez être connecté pour valider un retrait.");
+            return "redirect:/details?no_article=" + noArticle;
+        }
+        try {
+            // Récupérer l'article
+            List<ArticleAVendre> articles = articleService.getArticleById(noArticle);
+            if (articles == null || articles.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Article non trouvé.");
+                return "redirect:/enchere";
+            }
+
+            ArticleAVendre article = articles.get(0);
+            Utilisateur utilisateurConnecte = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+
+            // Récupérer l'enchère gagnante
+            Enchere enchereGagnante = null;
+            try {
+                enchereGagnante = enchereService.getHighestBid(noArticle);
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", "Aucune enchère trouvée pour cet article.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+
+            // Vérifier que l'utilisateur connecté est bien l'acheteur gagnant
+            if (enchereGagnante == null || enchereGagnante.getAcquereur() == null ||
+                    !enchereGagnante.getAcquereur().getPseudo().equals(utilisateurConnecte.getPseudo())) {
+                redirectAttributes.addFlashAttribute("error", "Vous n'êtes pas l'acheteur de cet article.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+
+            // Vérifier que l'enchère est terminée
+            Date maintenant = new Date();
+            if (article.getDate_fin_enchere().after(maintenant)) {
+                redirectAttributes.addFlashAttribute("error", "L'enchère n'est pas encore terminée.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+
+            // Payer le vendeur
+            if (article.getVendeur() != null) {
+                String pseudoVendeur = article.getVendeur().getPseudo();
+                Utilisateur vendeurComplet = utilisateurService.consulterUtilisateurParPseudo(pseudoVendeur);
+                if (vendeurComplet != null) {
+                    int nouveauCreditVendeur = vendeurComplet.getCredit() + enchereGagnante.getMontant_enchere();
+                    utilisateurService.updateCredit(pseudoVendeur, nouveauCreditVendeur);
+                }
+            }
+            redirectAttributes.addFlashAttribute("success",
+                    "Vous avez confirmé que l'article a été livré. Le vendeur a été payé.");
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Une erreur est survenue lors de la confirmation du retrait : " + e.getMessage());
+        }
+        return "redirect:/details?no_article=" + noArticle;
+    }
 }
+
+
 
 
 
