@@ -221,24 +221,14 @@ public class ArticleServiceImpl implements ArticleService {
      */
     private void updateStatutEncheres(List<ArticleAVendre> articles) {
         Date maintenant = new Date();
-        System.out.println("=== DEBUT MISE A JOUR STATUTS ===");
-        System.out.println("Date actuelle : " + maintenant);
         
         for (ArticleAVendre article : articles) {
-            System.out.println("Article " + article.getNo_article() + " - Statut actuel: " + article.getStatut() + 
-                             " - Date début: " + article.getDate_debut_enchere() + 
-                             " - Date fin: " + article.getDate_fin_enchere());
             
             // Si l'enchère était en attente (statut 0) et que sa date de début est arrivée
             if (article.getStatut() == 0 && !article.getDate_debut_enchere().after(maintenant)) {
-                System.out.println("  -> Passage du statut 0 à 1 pour l'article " + article.getNo_article());
                 try {
                     articleDAO.updateStatutOnly(article.getNo_article(), 1);
                     article.setStatut(1); // Mettre à jour l'objet en mémoire aussi
-                    
-                    // Vérification immédiate en base
-                    int statutDB = articleDAO.getStatutFromDB(article.getNo_article());
-                    System.out.println("  -> Mise à jour en base réussie - Statut vérifié en DB: " + statutDB);
                 } catch (Exception e) {
                     // Log l'erreur mais continue le traitement
                     System.err.println("Erreur lors de la mise à jour du statut de l'article " + article.getNo_article() + ": " + e.getMessage());
@@ -247,32 +237,23 @@ public class ArticleServiceImpl implements ArticleService {
             }
             // Si l'enchère est terminée et toujours active
             else if (article.getStatut() == 1 && !article.getDate_fin_enchere().after(maintenant)) {
-                System.out.println("  -> Passage du statut 1 à 2 pour l'article " + article.getNo_article());
                 try {
                     articleDAO.updateStatutOnly(article.getNo_article(), 2);
                     article.setStatut(2); // Mettre à jour l'objet en mémoire aussi
-                    
-                    // Vérification immédiate en base
-                    int statutDB = articleDAO.getStatutFromDB(article.getNo_article());
-                    System.out.println("  -> Mise à jour en base réussie - Statut vérifié en DB: " + statutDB);
                 } catch (Exception e) {
                     // Log l'erreur mais continue le traitement
                     System.err.println("Erreur lors de la mise à jour du statut de l'article " + article.getNo_article() + ": " + e.getMessage());
                     e.printStackTrace();
                 }
             } else {
-                System.out.println("  -> Aucune mise à jour nécessaire");
             }
         }
-        System.out.println("=== FIN MISE A JOUR STATUTS ===");
     }
 
     @Override
     public void forcerMiseAJourStatuts() {
-        System.out.println("=== FORCER MISE A JOUR DE TOUS LES STATUTS ===");
         List<ArticleAVendre> tousLesArticles = articleDAO.findAll();
         updateStatutEncheres(tousLesArticles);
-        System.out.println("=== MISE A JOUR FORCEE TERMINEE ===");
     }
 
     @Override
