@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/mon-profil/modifier").authenticated()
                         .requestMatchers("/mon-profil/modifier-mot-de-passe").authenticated()
                         .requestMatchers(HttpMethod.POST, "/mon-profil/modifier-mot-de-passe").authenticated()
+                        .requestMatchers("/profil").authenticated()
 
                         // Création de compte
                         .requestMatchers(HttpMethod.POST, "/creer-compte").permitAll()

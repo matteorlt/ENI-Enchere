@@ -57,8 +57,10 @@ public class AjoutPhotoController {
                     model.addAttribute("selectedArticle", articleConcerne.get(0));
                 }
             }
+            
+            // Utiliser le vrai pseudo de l'utilisateur connecté
+            model.addAttribute("participant", principal.getName());
         }
-        model.addAttribute("participant", "coach_toto");
         return "view-ajout-photo";
     }
 

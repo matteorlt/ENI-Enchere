@@ -53,33 +53,34 @@ public class UtilisateurController {
     }
 
 
-//    @GetMapping("/profil")
-//    public String afficherUnUtilisateur(
-//            @RequestParam("pseudo") @NotBlank String pseudo,
-//            Model model,
-//            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte) {
-//
-//        if (!isUtilisateurConnecte(utilisateurConnecte)) {
-//            logger.warn("Tentative d'accès au profil sans être connecté");
-//            return "redirect:/utilisateur/connexion";
-//        }
-//
-//        try {
-//            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-//            if (utilisateur == null) {
-//                logger.warn("Utilisateur non trouvé avec le pseudo: {}", pseudo);
-//                model.addAttribute("errorMessage", "Utilisateur introuvable");
-//                return "redirect:/accueil";
-//            }
-//
-//            model.addAttribute("utilisateur", utilisateur);
-//            return "view-profil";
-//        } catch (Exception e) {
-//            logger.error("Erreur lors de la consultation du profil pour le pseudo: {}", pseudo, e);
-//            model.addAttribute("errorMessage", "Erreur lors du chargement du profil");
-//            return "redirect:/accueil";
-//        }
-//    }
+    @GetMapping("/profil")
+    public String afficherUnUtilisateur(
+            @RequestParam("pseudo") @NotBlank String pseudo,
+            Model model,
+            Authentication authentication) {
+
+        // Vérifier que l'utilisateur est connecté
+        if (authentication == null) {
+            logger.warn("Tentative d'accès au profil sans être connecté");
+            return "redirect:/connexion";
+        }
+
+        try {
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
+            if (utilisateur == null) {
+                logger.warn("Utilisateur non trouvé avec le pseudo: " + pseudo);
+                model.addAttribute("errorMessage", "Utilisateur introuvable");
+                return "redirect:/";
+            }
+
+            model.addAttribute("utilisateur", utilisateur);
+            return "view-profil";
+        } catch (Exception e) {
+            logger.error("Erreur lors de la consultation du profil pour le pseudo: " + pseudo, e);
+            model.addAttribute("errorMessage", "Erreur lors du chargement du profil");
+            return "redirect:/";
+        }
+    }
 
     @GetMapping("/mon-profil")
     public String afficherProfilUtilisateur(
