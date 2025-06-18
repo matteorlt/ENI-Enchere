@@ -68,10 +68,6 @@ public class ArticleDAOImpl implements ArticleDAO {
                 "date_debut_encheres = ?, date_fin_encheres = ?, statut_enchere = ?, prix_initial = ?, " +
                 "prix_vente = ?, id_utilisateur = ?, no_categorie = ?, no_adresse_retrait = ? WHERE no_article = ?";
 
-        System.out.println("=== DEBUT UPDATE DAO ===");
-        System.out.println("SQL: " + sql);
-        System.out.println("Article ID: " + article.getNo_article());
-        System.out.println("Nouveau statut: " + article.getStatut());
         
         int rowsAffected = jdbcTemplate.update(sql,
                 article.getNom_article(),
@@ -85,9 +81,7 @@ public class ArticleDAOImpl implements ArticleDAO {
                 article.getCategorie().getNo_categorie(),
                 article.getAdresse_retrait().getNo_adresse(),
                 article.getNo_article());
-        
-        System.out.println("Lignes affectées: " + rowsAffected);
-        System.out.println("=== FIN UPDATE DAO ===");
+
     }
 
     @Override
@@ -217,15 +211,7 @@ public class ArticleDAOImpl implements ArticleDAO {
     @Override
     public void updateStatutOnly(Long articleId, int nouveauStatut) {
         String sql = "UPDATE ARTICLES_A_VENDRE SET statut_enchere = ? WHERE no_article = ?";
-        
-        System.out.println("=== UPDATE STATUT SEULEMENT ===");
-        System.out.println("Article ID: " + articleId);
-        System.out.println("Nouveau statut: " + nouveauStatut);
-        
         int rowsAffected = jdbcTemplate.update(sql, nouveauStatut, articleId);
-        
-        System.out.println("Lignes affectées: " + rowsAffected);
-        System.out.println("=== FIN UPDATE STATUT ===");
     }
 
     @Override

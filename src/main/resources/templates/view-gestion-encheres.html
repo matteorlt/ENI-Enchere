@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='admin')}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Administration des enchères</title>
 </head>
-<main>
-    <div class="gestion-container">
+<main class="container-fluid">
+    <div class="admin-container">
         <h1>🛡️ Administration des enchères</h1>
         <p class="gestion-subtitle">Gestion complète de toutes les enchères de la plateforme</p>
         
@@ -214,9 +214,9 @@
         </div>
         
         <!-- Boutons de navigation -->
-        <div class="navigation-buttons">
-            <a th:href="@{/enchere}" class="btn btn-secondary">⬅️ Retour aux enchères</a>
-            <a th:href="@{/admin/gestion-encheres}" class="btn btn-info">🔄 Actualiser</a>
+        <div class="text-center mt-4 mb-5">
+            <a th:href="@{/enchere}" class="btn btn--secondary me-3">⬅️ Retour aux enchères</a>
+            <a th:href="@{/admin/gestion-encheres}" class="btn btn--info">🔄 Actualiser</a>
         </div>
     </div>
 

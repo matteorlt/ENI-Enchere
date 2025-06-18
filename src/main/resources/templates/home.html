@@ -1,16 +1,26 @@
 <!DOCTYPE html >
-<html lang="en" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='home')}" xmlns:th="http://www.thymeleaf.org">
 
 <title>Accueil</title>
 
-<main class="home-main">
-    <div class="home-hero">
-        <h1 class="home-hero__title">Bienvenue sur ENI-Enchères</h1>
-        <h2 class="home-hero__subtitle">Votre plateforme d'enchères en ligne</h2>
-        <p class="home-hero__description">Découvrez des objets uniques et participez aux enchères !</p>
-        <div class="home-hero__actions">
-            <a href="/enchere" class="btn btn--primary home-hero__btn">Voir les enchères</a>
-            <a href="/vendre" class="btn btn--secondary home-hero__btn">Vendre un article</a>
+<main class="container-fluid bg-light min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <div class="bg-white p-5 rounded shadow-lg">
+                    <h1 class="display-4 text-gradient mb-4">Bienvenue sur ENI-Enchères</h1>
+                    <h2 class="h4 text-muted mb-4">Votre plateforme d'enchères en ligne</h2>
+                    <p class="lead mb-5">Découvrez des objets uniques et participez aux enchères !</p>
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                        <a href="/enchere" class="btn btn-primary btn-lg px-4">
+                            🔍 Voir les enchères
+                        </a>
+                        <a href="/vendre" class="btn btn-secondary btn-lg px-4">
+                            💰 Vendre un article
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>

@@ -1,93 +1,100 @@
 <!DOCTYPE html>
-<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='photo')}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Ajouter une photo</title>
 </head>
-<main class="photo-main">
-    <div class="photo-container">
-        <h1 class="photo-container__title">Ajouter une photo à votre article</h1>
-        
-        <!-- Messages d'erreur et de succès -->
-        <div th:if="${erreur}" class="alert alert--danger" th:text="${erreur}"></div>
-        <div th:if="${succes}" class="alert alert--success" th:text="${succes}"></div>
-
-        <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data" class="form-container photo-form">
-            
-            <!-- Information sur l'article présélectionné -->
-            <div th:if="${selectedArticle}" class="alert alert--info">
-                <h3>📦 Article créé avec succès !</h3>
-                <p><strong>Nom :</strong> <span th:text="${selectedArticle.nom_article}"></span></p>
-                <p><strong>Description :</strong> <span th:text="${selectedArticle.description}"></span></p>
-                <p>Vous pouvez maintenant ajouter une photo à cet article.</p>
-            </div>
-            
-            <div class="form-group">
-                <label for="articleId" class="form-group__label form-group__label--required">Article :</label>
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="photo-form">
+                <h1 class="text-center mb-4">📷 Ajouter une photo à votre article</h1>
                 
-                <!-- Si un article spécifique est sélectionné (venant de la création) -->
-                <div th:if="${selectedArticle}">
-                    <input type="text" 
-                           class="form-group__input form-group__input--readonly" 
-                           th:value="${selectedArticle.nom_article}" 
-                           readonly>
-                    <input type="hidden" name="articleId" th:value="${selectedArticle.no_article}">
-                </div>
-                
-                <!-- Sinon, afficher tous les articles de l'utilisateur -->
-                <select th:unless="${selectedArticle}" 
-                        id="articleId" 
-                        name="articleId" 
-                        class="form-group__select" 
-                        required>
-                    <option value="">Sélectionnez un article</option>
-                    <option th:each="article : ${articles}" 
-                            th:value="${article.no_article}" 
-                            th:text="${article.nom_article}">
-                    </option>
-                </select>
-            </div>
+                <!-- Messages d'erreur et de succès -->
+                <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
+                <div th:if="${succes}" class="alert alert-success" th:text="${succes}"></div>
 
-            <div class="form-group">
-                <label for="photo" class="form-group__label form-group__label--required">Photo de l'article :</label>
-                <input type="file" 
-                       id="photo" 
-                       name="photo" 
-                       class="form-group__file"
-                       accept="image/jpeg,image/jpg,image/png" 
-                       onchange="previewImage(event)" 
-                       required>
-                <small class="form-group__help">
-                    Formats acceptés : JPEG, JPG, PNG. Taille maximum : 5MB
-                </small>
-            </div>
+                <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data">
+            
+                    <!-- Information sur l'article présélectionné -->
+                    <div th:if="${selectedArticle}" class="alert alert-success mb-4">
+                        <h4 class="alert-heading">📦 Article créé avec succès !</h4>
+                        <p class="mb-2"><strong>Nom :</strong> <span th:text="${selectedArticle.nom_article}"></span></p>
+                        <p class="mb-2"><strong>Description :</strong> <span th:text="${selectedArticle.description}"></span></p>
+                        <p class="mb-0">Vous pouvez maintenant ajouter une photo à cet article.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="articleId" class="form-label">Article <span class="text-danger">*</span></label>
+                        
+                        <!-- Si un article spécifique est sélectionné (venant de la création) -->
+                        <div th:if="${selectedArticle}">
+                            <input type="text" 
+                                   class="form-control" 
+                                   th:value="${selectedArticle.nom_article}" 
+                                   readonly>
+                            <input type="hidden" name="articleId" th:value="${selectedArticle.no_article}">
+                        </div>
+                        
+                        <!-- Sinon, afficher tous les articles de l'utilisateur -->
+                        <select th:unless="${selectedArticle}" 
+                                id="articleId" 
+                                name="articleId" 
+                                class="form-select" 
+                                required>
+                            <option value="">Sélectionnez un article</option>
+                            <option th:each="article : ${articles}" 
+                                    th:value="${article.no_article}" 
+                                    th:text="${article.nom_article}">
+                            </option>
+                        </select>
+                    </div>
 
-            <!-- Prévisualisation de l'image -->
-            <div class="form-group photo-form__preview">
-                <label class="form-group__label">Prévisualisation :</label>
-                <img id="imagePreview" 
-                     src="#" 
-                     alt="Prévisualisation de la photo" 
-                     class="photo-form__preview-image" 
-                     style="display: none;">
-                <div id="noPreview" class="photo-form__no-preview">
-                    Aucune image sélectionnée
-                </div>
-            </div>
+                    <div class="mb-4">
+                        <label for="photo" class="form-label">Photo de l'article <span class="text-danger">*</span></label>
+                        <input type="file" 
+                               id="photo" 
+                               name="photo" 
+                               class="form-control"
+                               accept="image/jpeg,image/jpg,image/png" 
+                               onchange="previewImage(event)" 
+                               required>
+                        <div class="form-text">
+                            Formats acceptés : JPEG, JPG, PNG. Taille maximum : 5MB
+                        </div>
+                    </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn--primary">
-                    📷 Enregistrer la photo
-                </button>
-                <a th:href="@{/enchere}" class="btn btn--secondary">
-                    Ignorer pour l'instant
-                </a>
-                <div th:if="${selectedArticle}" style="margin-top: 1rem;">
-                    <a th:href="@{/details(no_article=${selectedArticle.no_article})}" class="btn btn--info">
-                        👁️ Voir mon article
-                    </a>
-                </div>
+                    <!-- Prévisualisation de l'image -->
+                    <div class="mb-4 photo-preview">
+                        <label class="form-label">Prévisualisation :</label>
+                        <div class="text-center">
+                            <img id="imagePreview" 
+                                 src="#" 
+                                 alt="Prévisualisation de la photo" 
+                                 class="photo-preview__image img-fluid" 
+                                 style="display: none;">
+                            <div id="noPreview" class="photo-preview__placeholder">
+                                📷 Aucune image sélectionnée
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button type="submit" class="btn btn-success btn-lg me-md-2">
+                            📷 Enregistrer la photo
+                        </button>
+                        <a th:href="@{/enchere}" class="btn btn-secondary btn-lg">
+                            ⏭️ Ignorer pour l'instant
+                        </a>
+                    </div>
+                    
+                    <div th:if="${selectedArticle}" class="text-center mt-3">
+                        <a th:href="@{/details(no_article=${selectedArticle.no_article})}" class="btn btn-info">
+                            👁️ Voir mon article
+                        </a>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
     <script>

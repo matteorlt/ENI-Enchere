@@ -1,65 +1,74 @@
 <!DOCTYPE html>
 <html lang="fr"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='compte')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>S'inscrire</title>
 </head>
-<main>
-    <form class="form-container" data-th-action="@{/creer-compte}" data-th-object="${utilisateur}" method="post">
-        <h1 class="form-container__title">Inscription</h1>
-        
-        <div class="form-group">
-            <label for="username" class="form-group__label">Nom d'utilisateur :</label>
-            <input type="text" id="username" data-th-field="*{pseudo}" required class="form-group__input">
-        </div>
+<main class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="form-container">
+                    <form data-th-action="@{/creer-compte}" data-th-object="${utilisateur}" method="post">
+                        <h1 class="text-center mb-4">Inscription</h1>
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nom d'utilisateur :</label>
+                            <input type="text" id="username" data-th-field="*{pseudo}" required class="form-control">
+                        </div>
 
-        <div class="form-group">
-            <label for="password" class="form-group__label">Mot de passe :</label>
-            <input type="password" id="password" data-th-field="*{mot_de_passe}" required class="form-group__input">
-        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe :</label>
+                            <input type="password" id="password" data-th-field="*{mot_de_passe}" required class="form-control">
+                        </div>
 
-        <div class="form-group">
-            <label for="nom" class="form-group__label">Nom :</label>
-            <input type="text" id="nom" data-th-field="*{nom}" required class="form-group__input">
-        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nom" class="form-label">Nom :</label>
+                                <input type="text" id="nom" data-th-field="*{nom}" required class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="prenom" class="form-label">Prénom :</label>
+                                <input type="text" id="prenom" data-th-field="*{prenom}" required class="form-control">
+                            </div>
+                        </div>
 
-        <div class="form-group">
-            <label for="prenom" class="form-group__label">Prénom :</label>
-            <input type="text" id="prenom" data-th-field="*{prenom}" required class="form-group__input">
-        </div>
+                        <div class="mb-3">
+                            <label for="inputEmail" class="form-label">Email :</label>
+                            <input type="email" id="inputEmail" data-th-field="*{email}" required class="form-control">
+                        </div>
 
-        <div class="form-group">
-            <label for="inputEmail" class="form-group__label">Email :</label>
-            <input type="email" id="inputEmail" data-th-field="*{email}" required class="form-group__input">
-        </div>
+                        <div class="mb-3">
+                            <label for="inputTelephone" class="form-label">Téléphone :</label>
+                            <input type="tel" id="inputTelephone" data-th-field="*{telephone}" class="form-control">
+                        </div>
 
-        <div class="form-group">
-            <label for="inputTelephone" class="form-group__label">Téléphone :</label>
-            <input type="tel" id="inputTelephone" data-th-field="*{telephone}" class="form-group__input">
-        </div>
+                        <div class="mb-4">
+                            <div class="mb-3">
+                                <label for="inputAdresse" class="form-label">Adresse :</label>
+                                <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required class="form-control">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="inputCP" class="form-label">Code postal :</label>
+                                    <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required class="form-control">
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="inputVille" class="form-label">Ville :</label>
+                                    <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required class="form-control">
+                                </div>
+                            </div>
+                        </div>
 
-        <div class="form-group address-group">
-            <div class="form-group">
-                <label for="inputAdresse" class="form-group__label">Adresse :</label>
-                <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required class="form-group__input">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="inputCP" class="form-group__label">Code postal :</label>
-                    <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required class="form-group__input">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <button type="submit" class="btn btn-primary me-md-2">S'inscrire</button>
+                            <a href="/connexion" class="btn btn-secondary">Déjà inscrit ?</a>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="inputVille" class="form-group__label">Ville :</label>
-                    <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required class="form-group__input">
-                </div>
             </div>
         </div>
-
-        <div class="form-buttons">
-            <button type="submit" class="btn btn--primary">S'inscrire</button>
-            <a href="/connexion" class="btn btn--secondary">Déjà inscrit ?</a>
-        </div>
-    </form>
+    </div>
 </main>
 </html>

@@ -1,72 +1,93 @@
 <!DOCTYPE html>
-<html lang="en"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+<html lang="fr"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='profil')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Mon profil</title>
 </head>
 <body>
-<main class="profil-main">
-  <form class="form-container profil-form"
-        method="post"
-        data-th-object="${utilisateur}">
-    <h1 class="form-container__title">Mon profil</h1>
-
-    <div class="form-group">
-      <label class="form-group__label">Pseudo :</label>
-      <p class="form-group__value" data-th-text="*{pseudo}"></p>
-      <input type="hidden" data-th-field="*{pseudo}" readonly/>
-    </div>
-
-    <div class="form-group">
-      <label for="inputNom" class="form-group__label">Nom* :</label>
-      <input type="text" id="inputNom" class="form-group__input form-group__input--readonly" data-th-field="*{nom}" readonly/>
-    </div>
-
-    <div class="form-group">
-      <label for="inputPrenom" class="form-group__label">Prénom* :</label>
-      <input type="text" id="inputPrenom" class="form-group__input form-group__input--readonly" data-th-field="*{prenom}" readonly/>
-    </div>
-
-    <div class="form-group">
-      <label for="inputEmail" class="form-group__label">Email* :</label>
-      <input type="email" id="inputEmail" class="form-group__input form-group__input--readonly" data-th-field="*{email}" readonly/>
-    </div>
-
-    <div class="form-group">
-      <label for="inputTelephone" class="form-group__label">Téléphone :</label>
-      <input type="tel" id="inputTelephone" class="form-group__input form-group__input--readonly" data-th-field="*{telephone}" readonly/>
-    </div>
-
-    <div class="form-group form-group--address">
-      <div class="form-group__field">
-        <label for="inputAdresse" class="form-group__label">Adresse* :</label>
-        <input type="text" id="inputAdresse" class="form-group__input" data-th-field="*{adresse.rue}" required/>
-      </div>
-      <div class="form-group__row">
-        <div class="form-group__field">
-          <label for="inputCP" class="form-group__label">Code postal* :</label>
-          <input type="text" id="inputCP" class="form-group__input" data-th-field="*{adresse.code_postal}" required/>
+<main class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="profil-container">
+        <div class="profil-header">
+          <h1>Mon Profil</h1>
         </div>
-        <div class="form-group__field">
-          <label for="inputVille" class="form-group__label">Ville* :</label>
-          <input type="text" id="inputVille" class="form-group__input" data-th-field="*{adresse.ville}" required/>
-        </div>
+        
+        <form method="post" data-th-object="${utilisateur}">
+          <div class="profil-info">
+            <div class="row profil-info__row">
+              <div class="col-md-3 profil-info__label">Pseudo :</div>
+              <div class="col-md-9 profil-info__value" data-th-text="*{pseudo}"></div>
+              <input type="hidden" data-th-field="*{pseudo}" readonly/>
+            </div>
+
+            <div class="row profil-info__row">
+              <div class="col-md-3 profil-info__label">Nom :</div>
+              <div class="col-md-9">
+                <input type="text" id="inputNom" class="form-control-plaintext" data-th-field="*{nom}" readonly/>
+              </div>
+            </div>
+
+            <div class="row profil-info__row">
+              <div class="col-md-3 profil-info__label">Prénom :</div>
+              <div class="col-md-9">
+                <input type="text" id="inputPrenom" class="form-control-plaintext" data-th-field="*{prenom}" readonly/>
+              </div>
+            </div>
+
+            <div class="row profil-info__row">
+              <div class="col-md-3 profil-info__label">Email :</div>
+              <div class="col-md-9">
+                <input type="email" id="inputEmail" class="form-control-plaintext" data-th-field="*{email}" readonly/>
+              </div>
+            </div>
+
+            <div class="row profil-info__row">
+              <div class="col-md-3 profil-info__label">Téléphone :</div>
+              <div class="col-md-9">
+                <input type="tel" id="inputTelephone" class="form-control-plaintext" data-th-field="*{telephone}" readonly/>
+              </div>
+            </div>
+
+            <div class="row profil-info__row">
+              <div class="col-md-3 profil-info__label">Adresse :</div>
+              <div class="col-md-9">
+                <input type="text" id="inputAdresse" class="form-control" data-th-field="*{adresse.rue}" required/>
+              </div>
+            </div>
+            
+            <div class="row profil-info__row">
+              <div class="col-md-3 profil-info__label">Code postal :</div>
+              <div class="col-md-4">
+                <input type="text" id="inputCP" class="form-control" data-th-field="*{adresse.code_postal}" required/>
+              </div>
+              <div class="col-md-2 profil-info__label">Ville :</div>
+              <div class="col-md-3">
+                <input type="text" id="inputVille" class="form-control" data-th-field="*{adresse.ville}" required/>
+              </div>
+            </div>
+          </div>
+
+          <div class="profil-postit">
+            <h6>💰 Votre Crédit</h6>
+            <div class="fs-4 fw-bold" data-th-text="*{credit} + ' points'"></div>
+            <input type="hidden" data-th-field="*{credit}" readonly/>
+          </div>
+          
+          <div class="text-center mt-4">
+            <a th:href="@{/mon-profil/modifier(pseudo=${#authentication.name})}" class="btn btn-primary me-3">
+              ✏️ Modifier mon profil
+            </a>
+            <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${#authentication.name})}" class="btn btn-secondary">
+              🔒 Modifier mot de passe
+            </a>
+          </div>
+        </form>
       </div>
     </div>
-
-    <div class="form-group">
-      <label class="form-group__label">Credit :</label>
-      <p class="form-group__value profil-form__credit" data-th-text="*{credit}"></p>
-      <input type="hidden" data-th-field="*{credit}" readonly/>
-    </div>
-    <div class="form-actions">
-      <a th:href="@{/mon-profil/modifier(pseudo=${#authentication.name})}" class="btn btn--secondary">Modifier mon profil</a>
-      <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${#authentication.name})}" class="btn btn--secondary">Modifier mot de passe</a>
-    </div>
-
-  </form>
+  </div>
 </main>
 
 </body>

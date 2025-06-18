@@ -1,73 +1,89 @@
 <!DOCTYPE html>
-<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='vente')}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Nouvelle vente</title>
 </head>
-<main class="vente-main">
-    <div class="vente-container">
-        <h1 class="vente-container__title">Nouvelle vente</h1>
-        
-        <div th:if="${error}" class="alert alert--danger" th:text="${error}"></div>
-        <div th:if="${success}" class="alert alert--success" th:text="${success}"></div>
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-container">
+                <h1 class="text-center mb-4">Nouvelle vente</h1>
+                
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
-        <form th:action="@{/vendre}" method="post" class="form-container vente-form">
-            <div class="form-group">
-                <label for="nomArticle" class="form-group__label form-group__label--required">Article :</label>
-                <input type="text" id="nomArticle" name="nomArticle" class="form-group__input" th:value="${article?.nom_article}" required>
+                <form th:action="@{/vendre}" method="post">
+                    <div class="mb-3">
+                        <label for="nomArticle" class="form-label">Article <span class="text-danger">*</span></label>
+                        <input type="text" id="nomArticle" name="nomArticle" class="form-control" th:value="${article?.nom_article}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="categorie" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                        <select id="categorie" name="categorie" class="form-select" required>
+                            <option value="">Sélectionnez une catégorie</option>
+                            <option th:each="cat : ${categories}"
+                                    th:value="${cat.no_categorie}"
+                                    th:text="${cat.libelle}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                        <textarea id="description" name="description" class="form-control" th:text="${article?.description}" required rows="6"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="miseAPrix" class="form-label">Mise à prix <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" id="miseAPrix" name="miseAPrix" class="form-control" th:value="${article?.prix_initial}" required min="1">
+                            <span class="input-group-text">points</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="dateDebut" class="form-label">Début de l'enchère <span class="text-danger">*</span></label>
+                            <input type="datetime-local" id="dateDebut" name="dateDebut" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="dateFin" class="form-label">Fin de l'enchère <span class="text-danger">*</span></label>
+                            <input type="datetime-local" id="dateFin" name="dateFin" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Lieu de retrait :</label>
+                        <div th:if="${utilisateur?.adresse}" class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">📍 Adresse de retrait</h6>
+                                <p class="card-text">
+                                    <span th:text="${utilisateur.adresse.rue}"></span><br>
+                                    <span th:text="${utilisateur.adresse.code_postal}"></span>
+                                    <span th:text="${utilisateur.adresse.ville}"></span>
+                                </p>
+                                <input type="hidden" name="retrait" th:value="${utilisateur.adresse.no_adresse}">
+                            </div>
+                        </div>
+                        <div th:unless="${utilisateur?.adresse}" class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Vous devez avoir une adresse de retrait pour vendre un article.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button type="submit" name="action" value="enregistrer" class="btn btn-primary me-md-2">
+                            💾 Enregistrer la vente
+                        </button>
+                        <button type="submit" name="action" value="annulerVente" class="btn btn-secondary">
+                            ❌ Annuler
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group">
-                <label for="categorie" class="form-group__label form-group__label--required">Catégorie :</label>
-                <select id="categorie" name="categorie" class="form-group__select" required>
-                    <option value="">Sélectionnez une catégorie</option>
-                    <option th:each="cat : ${categories}"
-                            th:value="${cat.no_categorie}"
-                            th:text="${cat.libelle}">
-                    </option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="description" class="form-group__label form-group__label--required">Description :</label>
-                <textarea id="description" name="description" class="form-group__textarea" th:text="${article?.description}" required style="width: 534px; height: 200px;"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="miseAPrix" class="form-group__label form-group__label--required">Mise à prix :</label>
-                <input type="number" id="miseAPrix" name="miseAPrix" class="form-group__input" th:value="${article?.prix_initial}" required min="1">
-            </div>
-
-            <div class="form-group">
-                <label for="dateDebut" class="form-group__label form-group__label--required">Début de l'enchère :</label>
-                <input type="datetime-local" id="dateDebut" name="dateDebut" class="form-group__input" required>
-            </div>
-
-            <div class="form-group">
-                <label for="dateFin" class="form-group__label form-group__label--required">Fin de l'enchère :</label>
-                <input type="datetime-local" id="dateFin" name="dateFin" class="form-group__input" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-group__label">Retrait :</label>
-                <div th:if="${utilisateur?.adresse}" class="vente-form__retrait">
-                    <p class="vente-form__retrait-info">
-                        <span th:text="${utilisateur.adresse.rue}"></span><br>
-                        <span th:text="${utilisateur.adresse.code_postal}"></span>
-                        <span th:text="${utilisateur.adresse.ville}"></span>
-                    </p>
-                    <input type="hidden" name="retrait" th:value="${utilisateur.adresse.no_adresse}">
-                </div>
-                <div th:unless="${utilisateur?.adresse}" class="alert alert--warning">
-                    Vous devez avoir une adresse de retrait pour vendre un article.
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" name="action" value="enregistrer" class="btn btn--primary" th:href="@{/ajouter-photo}">📷 Ajouter une photo</button>
-                <button name="action" value="annulerVente" class="btn btn--secondary">Annuler</button>
-            </div>
-        </form>
-
+        </div>
     </div>
 </main>
 </html>
