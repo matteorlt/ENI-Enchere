@@ -17,4 +17,6 @@ public interface ArticleDAO {
     List<ArticleAVendre> findByNomAndCategorie(String nom, String categorie);
     List<ArticleAVendre> findByNomAndCategorieAndVendeur(String nom, String categorie, String vendeurPseudo);
     List<ArticleAVendre> findArticlesAvecEncheresDe(String pseudoUtilisateur);
+    void updateStatutOnly(Long articleId, int nouveauStatut);
+    int getStatutFromDB(Long articleId);
 }

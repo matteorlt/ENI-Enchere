@@ -24,4 +24,7 @@ public interface ArticleService {
     
     // Méthodes de validation
     boolean validateArticle(ArticleAVendre article);
+    
+    // Méthode de mise à jour des statuts
+    void forcerMiseAJourStatuts();
 } 
