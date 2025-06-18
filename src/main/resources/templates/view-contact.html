@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='home')}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Contact - ENI Enchères</title>
+</head>
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="bg-white p-5 rounded shadow-lg">
+                <h1 class="text-gradient mb-4">📞 Contactez-nous</h1>
+                
+                <div class="row">
+                    <!-- Informations de contact -->
+                    <div class="col-md-6 mb-4">
+                        <h2 class="h4 text-primary mb-3">📍 Nos coordonnées</h2>
+                        
+                        <div class="bg-light p-4 rounded mb-4">
+                            <h5 class="text-primary">🏢 ENI École Informatique</h5>
+                            <p class="mb-2">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                                3 Rue Michael Faraday<br>
+                                44800 Saint-Herblain, France
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-phone text-primary"></i>
+                                <a href="tel:0240371500">02 40 37 15 00</a>
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-envelope text-primary"></i>
+                                <a href="mailto:contact@eni-encheres.fr">contact@eni-encheres.fr</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-light p-4 rounded mb-4">
+                            <h5 class="text-primary">⏰ Horaires d'ouverture</h5>
+                            <p class="mb-1"><strong>Lundi - Vendredi :</strong> 8h30 - 18h00</p>
+                            <p class="mb-1"><strong>Samedi :</strong> 9h00 - 12h00</p>
+                            <p class="mb-0"><strong>Dimanche :</strong> Fermé</p>
+                        </div>
+
+                        <div class="bg-light p-4 rounded">
+                            <h5 class="text-primary">🚗 Comment nous trouver</h5>
+                            <p class="mb-1"><strong>Métro :</strong> Ligne 1 - Station Croix-Bonneau</p>
+                            <p class="mb-1"><strong>Bus :</strong> Lignes 10, 11, 12</p>
+                            <p class="mb-0"><strong>Parking :</strong> Parking gratuit disponible</p>
+                        </div>
+                    </div>
+
+                    <!-- Formulaire de contact -->
+                    <div class="col-md-6">
+                        <h2 class="h4 text-primary mb-3">✉️ Envoyez-nous un message</h2>
+                        
+                        <form id="contactForm" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom complet *</label>
+                                <input type="text" class="form-control" id="nom" name="nom" required>
+                                <div class="invalid-feedback">
+                                    Veuillez saisir votre nom.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="invalid-feedback">
+                                    Veuillez saisir une adresse email valide.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" id="telephone" name="telephone">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="sujet" class="form-label">Sujet *</label>
+                                <select class="form-select" id="sujet" name="sujet" required>
+                                    <option value="">Choisissez un sujet</option>
+                                    <option value="question">Question générale</option>
+                                    <option value="probleme">Problème technique</option>
+                                    <option value="enchere">Question sur une enchère</option>
+                                    <option value="compte">Problème de compte</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Veuillez choisir un sujet.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message *</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required 
+                                          placeholder="Décrivez votre demande en détail..."></textarea>
+                                <div class="invalid-feedback">
+                                    Veuillez saisir votre message.
+                                </div>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="rgpd" required>
+                                <label class="form-check-label" for="rgpd">
+                                    J'accepte que mes données personnelles soient utilisées pour traiter ma demande *
+                                </label>
+                                <div class="invalid-feedback">
+                                    Vous devez accepter le traitement de vos données.
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane"></i> Envoyer le message
+                                </button>
+                            </div>
+                        </form>
+
+                        <div id="successMessage" class="alert alert-success mt-3" style="display: none;">
+                            <i class="fas fa-check-circle"></i> Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h2 class="h4 text-primary mb-3">❓ Questions fréquentes</h2>
+                        
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        Comment créer un compte ?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Cliquez sur "S'inscrire" en haut à droite de la page, remplissez le formulaire avec vos informations personnelles et validez votre inscription par email.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        Comment participer à une enchère ?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Une fois connecté, parcourez les enchères disponibles, cliquez sur celle qui vous intéresse et proposez votre enchère. Assurez-vous d'avoir suffisamment de crédits sur votre compte.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Comment vendre un objet ?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Connectez-vous à votre compte, cliquez sur "Vendre un article", remplissez les informations de votre objet, ajoutez des photos et définissez vos conditions de vente.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i> Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Validation du formulaire
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        if (form.checkValidity() === true) {
+                            // Simuler l'envoi du message
+                            document.getElementById('successMessage').style.display = 'block';
+                            form.reset();
+                            form.classList.remove('was-validated');
+                            
+                            // Faire défiler vers le message de succès
+                            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+                        }
+                        
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</main>
+</html> 

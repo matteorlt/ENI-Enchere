@@ -1,65 +1,167 @@
 <!DOCTYPE html>
-<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='photo')}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Ajouter une photo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <main class="photo-main">
     <div class="photo-container">
-        <h1 class="photo-container__title">Ajouter une photo à votre article</h1>
-        
-        <!-- Messages d'erreur et de succès -->
-        <div th:if="${erreur}" class="alert alert--danger" th:text="${erreur}"></div>
-        <div th:if="${succes}" class="alert alert--success" th:text="${succes}"></div>
-
-        <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data" class="form-container photo-form">
+        <!-- Section Prévisualisation (Côté gauche) -->
+        <div class="photo-preview-section">
+            <h2><i class="fas fa-eye"></i> Prévisualisation</h2>
             
-            <div class="form-group">
-                <label for="articleId" class="form-group__label form-group__label--required">Article :</label>
-                <select id="articleId" name="articleId" class="form-group__select" required>
-                    <option value="">Sélectionnez un article</option>
-                    <option th:each="article : ${articles}" 
-                            th:value="${article.no_article}" 
-                            th:text="${article.nom_article}">
-                    </option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="photo" class="form-group__label form-group__label--required">Photo de l'article :</label>
-                <input type="file" 
-                       id="photo" 
-                       name="photo" 
-                       class="form-group__file"
-                       accept="image/jpeg,image/jpg,image/png" 
-                       onchange="previewImage(event)" 
-                       required>
-                <small class="form-group__help">
-                    Formats acceptés : JPEG, JPG, PNG. Taille maximum : 5MB
-                </small>
-            </div>
-
-            <!-- Prévisualisation de l'image -->
-            <div class="form-group photo-form__preview">
-                <label class="form-group__label">Prévisualisation :</label>
-                <img id="imagePreview" 
-                     src="#" 
-                     alt="Prévisualisation de la photo" 
-                     class="photo-form__preview-image" 
-                     style="display: none;">
-                <div id="noPreview" class="photo-form__no-preview">
-                    Aucune image sélectionnée
+            <div class="photo-preview">
+                <div class="photo-preview__container">
+                    <img id="imagePreview" 
+                         src="#" 
+                         alt="Prévisualisation de la photo" 
+                         class="photo-preview__image">
+                    <div id="noPreview" class="photo-preview__placeholder">
+                        <i class="fas fa-camera icon"></i>
+                        <div class="text">Aucune image sélectionnée</div>
+                        <div class="subtext">Choisissez une photo pour la prévisualiser</div>
+                    </div>
                 </div>
             </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn--primary">
-                    📷 Enregistrer la photo
-                </button>
-                <a th:href="@{/enchere}" class="btn btn--secondary">
-                    Annuler
-                </a>
+            
+            <div class="photo-preview__info">
+                <div class="photo-preview__specs">
+                    <div class="photo-preview__spec">
+                        <span class="photo-preview__spec-label">Format</span>
+                        <span id="imageFormat">-</span>
+                    </div>
+                    <div class="photo-preview__spec">
+                        <span class="photo-preview__spec-label">Taille</span>
+                        <span id="imageSize">-</span>
+                    </div>
+                    <div class="photo-preview__spec">
+                        <span class="photo-preview__spec-label">Dimensions</span>
+                        <span id="imageDimensions">-</span>
+                    </div>
+                    <div class="photo-preview__spec">
+                        <span class="photo-preview__spec-label">Qualité</span>
+                        <span id="imageQuality">-</span>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
+
+        <!-- Section Formulaire (Côté droit) -->
+        <div class="photo-form-section">
+            <h2><i class="fas fa-upload"></i> Ajouter une Photo</h2>
+            
+            <!-- Messages d'alerte -->
+            <div th:if="${erreur}" class="photo-alert photo-alert--error show">
+                <i class="fas fa-exclamation-triangle"></i> <span th:text="${erreur}"></span>
+            </div>
+            <div th:if="${succes}" class="photo-alert photo-alert--success show">
+                <i class="fas fa-check-circle"></i> <span th:text="${succes}"></span>
+            </div>
+
+            <form th:action="@{/ajouter-photo}" method="post" enctype="multipart/form-data" class="photo-form">
+                
+                <!-- Information sur l'article présélectionné -->
+                <div th:if="${selectedArticle}" class="photo-alert photo-alert--success show">
+                    <h4><i class="fas fa-box"></i> Article créé avec succès !</h4>
+                    <p><strong>Nom :</strong> <span th:text="${selectedArticle.nom_article}"></span></p>
+                    <p><strong>Description :</strong> <span th:text="${selectedArticle.description}"></span></p>
+                    <p class="mb-0">Vous pouvez maintenant ajouter une photo à cet article.</p>
+                </div>
+                
+                <!-- Sélection d'article -->
+                <div class="mb-4">
+                    <label for="articleId" class="form-label">
+                        <i class="fas fa-box"></i> Article <span class="text-danger">*</span>
+                    </label>
+                    
+                    <div th:if="${selectedArticle}">
+                        <input type="text" 
+                               class="form-control" 
+                               th:value="${selectedArticle.nom_article}" 
+                               readonly>
+                        <input type="hidden" name="articleId" th:value="${selectedArticle.no_article}">
+                    </div>
+                    
+                    <select th:unless="${selectedArticle}" 
+                            id="articleId" 
+                            name="articleId" 
+                            class="form-select" 
+                            required>
+                        <option value="">Sélectionnez un article</option>
+                        <option th:each="article : ${articles}" 
+                                th:value="${article.no_article}" 
+                                th:text="${article.nom_article}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Zone de drop pour la photo -->
+                <div class="photo-drop-zone" onclick="document.getElementById('photo').click()">
+                    <i class="fas fa-cloud-upload-alt icon"></i>
+                    <div class="text">Cliquez ou glissez votre photo ici</div>
+                    <div class="subtext">JPEG, JPG, PNG - Max 5MB</div>
+                    <input type="file" 
+                           id="photo" 
+                           name="photo" 
+                           class="photo-file-input"
+                           accept="image/jpeg,image/jpg,image/png" 
+                           onchange="previewImage(event)" 
+                           required>
+                </div>
+
+                <!-- Informations du fichier -->
+                <div id="photoFileInfo" class="photo-file-info">
+                    <h4><i class="fas fa-info-circle"></i> Informations du fichier</h4>
+                    <div class="photo-file-details">
+                        <div class="photo-file-detail">
+                            <span class="photo-file-detail-label">Nom</span>
+                            <span id="fileName">-</span>
+                        </div>
+                        <div class="photo-file-detail">
+                            <span class="photo-file-detail-label">Taille</span>
+                            <span id="fileSize">-</span>
+                        </div>
+                        <div class="photo-file-detail">
+                            <span class="photo-file-detail-label">Type</span>
+                            <span id="fileType">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conseils -->
+                <div class="photo-tips">
+                    <h4><i class="fas fa-lightbulb"></i> Conseils pour une belle photo</h4>
+                    <ul>
+                        <li>Utilisez un bon éclairage naturel</li>
+                        <li>Prenez la photo sur un fond neutre</li>
+                        <li>Montrez l'article sous plusieurs angles si possible</li>
+                        <li>Assurez-vous que l'image soit nette et bien cadrée</li>
+                        <li>Format recommandé : 1200x800 pixels minimum</li>
+                    </ul>
+                </div>
+
+                <!-- Barre de progression -->
+                <div id="uploadProgress" class="photo-progress">
+                    <div class="photo-progress-bar"></div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="photo-actions">
+                    <button type="submit" class="photo-btn photo-btn--primary" id="submitBtn">
+                        <i class="fas fa-save"></i> Enregistrer la photo
+                    </button>
+                    <a th:href="@{/enchere}" class="photo-btn photo-btn--secondary">
+                        <i class="fas fa-forward"></i> Ignorer pour l'instant
+                    </a>
+                </div>
+                
+                <div th:if="${selectedArticle}" class="text-center mt-4">
+                    <a th:href="@{/details(no_article=${selectedArticle.no_article})}" class="photo-btn photo-btn--secondary">
+                        <i class="fas fa-eye"></i> Voir mon article
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -67,37 +169,114 @@
             const input = event.target;
             const preview = document.getElementById('imagePreview');
             const noPreview = document.getElementById('noPreview');
+            const fileInfo = document.getElementById('photoFileInfo');
             
             if (input.files && input.files[0]) {
+                const file = input.files[0];
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
                     preview.src = e.target.result;
-                    preview.style.display = 'block';
+                    preview.classList.add('show');
                     noPreview.style.display = 'none';
+                    
+                    // Obtenir les dimensions de l'image
+                    const img = new Image();
+                    img.onload = function() {
+                        document.getElementById('imageDimensions').textContent = img.width + 'x' + img.height;
+                        
+                        // Évaluer la qualité basée sur les dimensions
+                        let quality = 'Faible';
+                        if (img.width >= 1200 && img.height >= 800) {
+                            quality = 'Excellente';
+                        } else if (img.width >= 800 && img.height >= 600) {
+                            quality = 'Bonne';
+                        } else if (img.width >= 400 && img.height >= 300) {
+                            quality = 'Correcte';
+                        }
+                        document.getElementById('imageQuality').textContent = quality;
+                    };
+                    img.src = e.target.result;
                 }
                 
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
+                
+                // Afficher les informations du fichier
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('fileType').textContent = file.type.split('/')[1].toUpperCase();
+                document.getElementById('imageFormat').textContent = file.type.split('/')[1].toUpperCase();
+                document.getElementById('imageSize').textContent = formatFileSize(file.size);
+                
+                fileInfo.classList.add('show');
             } else {
+                preview.classList.remove('show');
                 preview.style.display = 'none';
-                noPreview.style.display = 'block';
+                noPreview.style.display = 'flex';
+                fileInfo.classList.remove('show');
             }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Drag and drop functionality
+        const dropZone = document.querySelector('.photo-drop-zone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+        
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            const fileInput = document.getElementById('photo');
+            fileInput.files = files;
+            previewImage({ target: fileInput });
         }
         
         // Validation côté client
         document.querySelector('form').addEventListener('submit', function(e) {
             const fileInput = document.getElementById('photo');
-            const articleSelect = document.getElementById('articleId');
+            const articleSelect = document.getElementById('articleId') || document.querySelector('input[name="articleId"]');
             
             if (!fileInput.files || fileInput.files.length === 0) {
                 e.preventDefault();
-                alert('Veuillez sélectionner une photo');
+                showAlert('Veuillez sélectionner une photo', 'error');
                 return;
             }
             
-            if (!articleSelect.value) {
+            if (articleSelect && !articleSelect.value) {
                 e.preventDefault();
-                alert('Veuillez sélectionner un article');
+                showAlert('Veuillez sélectionner un article', 'error');
                 return;
             }
             
@@ -106,17 +285,50 @@
             
             if (file.size > maxSize) {
                 e.preventDefault();
-                alert('La taille du fichier ne doit pas dépasser 5MB');
+                showAlert('La taille du fichier ne doit pas dépasser 5MB', 'error');
                 return;
             }
             
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
             if (!allowedTypes.includes(file.type)) {
                 e.preventDefault();
-                alert('Seuls les fichiers JPEG, JPG et PNG sont autorisés');
+                showAlert('Seuls les fichiers JPEG, JPG et PNG sont autorisés', 'error');
                 return;
             }
+            
+            // Simuler la progression de l'upload
+            const progressBar = document.getElementById('uploadProgress');
+            const progress = progressBar.querySelector('.photo-progress-bar');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            progressBar.classList.add('show');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+            
+            let width = 0;
+            const interval = setInterval(() => {
+                width += Math.random() * 15;
+                if (width >= 100) {
+                    width = 100;
+                    clearInterval(interval);
+                }
+                progress.style.width = width + '%';
+            }, 100);
         });
+        
+        function showAlert(message, type) {
+            // Créer et afficher une alerte dynamique
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `photo-alert photo-alert--${type} show`;
+            alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            
+            const form = document.querySelector('.photo-form');
+            form.insertBefore(alertDiv, form.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
     </script>
 </main>
 </html>

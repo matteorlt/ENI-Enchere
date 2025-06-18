@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='gestion')}"
       xmlns:th="http://www.thymeleaf.org">
   <head>
       <title>Gestion de mes articles</title>
   </head>
 <body>
-    <div th:replace="~{layout :: header}"></div>
-
-    <main class="gestion-container">
+<main class="container-fluid">
+    <div class="gestion-container">
         <div class="header-section">
             <h1 class="page-title">📦 Gestion de mes articles</h1>
             <p class="gestion-subtitle">Gérez vos articles en vente</p>
@@ -201,11 +200,12 @@
         </div>
         
         <!-- Bouton pour créer un nouvel article -->
-        <div class="action-section">
-            <a th:href="@{/vendre}" class="btn btn--primary btn--large">➕ Créer un nouvel article</a>
+        <div class="text-center mt-4 mb-5">
+            <a th:href="@{/vendre}" class="btn btn--primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                ➕ Créer un nouvel article
+            </a>
         </div>
-    </main>
-
-    <div th:replace="~{layout :: footer}"></div>
+    </div>
+</main>
 </body>
 </html> 

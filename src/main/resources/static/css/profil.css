@@ -1,0 +1,145 @@
+/* ========================================
+   PROFIL.CSS - Styles pour les pages de profil utilisateur
+   ======================================== */
+
+/* Conteneur profil */
+.profil-container {
+    background: white;
+    border-radius: var(--eni-border-radius);
+    box-shadow: var(--eni-shadow-lg);
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 800px;
+}
+
+.profil-header {
+    border-bottom: 2px solid var(--eni-light);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.profil-header h1 {
+    background: var(--eni-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0;
+}
+
+/* Informations du profil */
+.profil-info__row {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.3s ease;
+}
+
+.profil-info__row:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+    border-radius: var(--eni-border-radius);
+}
+
+.profil-info__label {
+    font-weight: 600;
+    color: var(--eni-dark);
+}
+
+.profil-info__value {
+    color: #495057;
+}
+
+/* Post-it style pour les infos spéciales */
+.profil-postit {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    padding: 1rem;
+    border-radius: var(--eni-border-radius);
+    border-left: 4px solid #ffc107;
+    margin: 1rem 0;
+    position: relative;
+    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.2);
+}
+
+.profil-postit::before {
+    content: '📌';
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    font-size: 1.5rem;
+    transform: rotate(15deg);
+}
+
+/* Bouton profil */
+.profil-button {
+    background: var(--eni-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.profil-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+/* Animation d'entrée */
+.profil-container {
+    animation: slideInFromRight 0.8s ease-out;
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Header box avec informations */
+.profil-header-box {
+    background: var(--eni-gradient);
+    color: white;
+    padding: 1rem;
+    border-radius: var(--eni-border-radius);
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.profil-header-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profil-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .profil-header h1 {
+        font-size: 2rem;
+    }
+} 

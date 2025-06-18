@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleDAO articleDAO;
@@ -18,12 +21,18 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleAVendre> getAllArticles() {
-        return articleDAO.findAll();
+        List<ArticleAVendre> articles = articleDAO.findAll();
+        // Mettre à jour les statuts de tous les articles
+        updateStatutEncheres(articles);
+        return articles;
     }
 
     @Override
     public List<ArticleAVendre> getArticleById(Integer articleId) {
-        return articleDAO.getId(articleId);
+        List<ArticleAVendre> articles = articleDAO.getId(articleId);
+        // Mettre à jour le statut de l'article récupéré
+        updateStatutEncheres(articles);
+        return articles;
     }
 
     @Override
@@ -192,11 +201,59 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleAVendre> getArticlesFiltres(String nom, String categorie, String vendeurPseudo) {
+        List<ArticleAVendre> articles;
+        
         if ((nom == null || nom.isEmpty()) && (categorie == null || categorie.isEmpty()) && (vendeurPseudo == null || vendeurPseudo.isEmpty())) {
-            return articleDAO.findAll();
+            articles = articleDAO.findAll();
         } else {
-            return articleDAO.findByNomAndCategorieAndVendeur(nom, categorie, vendeurPseudo);
+            articles = articleDAO.findByNomAndCategorieAndVendeur(nom, categorie, vendeurPseudo);
         }
+        
+        // Mettre à jour automatiquement le statut des enchères qui doivent commencer
+        updateStatutEncheres(articles);
+        
+        // Retourner tous les articles (le filtrage se fait dans le contrôleur si nécessaire)
+        return articles;
+    }
+    
+    /**
+     * Met à jour automatiquement le statut des enchères qui doivent commencer
+     */
+    private void updateStatutEncheres(List<ArticleAVendre> articles) {
+        Date maintenant = new Date();
+        
+        for (ArticleAVendre article : articles) {
+            
+            // Si l'enchère était en attente (statut 0) et que sa date de début est arrivée
+            if (article.getStatut() == 0 && !article.getDate_debut_enchere().after(maintenant)) {
+                try {
+                    articleDAO.updateStatutOnly(article.getNo_article(), 1);
+                    article.setStatut(1); // Mettre à jour l'objet en mémoire aussi
+                } catch (Exception e) {
+                    // Log l'erreur mais continue le traitement
+                    System.err.println("Erreur lors de la mise à jour du statut de l'article " + article.getNo_article() + ": " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+            // Si l'enchère est terminée et toujours active
+            else if (article.getStatut() == 1 && !article.getDate_fin_enchere().after(maintenant)) {
+                try {
+                    articleDAO.updateStatutOnly(article.getNo_article(), 2);
+                    article.setStatut(2); // Mettre à jour l'objet en mémoire aussi
+                } catch (Exception e) {
+                    // Log l'erreur mais continue le traitement
+                    System.err.println("Erreur lors de la mise à jour du statut de l'article " + article.getNo_article() + ": " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+            }
+        }
+    }
+
+    @Override
+    public void forcerMiseAJourStatuts() {
+        List<ArticleAVendre> tousLesArticles = articleDAO.findAll();
+        updateStatutEncheres(tousLesArticles);
     }
 
     @Override

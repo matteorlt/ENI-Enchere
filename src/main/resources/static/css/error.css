@@ -1,32 +1,168 @@
-.error-container {
+/* ========================================
+   ERROR.CSS - Styles pour les pages d'erreur
+   ======================================== */
+
+/* Conteneur principal */
+.error-main {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 50px 20px;
+    padding: 2rem;
+}
+
+.error-container {
+    background: white;
+    border-radius: var(--eni-border-radius);
+    box-shadow: var(--eni-shadow-lg);
+    padding: 3rem;
     max-width: 600px;
-    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 }
+
+/* Animation de fond */
+.error-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Code d'erreur */
 .error-code {
-    font-size: 72px;
-    color: #dc3545;
-    margin-bottom: 20px;
+    font-size: 8rem;
+    font-weight: 900;
+    background: var(--eni-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    animation: bounce 2s infinite;
+    position: relative;
+    z-index: 1;
 }
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px); }
+    60% { transform: translateY(-10px); }
+}
+
+/* Titre d'erreur */
+.error-title {
+    font-size: 2.5rem;
+    color: var(--eni-dark);
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Message d'erreur */
 .error-message {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 30px;
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
 }
-.error-details {
-    color: #666;
-    margin-bottom: 30px;
-}
-.back-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
+
+/* Bouton de retour */
+.error-button {
+    background: var(--eni-gradient);
     color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
-.back-button:hover {
-    background-color: #0056b3;
+
+.error-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+    color: white;
+}
+
+/* Animation d'entrée */
+.error-container {
+    animation: slideInScale 0.8s ease-out;
+}
+
+@keyframes slideInScale {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Illustration d'erreur */
+.error-illustration {
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.error-illustration svg {
+    width: 150px;
+    height: 150px;
+    opacity: 0.8;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .error-main {
+        padding: 1rem;
+    }
+    
+    .error-container {
+        padding: 2rem;
+    }
+    
+    .error-code {
+        font-size: 5rem;
+    }
+    
+    .error-title {
+        font-size: 2rem;
+    }
+    
+    .error-message {
+        font-size: 1rem;
+    }
+    
+    .error-button {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+    }
 }

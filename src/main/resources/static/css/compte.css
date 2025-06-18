@@ -1,0 +1,160 @@
+/* ========================================
+   COMPTE.CSS - Styles pour la page de création de compte
+   ======================================== */
+
+/* Conteneur principal */
+.compte-main {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.compte-form {
+    background: white;
+    border-radius: var(--eni-border-radius);
+    box-shadow: var(--eni-shadow-lg);
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Titre du formulaire */
+.compte-form__title {
+    text-align: center;
+    background: var(--eni-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* Groupement des champs */
+.compte-form__group {
+    background: rgba(102, 126, 234, 0.05);
+    padding: 1.5rem;
+    border-radius: var(--eni-border-radius);
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--eni-primary);
+}
+
+.compte-form__group-title {
+    color: var(--eni-primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Style spécial pour les champs */
+.compte-form .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: var(--eni-border-radius);
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.compte-form .form-control:focus {
+    border-color: var(--eni-primary);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: scale(1.02);
+}
+
+/* Validation states */
+.compte-form .form-control.is-invalid {
+    border-color: #dc3545;
+    animation: shake 0.5s ease-in-out;
+}
+
+.compte-form .form-control.is-valid {
+    border-color: #28a745;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Bouton de soumission */
+.compte-form__submit {
+    background: var(--eni-gradient);
+    border: none;
+    color: white;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.compte-form__submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.compte-form__submit:active {
+    transform: translateY(-1px);
+}
+
+/* Animation d'entrée */
+.compte-form {
+    animation: slideInFromTop 0.8s ease-out;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Lien vers connexion */
+.compte-form__login-link {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.compte-form__login-link a {
+    color: var(--eni-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.compte-form__login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .compte-main {
+        padding: 1rem;
+    }
+    
+    .compte-form {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .compte-form__title {
+        font-size: 2rem;
+    }
+    
+    .compte-form__group {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+} 

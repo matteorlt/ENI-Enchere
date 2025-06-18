@@ -1421,12 +1421,12 @@ a:hover {
     .gestion-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .gestion-filters__form {
         grid-template-columns: 1fr 1fr;
         gap: 15px;
     }
-    
+
     .gestion-filters__buttons {
         grid-column: 1 / -1;
         justify-content: center;
@@ -1438,89 +1438,89 @@ a:hover {
         font-size: 1.5rem;
         padding: 0 0.5rem;
     }
-    
+
     .layout-nav {
         margin: 0 0.5rem;
     }
-    
+
     .layout-nav__list {
         flex-direction: column;
         gap: 0.5rem;
         align-items: center;
     }
-    
+
     .layout-nav__link {
         padding: 0.5rem 1rem;
         text-align: center;
         width: 200px;
     }
-    
+
     .section {
         padding: 2rem;
         margin: 0 0.5rem;
     }
-    
+
     .layout-main {
         padding: 1rem 0;
     }
-    
+
     .layout-footer__content {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .container {
         padding: 0 0.5rem;
     }
-    
+
     .encheres-filters__form {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .encheres-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .detail-table,
     .detail-table__row,
     .detail-table__cell {
         display: block;
         width: 100%;
     }
-    
+
     .detail-table__label {
         text-align: left;
         width: auto;
     }
-    
+
     .detail-table__value {
         min-width: 0;
     }
-    
+
     .form-row {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
+
     .form-buttons {
         flex-direction: column;
     }
-    
+
     .gestion-filters__form {
         grid-template-columns: 1fr;
     }
-    
+
     .gestion-card__details {
         flex-direction: column;
         gap: 8px;
     }
-    
+
     .profil-header-box {
         position: static;
         margin: 1rem auto;
     }
-    
+
     .profil-main {
         min-height: unset;
     }
@@ -1530,20 +1530,20 @@ a:hover {
     .layout-header__title {
         font-size: 1.3rem;
     }
-    
+
     .layout-nav__link {
         padding: 0.4rem 0.8rem;
         width: 180px;
     }
-    
+
     .section {
         padding: 1.5rem;
     }
-    
+
     .layout-footer {
         padding: 1rem 0;
     }
-    
+
     h1 { font-size: 2rem; }
     h2 { font-size: 1.75rem; }
 }

@@ -1,0 +1,122 @@
+/* ========================================
+   HOME.CSS - Styles pour la page d'accueil
+   ======================================== */
+
+/* Hero section */
+.home-hero {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: var(--eni-border-radius);
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.home-hero__title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: var(--eni-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInDown 1s ease-out;
+}
+
+.home-hero__subtitle {
+    font-size: 1.5rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.home-hero__description {
+    font-size: 1.1rem;
+    color: #495057;
+    margin-bottom: 2.5rem;
+    animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.home-hero__actions {
+    animation: fadeInUp 1s ease-out 0.9s both;
+}
+
+.home-hero__btn {
+    margin: 0.5rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.home-hero__btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-decoration: none;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-hero {
+        padding: 2rem 1rem;
+    }
+    
+    .home-hero__title {
+        font-size: 2.5rem;
+    }
+    
+    .home-hero__subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .home-hero__btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        margin: 0.25rem;
+        display: block;
+        text-align: center;
+    }
+} 

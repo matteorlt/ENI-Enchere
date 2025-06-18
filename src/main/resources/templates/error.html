@@ -1,21 +1,32 @@
 <!DOCTYPE html>
-<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='error')}" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <title>Erreur</title>
 </head>
 <body>
-<main>
-    <div class="error-container">
-        <div class="error-code" th:text="${statusCode}">500</div>
-        <div class="error-message" th:text="${errorMessage}">Une erreur s'est produite</div>
-        <div class="error-details">
-            <p>Nous sommes désolés pour ce désagrément.</p>
-            <p>Veuillez réessayer ou retourner à la page d'accueil.</p>
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="error-container">
+                <div class="text-center">
+                    <div class="error-code display-1 fw-bold mb-4" th:text="${statusCode}">500</div>
+                    <div class="error-message h3 mb-4" th:text="${errorMessage}">Une erreur s'est produite</div>
+                    <div class="error-details mb-4">
+                        <div class="alert alert-warning">
+                            <p class="mb-2">Nous sommes désolés pour ce désagrément.</p>
+                            <p class="mb-0">Veuillez réessayer ou retourner à la page d'accueil.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <a th:href="@{/}" class="back-button">Retour à l'accueil</a>
+        <a th:href="@{/}" class="btn btn-primary btn-lg">
+            🏠 Retour à l'accueil
+        </a>
     </div>
+
 </main>
 </body>
 </html> 

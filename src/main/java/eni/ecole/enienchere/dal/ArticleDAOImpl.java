@@ -42,14 +42,15 @@ public class ArticleDAOImpl implements ArticleDAO {
     @Override
     public void insert(ArticleAVendre article) {
         String sql = "INSERT INTO ARTICLES_A_VENDRE (nom_article, description, date_debut_encheres, " +
-                "date_fin_encheres, prix_initial, prix_vente, id_utilisateur, no_categorie, no_adresse_retrait) " +
-                "VALUES (:nom, :description, :dateDebut, :dateFin, :prixInitial, :prixVente, :vendeur, :categorie, :adresse)";
+                "date_fin_encheres, statut_enchere, prix_initial, prix_vente, id_utilisateur, no_categorie, no_adresse_retrait) " +
+                "VALUES (:nom, :description, :dateDebut, :dateFin, :statut_enchere, :prixInitial, :prixVente, :vendeur, :categorie, :adresse)";
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nom", article.getNom_article())
                 .addValue("description", article.getDescription())
                 .addValue("dateDebut", article.getDate_debut_enchere())
                 .addValue("dateFin", article.getDate_fin_enchere())
+                .addValue("statut_enchere", article.getStatut())
                 .addValue("prixInitial", article.getPrix_initial())
                 .addValue("prixVente", article.getPrix_vente())
                 .addValue("vendeur", article.getVendeur().getPseudo())
@@ -64,20 +65,23 @@ public class ArticleDAOImpl implements ArticleDAO {
     @Override
     public void update(ArticleAVendre article) {
         String sql = "UPDATE ARTICLES_A_VENDRE SET nom_article = ?, description = ?, " +
-                "date_debut_encheres = ?, date_fin_encheres = ?, prix_initial = ?, " +
+                "date_debut_encheres = ?, date_fin_encheres = ?, statut_enchere = ?, prix_initial = ?, " +
                 "prix_vente = ?, id_utilisateur = ?, no_categorie = ?, no_adresse_retrait = ? WHERE no_article = ?";
 
-        jdbcTemplate.update(sql,
+        
+        int rowsAffected = jdbcTemplate.update(sql,
                 article.getNom_article(),
                 article.getDescription(),
                 article.getDate_debut_enchere(),
                 article.getDate_fin_enchere(),
+                article.getStatut(),
                 article.getPrix_initial(),
                 article.getPrix_vente(),
                 article.getVendeur().getPseudo(),
                 article.getCategorie().getNo_categorie(),
                 article.getAdresse_retrait().getNo_adresse(),
                 article.getNo_article());
+
     }
 
     @Override
@@ -202,5 +206,17 @@ public class ArticleDAOImpl implements ArticleDAO {
                 "JOIN ENCHERES e ON a.no_article = e.no_article " +
                 "WHERE e.id_utilisateur = ?";
         return jdbcTemplate.query(sql, articleRowMapper, pseudoUtilisateur);
+    }
+
+    @Override
+    public void updateStatutOnly(Long articleId, int nouveauStatut) {
+        String sql = "UPDATE ARTICLES_A_VENDRE SET statut_enchere = ? WHERE no_article = ?";
+        int rowsAffected = jdbcTemplate.update(sql, nouveauStatut, articleId);
+    }
+
+    @Override
+    public int getStatutFromDB(Long articleId) {
+        String sql = "SELECT statut_enchere FROM ARTICLES_A_VENDRE WHERE no_article = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, articleId);
     }
 }

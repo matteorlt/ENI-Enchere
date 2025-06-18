@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='encheres')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Liste des enchères</title>
@@ -8,88 +8,104 @@
 <body>
     <div th:replace="~{layout :: header}"></div>
 
-    <main class="container">
-        <section class="encheres-filters">
-            <h4>Filtres :</h4>
-            <form method="get" th:action="@{/enchere}" class="encheres-filters__form">
-                <div class="encheres-filters__group">
-                    <label for="nom" class="encheres-filters__label">Le nom de l'article contient :</label>
-                    <input type="text" id="nom" name="nom" th:value="${nom}" placeholder="Rechercher..." class="encheres-filters__input">
+    <main class="container py-4">
+        <section class="encheres-filters mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Filtres</h4>
                 </div>
-                
-                <div class="encheres-filters__group">
-                    <label for="categorie" class="encheres-filters__label">Catégorie :</label>
-                    <select name="categorie" id="categorie" class="encheres-filters__select">
-                        <option value="">Toutes les catégories</option>
-                        <option th:each="cat : ${categories}" 
-                                th:value="${cat.libelle}" 
-                                th:text="${cat.libelle}"
-                                th:selected="${cat.libelle == categorie}">
-                        </option>
-                    </select>
+                <div class="card-body">
+                    <form method="get" th:action="@{/enchere}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nom" class="form-label">Le nom de l'article contient :</label>
+                                <input type="text" id="nom" name="nom" th:value="${nom}" placeholder="Rechercher..." class="form-control">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="categorie" class="form-label">Catégorie :</label>
+                                <select name="categorie" id="categorie" class="form-select">
+                                    <option value="">Toutes les catégories</option>
+                                    <option th:each="cat : ${categories}" 
+                                            th:value="${cat.libelle}" 
+                                            th:text="${cat.libelle}"
+                                            th:selected="${cat.libelle == categorie}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6" th:if="${#authorization.expression('isAuthenticated()')}">
+                                <div class="form-check">
+                                    <input type="checkbox" id="mesEncheres" name="mesEncheres" th:checked="${mesEncheres}" class="form-check-input">
+                                    <label for="mesEncheres" class="form-check-label">Mes ventes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="mesEncheresFaites" name="mesEncheresFaites" th:checked="${mesEncheresFaites}" class="form-check-input">
+                                    <label for="mesEncheresFaites" class="form-check-label">Mes enchères</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="statut" class="form-label">Filtrer par statut :</label>
+                                <select id="statut" name="statut" class="form-select">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="debut" th:selected="${statut == 'debut'}">💛 Pas commencé</option>
+                                    <option value="actif" th:selected="${statut == 'actif'}">💚 En cours</option>
+                                    <option value="termine" th:selected="${statut == 'termine'}">🔴 Terminé</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-center mt-3">
+                            <button type="submit" class="btn btn-primary">Rechercher</button>
+                            <a th:href="@{/enchere}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="encheres-filters__group" th:if="${#authorization.expression('isAuthenticated()')}">
-                    <label for="mesEncheres" class="encheres-filters__checkbox-label">
-                        <input type="checkbox" id="mesEncheres" name="mesEncheres" th:checked="${mesEncheres}" class="encheres-filters__checkbox">
-                        Mes ventes
-                    </label>
-                    <br>
-                    <label for="mesEncheresFaites" class="encheres-filters__checkbox-label">
-                        <input type="checkbox" id="mesEncheresFaites" name="mesEncheresFaites" th:checked="${mesEncheresFaites}" class="encheres-filters__checkbox">
-                        Mes enchères
-                    </label>
-                </div>
-                
-                <div class="encheres-filters__group">
-                    <label for="statut" class="encheres-filters__label">Filtrer par statut :</label>
-                    <select id="statut" name="statut" class="encheres-filters__select">
-                        <option value="">Tous les statuts</option>
-                        <option value="debut" th:selected="${statut == 'debut'}">💛 Pas commencé</option>
-                        <option value="actif" th:selected="${statut == 'actif'}">💚 En cours</option>
-                        <option value="termine" th:selected="${statut == 'termine'}">🔴 Terminé</option>
-                    </select>
-                </div>
-                
-                <div class="encheres-filters__buttons">
-                    <button type="submit" class="btn btn--primary">Rechercher</button>
-                    <a th:href="@{/enchere}" class="btn btn--secondary">Annuler</a>
-                </div>
-            </form>
+            </div>
         </section>
         
         <section>
-            <h2>Liste des enchères</h2>
-            <div class="encheres-grid">
-                <a th:each="enchere : ${encheres}" th:href="@{/details(no_article=${enchere.no_article})}" class="encheres-card">
-                    <!-- Photo de l'article via le contrôleur PhotoController -->
-                    <img th:if="${enchere.photo != null and enchere.photo != ''}" 
-                         th:src="@{'/images/articles/' + ${enchere.no_article}}"
-                         th:alt="${enchere.nom_article}"
-                         class="encheres-card__image" />
-                    
-                    <!-- Image par défaut si pas de photo -->
-                    <img th:unless="${enchere.photo != null and enchere.photo != ''}" 
-                         src="/images/default.webp"
-                         alt="Image par défaut" 
-                         class="encheres-card__image" />
-                         
-                    <h3 class="encheres-card__title" th:text="${enchere.nom_article}">Nom</h3>
-                    
-                    <!-- Affichage du statut temporel -->
-                    <p class="encheres-status">
-                        <span th:if="${enchere.date_debut_enchere.after(new java.util.Date())}" class="encheres-status--pending">💛 Pas commencé</span>
-                        <span th:if="${!enchere.date_debut_enchere.after(new java.util.Date()) && enchere.date_fin_enchere.after(new java.util.Date())}" class="encheres-status--active">💚 En cours</span>
-                        <span th:if="${!enchere.date_fin_enchere.after(new java.util.Date())}" class="encheres-status--finished">🔴 Terminé</span>
-                    </p>
-                    
-                    <p class="encheres-card__price">Prix : <span th:text="${enchere.prix_vente != null ? enchere.prix_vente : enchere.prix_initial}">0</span> point(s)</p>
-                    <p class="encheres-card__details">Fin de l'enchère : <span th:text="${#dates.format(enchere.date_fin_enchere, 'dd/MM/yyyy')}">01/06/202X</span></p>
-                    <p class="encheres-card__details">Vendeur : <span th:text="${enchere.vendeur.pseudo}">vendeur</span></p>
-                </a>
+            <h2 class="mb-4">Liste des enchères</h2>
+            <div class="row g-4">
+                <div th:each="enchere : ${encheres}" class="col-md-6 col-lg-4">
+                    <div class="card encheres-card h-100">
+                        <a th:href="@{/details(no_article=${enchere.no_article})}" class="text-decoration-none">
+                            <!-- Photo de l'article via le contrôleur PhotoController -->
+                            <img th:if="${enchere.photo != null and enchere.photo != ''}" 
+                                 th:src="@{'/images/articles/' + ${enchere.no_article}}"
+                                 th:alt="${enchere.nom_article}"
+                                 class="card-img-top" />
+                            
+                            <!-- Image par défaut si pas de photo -->
+                            <img th:unless="${enchere.photo != null and enchere.photo != ''}" 
+                                 src="/images/default.webp"
+                                 alt="Image par défaut" 
+                                 class="card-img-top" />
+                                 
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title" th:text="${enchere.nom_article}">Nom</h5>
+                                
+                                <!-- Affichage du statut temporel -->
+                                <span class="badge mb-2 align-self-start">
+                                    <span th:if="${enchere.date_debut_enchere.after(new java.util.Date())}" class="badge bg-warning text-dark">💛 Pas commencé</span>
+                                    <span th:if="${!enchere.date_debut_enchere.after(new java.util.Date()) && enchere.date_fin_enchere.after(new java.util.Date())}" class="badge bg-success">💚 En cours</span>
+                                    <span th:if="${!enchere.date_fin_enchere.after(new java.util.Date())}" class="badge bg-danger">🔴 Terminé</span>
+                                </span>
+                                
+                                <p class="card-text"><strong>Prix :</strong> <span th:text="${enchere.prix_vente != null ? enchere.prix_vente : enchere.prix_initial}">0</span> point(s)</p>
+                                <p class="card-text"><small class="text-muted">Fin : <span th:text="${#dates.format(enchere.date_fin_enchere, 'dd/MM/yyyy')}">01/06/202X</span></small></p>
+                                <p class="card-text mt-auto"><small class="text-muted">Vendeur : <span th:text="${enchere.vendeur.pseudo}">vendeur</span></small></p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div th:if="${encheres == null or #lists.isEmpty(encheres)}" class="text-center p-5">
-                <p class="text-muted">Aucune enchère trouvée.</p>
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">Aucune enchère trouvée</h4>
+                    <p class="mb-0">Essayez de modifier vos critères de recherche.</p>
+                </div>
             </div>
         </section>
     </main>

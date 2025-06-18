@@ -1,139 +1,187 @@
 <!DOCTYPE html>
 <html lang="fr"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='detail')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Détail de l'enchère</title>
 </head>
 <body>
-<main class="detail-container">
+<main class="container py-4">
     <!-- Messages d'alerte -->
-    <div th:if="${success}" class="alert alert--success" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert--danger" th:text="${error}"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
     
-    <!-- Photo de l'article -->
-    <div class="detail-photo">
-        <img th:if="${article.photo != null and article.photo != ''}" 
-             th:src="@{'/images/articles/' + ${article.no_article}}"
-             th:alt="${article.nom_article}"
-             class="detail-photo__image"/>
-        <img th:unless="${article.photo != null and article.photo != ''}" 
-             src="/images/default.webp" 
-             alt="Image par défaut" 
-             class="detail-photo__image detail-photo__image--default"/>
-    </div>
+    <div class="detail-container">
+        <div class="row">
+            <!-- Photo de l'article -->
+            <div class="col-lg-6 mb-4">
+                <div class="detail-photo">
+                    <img th:if="${article.photo != null and article.photo != ''}" 
+                         th:src="@{'/images/articles/' + ${article.no_article}}"
+                         th:alt="${article.nom_article}"
+                         class="detail-photo__image img-fluid"/>
+                    <img th:unless="${article.photo != null and article.photo != ''}" 
+                         src="/images/default.webp" 
+                         alt="Image par défaut" 
+                         class="detail-photo__image detail-photo__image--default img-fluid"/>
+                </div>
+            </div>
     
-    <div class="detail-table">
-        <div class="detail-table__row">
-            <div class="detail-table__cell detail-table__label">Article :</div>
-            <div class="detail-table__cell detail-table__value" th:text="${article.nom_article}"></div>
-            <div class="detail-table__cell detail-table__label">Mise à prix :</div>
-            <div class="detail-table__cell detail-table__value" th:text="${article.prix_initial} + ' point(s)' "></div>
-        </div>
-        <div class="detail-table__row">
-            <div class="detail-table__cell detail-table__label">Catégorie :</div>
-            <div class="detail-table__cell detail-table__value" th:text="${article.categorie.libelle}"></div>
-            <div class="detail-table__cell detail-table__label">Meilleure offre :</div>
-            <div class="detail-table__cell detail-table__value" th:text="${meilleureOffre} + ' point(s)'"></div>
-        </div>
-        <div class="detail-table__row">
-            <div class="detail-table__cell detail-table__label">Description :</div>
-            <div class="detail-table__cell detail-table__value" th:text="${article.description}" colspan="3"></div>
-            <div class="detail-table__cell detail-table__label">Fin de l'enchère :</div>
-            <div class="detail-table__cell detail-table__value" th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy HH:mm')}"></div>
-            <div class="detail-table__cell detail-table__label">Statut :</div>
-            <div class="detail-table__cell detail-table__value">
-                <span th:if="${enchereTerminee}" class="encheres-status--finished">🔴 Terminée</span>
-                <span th:unless="${enchereTerminee}">
-                    <div id="countdown" th:data-date-fin="${dateFinFormatted}" class="detail-countdown">
-                        Chargement...
+            <!-- Détails de l'article -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-gradient-eni text-white">
+                        <h1 class="card-title h3 mb-0" th:text="${article.nom_article}">Nom de l'article</h1>
                     </div>
-                </span>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <strong>Catégorie :</strong><br>
+                                <span th:text="${article.categorie.libelle}" class="text-muted"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Mise à prix :</strong><br>
+                                <span th:text="${article.prix_initial} + ' point(s)'" class="text-primary fw-bold"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Meilleure offre :</strong><br>
+                                <span th:text="${meilleureOffre} + ' point(s)'" class="text-success fw-bold"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Fin de l'enchère :</strong><br>
+                                <span th:text="${#dates.format(article.date_fin_enchere, 'dd/MM/yyyy HH:mm')}" class="text-muted"></span>
+                            </div>
+                            <div class="col-12">
+                                <strong>Description :</strong><br>
+                                <p th:text="${article.description}" class="text-muted mb-3"></p>
+                            </div>
+                            <div class="col-12">
+                                <strong>Statut :</strong><br>
+                                <span th:if="${enchereTerminee}" class="badge bg-danger">🔴 Terminée</span>
+                                <span th:unless="${enchereTerminee}">
+                                    <div id="countdown" th:data-date-fin="${dateFinFormatted}" class="detail-countdown">
+                                        Chargement...
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="detail-bottom">
-        <div class="retrait">
-            <span class="label">Retrait :</span>
-            <span class="value" th:text="${article.adresse_retrait.rue + ' ' + article.adresse_retrait.code_postal + ' ' + article.adresse_retrait.ville}"></span>
-        </div>
-        <div class="vendeur">
-            <span class="label">Vendeur :</span>
-            <a data-th-href="@{/profil(pseudo=${article.vendeur.pseudo})}" class="value" th:text="${article.vendeur.pseudo}"></a>
+        
+        <!-- Informations de retrait et vendeur -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="card-title">📍 Lieu de retrait</h5>
+                                <p class="card-text" th:text="${article.adresse_retrait.rue + ' ' + article.adresse_retrait.code_postal + ' ' + article.adresse_retrait.ville}"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="card-title">👤 Vendeur</h5>
+                                <p class="card-text">
+                                    <a data-th-href="@{/profil(pseudo=${article.vendeur.pseudo})}" 
+                                       class="text-decoration-none fw-bold" 
+                                       th:text="${article.vendeur.pseudo}"></a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Affichage du gagnant si l'enchère est terminée -->
-        <div th:if="${enchereTerminee}" class="detail-enchere">
-            <div class="enchere-terminee">
-                <h3 class="enchere-terminee-titre">🏆 Enchère terminée</h3>
-                
-                <div th:if="${gagnant != null}" class="gagnant-info">
-                    <div class="detail-winner">
-                        <h4 class="detail-winner__title">🎉 Gagnant de l'enchère</h4>
-                        <p class="detail-winner__pseudo"><strong th:text="${gagnant.pseudo}">Pseudo du gagnant</strong></p>
-                        <p class="detail-winner__price">Prix final : <strong th:text="${prixFinal} + ' points'">0 points</strong></p>
+        <div th:if="${enchereTerminee}" class="row mt-4">
+            <div class="col-12">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="card-title mb-0">🏆 Enchère terminée</h3>
                     </div>
-                </div>
-                
-                <div th:unless="${gagnant != null}" class="detail-no-winner">
-                    <div class="alert alert--info">
-                        <h4 class="detail-no-winner__title">📭 Aucune enchère</h4>
-                        <p>Cet article n'a reçu aucune enchère et n'a pas été vendu.</p>
+                    <div class="card-body">
+                        <div th:if="${gagnant != null}" class="detail-winner">
+                            <div class="alert alert-success">
+                                <h4 class="alert-heading">🎉 Gagnant de l'enchère</h4>
+                                <p class="mb-2"><strong>Gagnant :</strong> <span th:text="${gagnant.pseudo}" class="fw-bold"></span></p>
+                                <p class="mb-0"><strong>Prix final :</strong> <span th:text="${prixFinal} + ' points'" class="fw-bold text-success"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div th:unless="${gagnant != null}" class="detail-no-winner">
+                            <div class="alert alert-info">
+                                <h4 class="alert-heading">📭 Aucune enchère</h4>
+                                <p class="mb-0">Cet article n'a reçu aucune enchère et n'a pas été vendu.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Formulaire d'enchère (seulement si l'enchère n'est pas terminée) -->
-        <div th:if="${!enchereTerminee and peutEncherir}" class="detail-enchere">
-            <div class="detail-credit">
-                <span class="detail-credit__label">💰 Votre crédit :</span>
-                <span class="detail-credit__value" th:text="${creditUtilisateur} + ' points'">0 points</span>
+        <div th:if="${!enchereTerminee and peutEncherir}" class="row mt-4">
+            <div class="col-12">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="card-title mb-0">💰 Faire une enchère</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="detail-credit mb-3">
+                            <div class="alert alert-info">
+                                <strong>💰 Votre crédit :</strong> 
+                                <span th:text="${creditUtilisateur} + ' points'" class="fw-bold"></span>
+                            </div>
+                        </div>
+                        
+                        <form th:action="@{/enchere/soumettre}" method="post">
+                            <input type="hidden" name="no_article" th:value="${article.no_article}">
+                            
+                            <div class="mb-3">
+                                <label for="montant_propose" class="form-label">Votre enchère :</label>
+                                <input type="number" 
+                                       id="montant_propose" 
+                                       name="montant_propose" 
+                                       th:min="${montantMinimum}" 
+                                       th:max="${creditUtilisateur}"
+                                       th:placeholder="'Minimum : ' + ${montantMinimum} + ' points'"
+                                       required
+                                       class="form-control">
+                                <div class="form-text">
+                                    Minimum : <span th:text="${montantMinimum}"></span> points | 
+                                    Maximum : <span th:text="${creditUtilisateur}"></span> points
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" th:disabled="${creditUtilisateur < montantMinimum}">
+                                    <span th:if="${creditUtilisateur >= montantMinimum}">💎 Enchérir</span>
+                                    <span th:unless="${creditUtilisateur >= montantMinimum}">❌ Crédit insuffisant</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            
-            <form th:action="@{/enchere/soumettre}" method="post" class="detail-enchere__form">
-                <input type="hidden" name="no_article" th:value="${article.no_article}">
-                
-                <div class="detail-enchere__input-group">
-                    <label for="montant_propose" class="detail-enchere__label">Votre enchère :</label>
-                    <input type="number" 
-                           id="montant_propose" 
-                           name="montant_propose" 
-                           th:min="${montantMinimum}" 
-                           th:max="${creditUtilisateur}"
-                           th:placeholder="'Minimum : ' + ${montantMinimum} + ' points'"
-                           required
-                           class="detail-enchere__input">
-                    <span class="detail-enchere__info">Minimum : <span th:text="${montantMinimum}"></span> points | Maximum : <span th:text="${creditUtilisateur}"></span> points</span>
-                </div>
-                
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn--primary" th:disabled="${creditUtilisateur < montantMinimum}" name="action" value="encherir">
-                        <span th:if="${creditUtilisateur >= montantMinimum}">Enchérir</span>
-                        <span th:unless="${creditUtilisateur >= montantMinimum}">Crédit insuffisant</span>
-                    </button>
-                </div>
-            </form>
         </div>
         
         <!-- Message si l'utilisateur ne peut pas enchérir (et enchère pas terminée) -->
-        <div th:if="${!enchereTerminee and !peutEncherir}" class="detail-enchere">
-            <div th:if="${#authorization.expression('isAuthenticated()')}" class="alert alert--info">
-                Vous ne pouvez pas enchérir sur votre propre article.
-            </div>
-            <div th:unless="${#authorization.expression('isAuthenticated()')}" class="alert alert--warning">
-                Vous devez être connecté pour enchérir.
-                <a th:href="@{/connexion}" class="btn btn--secondary">Se connecter</a>
+        <div th:if="${!enchereTerminee and !peutEncherir}" class="row mt-4">
+            <div class="col-12">
+                <div class="alert" th:classappend="${raisonNonEncherir?.contains('connecté') ? 'alert-warning' : 'alert-info'}">
+                    <p th:text="${raisonNonEncherir ?: 'Vous ne pouvez pas enchérir sur cette enchère.'}" class="mb-2"></p>
+                    <a th:if="${raisonNonEncherir?.contains('connecté')}" th:href="@{/connexion}" class="btn btn-secondary">Se connecter</a>
+                </div>
             </div>
         </div>
-
-        <div class="form-buttons">
-            <form th:if="${enchereTerminee and gagnant != null and #authentication.name == gagnant.pseudo}" method="post" th:action="@{/enchere/soumettre}">
-                <input type="hidden" name="no_article" value="${article.noArticle}">
-                <button type="submit" name="action" value="confirmer_retrait">Retrait effectué</button>
-            </form>
-            <a th:href="@{/enchere}" class="btn btn--secondary">Retour à la liste</a>
+        
+        <!-- Boutons de navigation -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <a th:href="@{/enchere}" class="btn btn-secondary btn-lg">← Retour à la liste</a>
+            </div>
         </div>
     </div>
 

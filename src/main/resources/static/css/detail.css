@@ -1,0 +1,138 @@
+/* ========================================
+   DETAIL.CSS - Styles pour la page de détail d'enchère
+   ======================================== */
+
+/* Conteneur principal */
+.detail-container {
+    background: white;
+    border-radius: var(--eni-border-radius);
+    box-shadow: var(--eni-shadow-lg);
+    overflow: hidden;
+}
+
+/* Photo de l'article */
+.detail-photo__image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.detail-photo__image:hover {
+    transform: scale(1.02);
+}
+
+.detail-photo__image--default {
+    background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%),
+                linear-gradient(-45deg, #f8f9fa 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #f8f9fa 75%),
+                linear-gradient(-45deg, transparent 75%, #f8f9fa 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+/* Countdown */
+.detail-countdown {
+    background: var(--eni-gradient);
+    color: white;
+    padding: 1rem;
+    border-radius: var(--eni-border-radius);
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 1rem 0;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Credit display */
+.detail-credit {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: var(--eni-border-radius);
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.detail-credit__label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.detail-credit__value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+
+/* Winner display */
+.detail-winner {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: var(--eni-border-radius);
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.detail-winner__title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-winner__pseudo {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.detail-winner__price {
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.detail-no-winner {
+    background: #6c757d;
+    color: white;
+    padding: 1.5rem;
+    border-radius: var(--eni-border-radius);
+    text-align: center;
+    margin: 1rem 0;
+}
+
+/* Animations d'entrée */
+.detail-container {
+    animation: slideInFromBottom 0.8s ease-out;
+}
+
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .detail-photo__image {
+        height: 250px;
+    }
+    
+    .detail-container {
+        margin: 1rem;
+    }
+} 

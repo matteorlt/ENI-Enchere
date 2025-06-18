@@ -6,9 +6,14 @@ import eni.ecole.enienchere.bo.Utilisateur;
 import eni.ecole.enienchere.dal.AdresseDAOImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,8 +21,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -63,7 +70,7 @@ public class UtilisateurController {
                     model.addAttribute("adresse", adresse);
                     return "view-mon-profil";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification: {}",e);
+                    logger.error("Erreur lors du chargement du profil pour: " + pseudo, e);
                     return "redirect:/";
                 }
             }
@@ -92,7 +99,7 @@ public class UtilisateurController {
                     model.addAttribute("adresse", adresse);
                     return "view-profil-modif";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification: {}",e);
+                    logger.error("Erreur lors du chargement du formulaire de modification pour: " + pseudo, e);
                     return "redirect:/";
                 }
             }
@@ -152,20 +159,20 @@ public class UtilisateurController {
            var utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
 
            if (!nouveauMotDePasse.equals(confirmationMotDePasse)) {
-               redirectAttributes.addFlashAttribute("errorConfirmMdpMessage", "Le nouveau mot de passe doit être identique à celui entré dans le champ de confirmation");
-               return "redirect:/mon-profil/modifier-mot-de-passe?pseudo=" + authentication.getName();
+               redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe doit être identique à celui entré dans le champ de confirmation");
+               return "view-profil-modif-mdp";
            }
 
            // Vérification de l'ancien mot de passe
            if (!passwordEncoder.matches(ancienMotDePasse, utilisateurAModifier.getMot_de_passe())) {
-               redirectAttributes.addFlashAttribute("errorMdpMessage", "Mot de passe incorrect");
-               return "redirect:/mon-profil/modifier-mot-de-passe?pseudo=" + authentication.getName();
+               redirectAttributes.addFlashAttribute("errorMessage", "Mot de passe incorrect");
+               return "view-profil-modif-mdp";
            }
 
            // Vérification que le nouveau mot de passe est différent de l'ancien
            if (passwordEncoder.matches(nouveauMotDePasse, utilisateurAModifier.getMot_de_passe())) {
-               redirectAttributes.addFlashAttribute("errorNewMdpMessage", "Le nouveau mot de passe et l'ancien sont identiques");
-               return "redirect:/mon-profil/modifier-mot-de-passe?pseudo=" + authentication.getName();
+               redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe et l'ancien sont identiques");
+               return "view-profil-modif-mdp";
            }
 
             try {
@@ -175,20 +182,20 @@ public class UtilisateurController {
                 // Mise à jour en base de données
                 utilisateurService.updateMdp(utilisateurAModifier, nouveauMotDePasseEncode);
 
-                redirectAttributes.addFlashAttribute("successModifMdpMessage", "Mot de passe mis à jour avec succès");
+                redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
 
                 return "redirect:/mon-profil?pseudo=" + authentication.getName();
 
             } catch (Exception e) {
                 logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}",e);
-                redirectAttributes.addFlashAttribute("errorModifMdpMessage", "Erreur lors de la mise à jour du mot de passe");
+                redirectAttributes.addFlashAttribute("successMessage", "Erreur lors de la mise à jour du mot de passe");
                 return "view-profil-modif-mdp";
             }
        }
 
 
     @GetMapping("/connexion")
-    String login(Model model) {
+    String login() {
         logger.info("Affichage du formulaire login");
 
         return "view-connexion";
@@ -216,7 +223,7 @@ public class UtilisateurController {
             request.login(utilisateur.getUsername(), password);
         } catch (ServletException e) {
             logger.error("Erreur, mot de passe incorrect : {",e);
-            redirectAttributes.addFlashAttribute("errorMdpMessage", "Mot de passe incorrect");
+            redirectAttributes.addFlashAttribute("successMessage", "Erreur, mot de passe incorrect");
             return "redirect:/register?error";
         }
 
