@@ -6,6 +6,10 @@
     <title>S'inscrire</title>
 </head>
 <main>
+    <div th:if="${errorCreationCompte}" class="alert alert-error alert-dismissible fade show" role="alert">
+        <span th:text="${errorCreationCompte}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     <form class="form-container" data-th-action="@{/creer-compte}" data-th-object="${utilisateur}" method="post">
         <h1 class="form-container__title">Inscription</h1>
         
@@ -18,6 +22,27 @@
             <label for="password" class="form-group__label">Mot de passe :</label>
             <input type="password" id="password" data-th-field="*{mot_de_passe}" required class="form-group__input">
         </div>
+
+        <p class="small" id="textMdp">Au moins un symbole, un chiffre, ainsi que 8 caractères minimum</p>
+        <div class="forceMdp" id="forceMdp">
+            <div class="hidden" id="faible">
+                <div class="barreCouleur"></div>
+                <span class="texteForceMdp">Faible</span>
+            </div>
+            <div class="hidden" id="moyen">
+                <div class="barreCouleur"></div>
+                <span class="texteForceMdp">Moyen</span>
+            </div>
+            <div class="hidden" id="fort">
+                <div class="barreCouleur"></div>
+                <span class="texteForceMdp">Fort</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputConfirmMdp">Confirmer mot de passe* :</label>
+            <input type="password" id="inputConfirmMdp" name="confirmNewPassword" required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
+        </div>
+        <p class="small red hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>
 
         <div class="form-group">
             <label for="nom" class="form-group__label">Nom :</label>

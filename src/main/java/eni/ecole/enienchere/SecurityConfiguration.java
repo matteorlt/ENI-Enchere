@@ -73,17 +73,20 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/creer-compte").permitAll();
                     auth.requestMatchers("/mon-profil/**").permitAll();
                     auth.requestMatchers("/js/**").permitAll();
-
-
-
                     auth.requestMatchers(HttpMethod.GET,"/error").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
+
+                    auth.requestMatchers(HttpMethod.GET,"/enchere").hasAnyRole("ADMIN");
 
 
 
                     auth.anyRequest().authenticated();
                 })
+
+
+
+
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
                 .formLogin(f ->
@@ -97,6 +100,7 @@ public class SecurityConfiguration {
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/")
                         .permitAll())
+
                 .build();
     }
 
@@ -113,19 +117,8 @@ public class SecurityConfiguration {
 //                // Active la protection XSS du navigateur
 //                .xssProtection())
 //
-//            // Configuration de la gestion des sessions
-//            .sessionManagement(session -> session
-//                // Limite à une session active par utilisateur
-//                .maximumSessions(1)
-//                // Redirige vers la page de connexion si la session expire
-//                .expiredUrl("/connexion?expired")
-//                // Configure le timeout de session à 5 minutes (300 secondes)
-//                .and()
-//                .sessionFixation().newSession()
-//                .invalidSessionUrl("/connexion?expired")
-//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-//                .maximumSessions(1)
-//                .expiredUrl("/connexion?expired"))
+            // Configuration de la gestion des sessions
+
 //
 //            // Configuration de la déconnexion
 //            .logout(logout -> logout

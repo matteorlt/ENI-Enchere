@@ -47,7 +47,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public void updateAdresse(Utilisateur utilisateur, String rue, String cp, String ville) {
-        Adresse adresse=utilisateur.getAdresse();
+        Adresse adresse = utilisateur.getAdresse();
         adresse.setRue(rue);
         adresse.setCode_postal(cp);
         adresse.setVille(ville);
@@ -56,50 +56,62 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public void modifUtilisateur(Utilisateur utilisateur, String nom, String prenom, String email, String telephone) {
-utilisateur.setNom(nom);
-utilisateur.setPrenom(prenom);
-utilisateur.setEmail(email);
-utilisateur.setTelephone(telephone);
+        utilisateur.setNom(nom);
+        utilisateur.setPrenom(prenom);
+        utilisateur.setEmail(email);
+        utilisateur.setTelephone(telephone);
         this.update(utilisateur);
     }
 
 
     @Override
     public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
-        utilisateur.setCredit(10);
+//        Récupère la liste des utilisateurs existants
+        var utilisateurs = utilisateurDAO.readAll();
+//        Vérifie un éventuel doublon
+        var emailExist = utilisateurs.stream().anyMatch(u -> u.getEmail().equals(utilisateur.getEmail()));
+        var pseudoExist = utilisateurs.stream().anyMatch(u -> u.getPseudo().equals(utilisateur.getPseudo()));
+        if (!pseudoExist && !emailExist) {
+            utilisateur.setCredit(10);
+            utilisateurDAO.create(utilisateur);
 
+        }
+        if (pseudoExist) {
+            throw new IllegalArgumentException("Pseudo déjà existant");
+        }
+        if (emailExist) {
+            throw new IllegalArgumentException("Email déjà existant");
+        }
 
-        utilisateurDAO.create(utilisateur);
-        return utilisateur.getPseudo();
-    }
+            return utilisateur.getPseudo();
+        }
 
-    @Override
-    public void enregistrerUneAdresse(Adresse adresse) {
+        @Override
+        public void enregistrerUneAdresse (Adresse adresse){
 
-        adresseDAO.create(adresse);
+            adresseDAO.create(adresse);
 
-    }
-
-
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try {
-            var utilisateur = utilisateurDAO.read(username);
-
-            if (utilisateur == null)
-                throw new UsernameNotFoundException("User not found");
-
-            return utilisateur;
-        } catch (Exception e) {
-            throw new UsernameNotFoundException("Erreur lors de la récupération de l'utilisateur: " + username, e);
         }
 
 
-    }
+        @Override
+        public UserDetails loadUserByUsername (String username) throws UsernameNotFoundException {
+            try {
+                var utilisateur = utilisateurDAO.read(username);
 
-    @Override
-    public void updateCredit(String pseudo, int nouveauCredit) {
-        utilisateurDAO.updateCredit(pseudo, nouveauCredit);
+                if (utilisateur == null)
+                    throw new UsernameNotFoundException("User not found");
+
+                return utilisateur;
+            } catch (Exception e) {
+                throw new UsernameNotFoundException("Erreur lors de la récupération de l'utilisateur: " + username, e);
+            }
+
+
+        }
+
+        @Override
+        public void updateCredit (String pseudo,int nouveauCredit){
+            utilisateurDAO.updateCredit(pseudo, nouveauCredit);
+        }
     }
-}

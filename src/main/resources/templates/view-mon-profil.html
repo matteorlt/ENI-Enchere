@@ -63,8 +63,8 @@
     </div>
 
     <div class="form-actions">
-      <a href="/profil/modifier-mot-de-passe" class="btn btn--secondary">Modifier mon profil</a>
-      <a href="/profil/modifier-mot-de-passe" class="btn btn--secondary">Modifier mot de passe</a>
+      <a th:href="@{/mon-profil/modifier(pseudo=${#authentication.name})}" class="btn btn--secondary">Modifier mon profil</a>
+      <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${#authentication.name})}" class="btn btn--secondary">Modifier mot de passe</a>
     </div>
 
   </form>
