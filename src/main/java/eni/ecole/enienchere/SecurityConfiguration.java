@@ -73,19 +73,24 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/creer-compte").permitAll();
                     auth.requestMatchers("/mon-profil/**").permitAll();
                     auth.requestMatchers("/js/**").permitAll();
+
+
+
                     auth.requestMatchers(HttpMethod.GET,"/error").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/css/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/images/**").permitAll();
-
-                    auth.requestMatchers(HttpMethod.GET,"/enchere").hasAnyRole("ADMIN");
 
 
 
                     auth.anyRequest().authenticated();
                 })
 
-
-
+                // Configuration "Se souvenir de moi"
+                .rememberMe(remember -> remember
+                // Clé secrète pour signer le cookie (doit être unique et sécurisée)
+                .key("ENI-Enchere-2025-SecureKey-!@#$%^&*()_+")
+                // Durée de validité du cookie (24 heures)
+                .tokenValiditySeconds(86400))
 
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
@@ -100,7 +105,6 @@ public class SecurityConfiguration {
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/")
                         .permitAll())
-
                 .build();
     }
 
@@ -117,8 +121,19 @@ public class SecurityConfiguration {
 //                // Active la protection XSS du navigateur
 //                .xssProtection())
 //
-            // Configuration de la gestion des sessions
-
+//            // Configuration de la gestion des sessions
+//            .sessionManagement(session -> session
+//                // Limite à une session active par utilisateur
+//                .maximumSessions(1)
+//                // Redirige vers la page de connexion si la session expire
+//                .expiredUrl("/connexion?expired")
+//                // Configure le timeout de session à 5 minutes (300 secondes)
+//                .and()
+//                .sessionFixation().newSession()
+//                .invalidSessionUrl("/connexion?expired")
+//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                .maximumSessions(1)
+//                .expiredUrl("/connexion?expired"))
 //
 //            // Configuration de la déconnexion
 //            .logout(logout -> logout

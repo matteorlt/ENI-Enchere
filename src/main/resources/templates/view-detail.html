@@ -119,12 +119,9 @@
         
         <!-- Message si l'utilisateur ne peut pas enchérir (et enchère pas terminée) -->
         <div th:if="${!enchereTerminee and !peutEncherir}" class="detail-enchere">
-            <div th:if="${#authorization.expression('isAuthenticated()')}" class="alert alert--info">
-                Vous ne pouvez pas enchérir sur votre propre article.
-            </div>
-            <div th:unless="${#authorization.expression('isAuthenticated()')}" class="alert alert--warning">
-                Vous devez être connecté pour enchérir.
-                <a th:href="@{/connexion}" class="btn btn--secondary">Se connecter</a>
+            <div class="alert" th:classappend="${raisonNonEncherir?.contains('connecté') ? 'alert--warning' : 'alert--info'}">
+                <span th:text="${raisonNonEncherir ?: 'Vous ne pouvez pas enchérir sur cette enchère.'}"></span>
+                <a th:if="${raisonNonEncherir?.contains('connecté')}" th:href="@{/connexion}" class="btn btn--secondary">Se connecter</a>
             </div>
         </div>
         

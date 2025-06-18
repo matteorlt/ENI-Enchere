@@ -61,7 +61,6 @@
       <p class="form-group__value profil-form__credit" data-th-text="*{credit}"></p>
       <input type="hidden" data-th-field="*{credit}" readonly/>
     </div>
-
     <div class="form-actions">
       <a th:href="@{/mon-profil/modifier(pseudo=${#authentication.name})}" class="btn btn--secondary">Modifier mon profil</a>
       <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${#authentication.name})}" class="btn btn--secondary">Modifier mot de passe</a>

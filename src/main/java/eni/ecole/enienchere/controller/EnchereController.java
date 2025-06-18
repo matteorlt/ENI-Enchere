@@ -114,6 +114,31 @@ public class EnchereController {
         return "view-enchere";
     }
 
+    @GetMapping("/admin/maj-statuts")
+    public String forcerMiseAJourStatuts(RedirectAttributes redirectAttributes, Principal principal) {
+        if (principal == null) {
+            return "redirect:/connexion";
+        }
+        
+        try {
+            // Vérifier que l'utilisateur est administrateur
+            Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+            if (utilisateur == null || !utilisateur.isAdministrateur()) {
+                redirectAttributes.addFlashAttribute("error", "Accès refusé - Droits administrateur requis");
+                return "redirect:/enchere";
+            }
+            
+            // Forcer la mise à jour des statuts
+            articleService.forcerMiseAJourStatuts();
+            redirectAttributes.addFlashAttribute("success", "Mise à jour des statuts effectuée avec succès !");
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la mise à jour des statuts : " + e.getMessage());
+        }
+        
+        return "redirect:/enchere";
+    }
+
     @GetMapping("/details")
     public String getDetail(@RequestParam(name = "no_article", required = true) Integer noArticle, Model model, Principal principal) {
         List<ArticleAVendre> articles = articleService.getArticleById(noArticle);
@@ -144,12 +169,37 @@ public class EnchereController {
             // Vérifier si l'utilisateur peut enchérir
             if (principal != null) {
                 Utilisateur utilisateurConnecte = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
-                boolean peutEncherir = !article.getVendeur().getPseudo().equals(utilisateurConnecte.getPseudo());
+                Date maintenant = new Date();
+                
+                // L'utilisateur peut enchérir si :
+                // - Il n'est pas le vendeur
+                // - L'enchère est active (statut 1)
+                // - L'enchère a commencé (date de début passée)
+                // - L'enchère n'est pas terminée (date de fin future)
+                boolean peutEncherir = !article.getVendeur().getPseudo().equals(utilisateurConnecte.getPseudo()) &&
+                                     article.getStatut() == 1 &&
+                                     !article.getDate_debut_enchere().after(maintenant) &&
+                                     article.getDate_fin_enchere().after(maintenant);
+                
                 model.addAttribute("peutEncherir", peutEncherir);
                 model.addAttribute("creditUtilisateur", utilisateurConnecte.getCredit());
+                
+                // Ajouter une raison si l'utilisateur ne peut pas enchérir
+                if (!peutEncherir) {
+                    if (article.getVendeur().getPseudo().equals(utilisateurConnecte.getPseudo())) {
+                        model.addAttribute("raisonNonEncherir", "Vous ne pouvez pas enchérir sur votre propre article.");
+                    } else if (article.getStatut() == 0) {
+                        model.addAttribute("raisonNonEncherir", "Cette enchère n'a pas encore commencé.");
+                    } else if (article.getDate_debut_enchere().after(maintenant)) {
+                        model.addAttribute("raisonNonEncherir", "Cette enchère n'a pas encore commencé.");
+                    } else if (!article.getDate_fin_enchere().after(maintenant)) {
+                        model.addAttribute("raisonNonEncherir", "Cette enchère est terminée.");
+                    }
+                }
             } else {
                 model.addAttribute("peutEncherir", false);
                 model.addAttribute("creditUtilisateur", 0);
+                model.addAttribute("raisonNonEncherir", "Vous devez être connecté pour enchérir.");
             }
             
             // Vérifier si l'enchère est terminée et récupérer le gagnant
@@ -209,9 +259,25 @@ public class EnchereController {
                 return "redirect:/details?no_article=" + noArticle;
             }
             
-            // Vérifier que l'enchère n'est pas terminée
+            // Vérifier le statut et les dates de l'enchère
             Date maintenant = new Date();
+            
+            if (article.getStatut() == 0) {
+                redirectAttributes.addFlashAttribute("error", "Cette enchère n'a pas encore commencé.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            
+            if (article.getDate_debut_enchere().after(maintenant)) {
+                redirectAttributes.addFlashAttribute("error", "Cette enchère n'a pas encore commencé.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            
             if (article.getDate_fin_enchere().before(maintenant)) {
+                redirectAttributes.addFlashAttribute("error", "Cette enchère est terminée.");
+                return "redirect:/details?no_article=" + noArticle;
+            }
+            
+            if (article.getStatut() == 2) {
                 redirectAttributes.addFlashAttribute("error", "Cette enchère est terminée.");
                 return "redirect:/details?no_article=" + noArticle;
             }

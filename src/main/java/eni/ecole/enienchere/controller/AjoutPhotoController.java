@@ -38,11 +38,25 @@ public class AjoutPhotoController {
     }
 
     @GetMapping("/ajouter-photo")
-    public String afficherAjoutPhoto(Model model, Principal principal) {
+    public String afficherAjoutPhoto(Model model, 
+                                   @RequestParam(value = "articleId", required = false) Long articleId,
+                                   Principal principal) {
         if (principal != null) {
             // Récupérer les articles de l'utilisateur connecté
             List<ArticleAVendre> articlesUtilisateur = articleService.getArticlesByVendeur(principal.getName());
             model.addAttribute("articles", articlesUtilisateur);
+            
+            // Si un articleId est fourni, le présélectionner
+            if (articleId != null) {
+                model.addAttribute("selectedArticleId", articleId);
+                
+                // Vérifier que l'article appartient bien à l'utilisateur
+                List<ArticleAVendre> articleConcerne = articleService.getArticleById(articleId.intValue());
+                if (!articleConcerne.isEmpty() && 
+                    articleConcerne.get(0).getVendeur().getPseudo().equals(principal.getName())) {
+                    model.addAttribute("selectedArticle", articleConcerne.get(0));
+                }
+            }
         }
         model.addAttribute("participant", "coach_toto");
         return "view-ajout-photo";
@@ -63,7 +77,7 @@ public class AjoutPhotoController {
             // Validation du fichier
             if (!photoService.validatePhotoFile(fichier)) {
                 redirectAttributes.addFlashAttribute("erreur", "Le fichier photo n'est pas valide");
-                return "redirect:/ajouter-photo";
+                return "redirect:/ajouter-photo" + (articleId != null ? "?articleId=" + articleId : "");
             }
             
             // Vérifier que l'article existe et appartient à l'utilisateur
@@ -76,24 +90,24 @@ public class AjoutPhotoController {
             ArticleAVendre article = articles.get(0);
             if (!article.getVendeur().getPseudo().equals(principal.getName())) {
                 redirectAttributes.addFlashAttribute("erreur", "Vous ne pouvez ajouter une photo qu'à vos propres articles");
-                return "redirect:/ajouter-photo";
+                return "redirect:/ajouter-photo" + (articleId != null ? "?articleId=" + articleId : "");
             }
             
             // Sauvegarder la photo
             String photoPath = photoService.savePhoto(fichier, articleId);
             
             if (photoPath != null) {
-                redirectAttributes.addFlashAttribute("succes", "Photo ajoutée avec succès");
-                return "redirect:/enchere";
+                redirectAttributes.addFlashAttribute("succes", "Photo ajoutée avec succès à votre article !");
+                return "redirect:/details?no_article=" + articleId;
             } else {
                 redirectAttributes.addFlashAttribute("erreur", "Erreur lors de l'ajout de la photo");
-                return "redirect:/ajouter-photo";
+                return "redirect:/ajouter-photo?articleId=" + articleId;
             }
             
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("erreur", "Erreur lors de l'ajout de la photo : " + e.getMessage());
-            return "redirect:/ajouter-photo";
+            return "redirect:/ajouter-photo" + (articleId != null ? "?articleId=" + articleId : "");
         }
     }
 

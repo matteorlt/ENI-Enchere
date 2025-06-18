@@ -1,41 +1,35 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="fr"
       data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title})}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Se connecter</title>
 </head>
-<body>
-<main>
-    <form class="form-container"
+<main class="connexion-main">
+    <form class="form-container connexion-form"
           method="post"
-
-
-    data-th-action="@{/connexion}">
-        <h1>Se connecter</h1>
-
-        <div class="form-group">
-            <label for="inputPseudo">Identifiant :</label>
-            <input type="text" id="inputPseudo" name="username" required/>
-        </div>
+          data-th-object="${utilisateur}"
+          data-th-action="@{/connexion}">
+        <h1 class="form-container__title">Se connecter</h1>
 
         <div class="form-group">
-            <label for="inputMdp">Mot de passe :</label>
-            <input type="text" id="inputMdp" name="password" required/>
+            <label for="inputPseudo" class="form-group__label form-group__label--required">Identifiant :</label>
+            <input type="text" id="inputPseudo" name="username" class="form-group__input" required/>
         </div>
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary" >Se connecter</button>
-            <a href="/" >Mot de passe oublié</a>
+        <div class="form-group">
+            <label for="inputMdp" class="form-group__label form-group__label--required">Mot de passe :</label>
+            <input type="password" id="inputMdp" name="password" class="form-group__input" required/>
         </div>
-        <button type="submit">Se connecter1</button>
-        <div>
-            <a href="/creer-compte" class="btn btn-secondary">Créer un compte</a>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">Se connecter</button>
+            <a href="/" class="connexion-form__forgot-link">Mot de passe oublié</a>
+        </div>
+
+        <div class="connexion-form__register">
+            <a href="/creer-compte" class="btn btn--secondary">Créer un compte</a>
         </div>
     </form>
 </main>
-
-</body>
 </html>
-

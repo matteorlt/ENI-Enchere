@@ -104,8 +104,26 @@ public class NouvelleVenteController {
             Date dateFin = dateFormat.parse(dateFinStr);
             Date aujourdhui = new Date();
 
+            // Autoriser la création d'enchères pour aujourd'hui ou dans le futur
             if (dateDebut.before(aujourdhui)) {
-                throw new IllegalArgumentException("La date de début doit être dans le futur");
+                // Autoriser les dates d'aujourd'hui en comparant uniquement les dates (sans l'heure)
+                java.util.Calendar calAujourd = java.util.Calendar.getInstance();
+                calAujourd.setTime(aujourdhui);
+                calAujourd.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                calAujourd.set(java.util.Calendar.MINUTE, 0);
+                calAujourd.set(java.util.Calendar.SECOND, 0);
+                calAujourd.set(java.util.Calendar.MILLISECOND, 0);
+                
+                java.util.Calendar calDebut = java.util.Calendar.getInstance();
+                calDebut.setTime(dateDebut);
+                calDebut.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                calDebut.set(java.util.Calendar.MINUTE, 0);
+                calDebut.set(java.util.Calendar.SECOND, 0);
+                calDebut.set(java.util.Calendar.MILLISECOND, 0);
+                
+                if (calDebut.getTime().before(calAujourd.getTime())) {
+                    throw new IllegalArgumentException("La date de début ne peut pas être dans le passé");
+                }
             }
             if (dateFin.before(dateDebut)) {
                 throw new IllegalArgumentException("La date de fin doit être après la date de début");
@@ -137,12 +155,22 @@ public class NouvelleVenteController {
             article.setVendeur(vendeur);
             article.setCategorie(categorie);
             article.setAdresse_retrait(adresseRetrait);
-            article.setStatut(1); // Statut actif
+            
+            // Déterminer le statut selon la date de début
+            Date maintenant = new Date();
+            if (dateDebut.after(maintenant)) {
+                // Si la date de début est dans le futur, l'enchère est en attente
+                article.setStatut(0); // Statut en attente/bloqué
+            } else {
+                // Si la date de début est aujourd'hui ou dans le passé, l'enchère est active
+                article.setStatut(1); // Statut actif
+            }
 
             articleService.createArticle(article);
             
-            redirectAttributes.addFlashAttribute("success", "Votre article a été mis en vente avec succès !");
-            return "redirect:/enchere";
+            // Rediriger vers la page d'ajout de photo avec l'ID de l'article créé
+            redirectAttributes.addFlashAttribute("success", "Votre article a été mis en vente avec succès ! Vous pouvez maintenant ajouter une photo.");
+            return "redirect:/ajouter-photo?articleId=" + article.getNo_article();
             
         } catch (ParseException e) {
             redirectAttributes.addFlashAttribute("error", "Format de date invalide : " + e.getMessage());

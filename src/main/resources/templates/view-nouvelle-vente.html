@@ -63,13 +63,11 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" name="action" value="enregistrer" class="btn btn--primary">Enregistrer</button>
-                <button type="submit" name="action" value="annulerVente" class="btn btn--secondary">Annuler</button>
+                <button type="submit" name="action" value="enregistrer" class="btn btn--primary" th:href="@{/ajouter-photo}">📷 Ajouter une photo</button>
+                <button name="action" value="annulerVente" class="btn btn--secondary">Annuler</button>
             </div>
         </form>
-        <div class="vente-container__photo-link">
-            <a th:href="@{/ajouter-photo}" class="btn btn--outline">📷 Ajouter une photo</a>
-        </div>
+
     </div>
 </main>
 </html>
