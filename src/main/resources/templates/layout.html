@@ -67,7 +67,12 @@
             let forceMdpFort = document.getElementById("fort");
             let regex = /^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$/;
 
-            forceMdpFaible.style.visibility = "visible";
+            if (Mdp.value.length>0) {
+                forceMdpFaible.style.visibility = "visible";
+            }
+            else {
+                forceMdpFaible.style.visibility = "hidden"
+            }
 
             if (passwordInput.value.match(regex)) {
                 phraseMdp.classList.remove("red");
