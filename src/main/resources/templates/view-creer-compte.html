@@ -1,68 +1,102 @@
 <!DOCTYPE html>
 <html lang="fr"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='compte')}"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='force-mdp')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>S'inscrire</title>
+    <!-- CSS compte inclus manuellement car nous avons besoin de 2 CSS -->
+    <link rel="stylesheet" th:href="@{/css/compte.css}">
 </head>
+<body> <!-- ✅ Balise body ajoutée -->
+
 <main class="py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="form-container">
-                    <form data-th-action="@{/creer-compte}" data-th-object="${utilisateur}" method="post">
+                    <div th:if="${errorCreationCompte}" class="alert alert-error alert-dismissible fade show" role="alert">
+                        <span th:text="${errorCreationCompte}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <form id="form" data-th-action="@{/creer-compte}" data-th-object="${utilisateur}" method="post">
                         <h1 class="text-center mb-4">Inscription</h1>
-                        
+
                         <div class="mb-3">
                             <label for="username" class="form-label">Nom d'utilisateur :</label>
-                            <input type="text" id="username" data-th-field="*{pseudo}" required class="form-control">
+                            <input type="text" id="username" data-th-field="*{pseudo}" required class="form-control input-field">
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">Mot de passe :</label>
-                            <input type="password" id="password" data-th-field="*{mot_de_passe}" required class="form-control">
+                            <label for="password" class="form-label">Mot de passe* :</label>
+                            <input type="password" id="password" data-th-field="*{mot_de_passe}" required
+                                   pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$" class="form-control input-field">
                         </div>
+                        <p class="form-text text-muted" id="textMdp">Au moins un symbole, un chiffre, ainsi que 8 caractères minimum</p>
+
+                        <div class="forceMdp" id="forceMdp">
+                            <div class="hidden" id="faible">
+                                <div class="barreCouleur"></div>
+                                <span class="texteForceMdp">Faible</span>
+                            </div>
+                            <div class="hidden" id="moyen">
+                                <div class="barreCouleur"></div>
+                                <span class="texteForceMdp">Moyen</span>
+                            </div>
+                            <div class="hidden" id="fort">
+                                <div class="barreCouleur"></div>
+                                <span class="texteForceMdp">Fort</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmer mot de passe* :</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required
+                                   pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$" class="form-control input-field">
+                        </div>
+                        <p class="form-text text-danger hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="nom" class="form-label">Nom :</label>
-                                <input type="text" id="nom" data-th-field="*{nom}" required class="form-control">
+                                <input type="text" id="nom" data-th-field="*{nom}" required class="form-control input-field">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="prenom" class="form-label">Prénom :</label>
-                                <input type="text" id="prenom" data-th-field="*{prenom}" required class="form-control">
+                                <input type="text" id="prenom" data-th-field="*{prenom}" required class="form-control input-field">
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="inputEmail" class="form-label">Email :</label>
-                            <input type="email" id="inputEmail" data-th-field="*{email}" required class="form-control">
+                            <input type="email" id="inputEmail" data-th-field="*{email}" required class="form-control" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">
+
                         </div>
+                        <p class="small red hidden" id="textInputEmail">L'email n'est pas au bon format</p>
 
                         <div class="mb-3">
                             <label for="inputTelephone" class="form-label">Téléphone :</label>
-                            <input type="tel" id="inputTelephone" data-th-field="*{telephone}" class="form-control">
+                            <input type="tel" id="inputTelephone" data-th-field="*{telephone}" class="form-control input-field">
                         </div>
 
                         <div class="mb-4">
                             <div class="mb-3">
                                 <label for="inputAdresse" class="form-label">Adresse :</label>
-                                <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required class="form-control">
+                                <input type="text" id="inputAdresse" data-th-field="*{adresse.rue}" required class="form-control input-field">
                             </div>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label for="inputCP" class="form-label">Code postal :</label>
-                                    <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required class="form-control">
+                                    <input type="text" id="inputCP" data-th-field="*{adresse.code_postal}" required class="form-control input-field">
                                 </div>
                                 <div class="col-md-8 mb-3">
                                     <label for="inputVille" class="form-label">Ville :</label>
-                                    <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required class="form-control">
+                                    <input type="text" id="inputVille" data-th-field="*{adresse.ville}" required class="form-control input-field">
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                            <button type="submit" class="btn btn-primary me-md-2">S'inscrire</button>
+                            <button type="submit" class="btn btn-primary me-md-2 disabled" id="btnSubmit">S'inscrire</button>
                             <a href="/connexion" class="btn btn-secondary">Déjà inscrit ?</a>
                         </div>
                     </form>
@@ -71,4 +105,5 @@
         </div>
     </div>
 </main>
+</body>
 </html>

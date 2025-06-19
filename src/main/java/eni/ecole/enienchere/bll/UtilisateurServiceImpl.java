@@ -86,10 +86,23 @@ utilisateur.setTelephone(telephone);
 
     @Override
     public String enregistrerUnUtilisateur(Utilisateur utilisateur) {
-        utilisateur.setCredit(10);
+//        Récupère la liste des utilisateurs existants
+        var utilisateurs = utilisateurDAO.readAll();
+//        Vérifie un éventuel doublon
+        var emailExist = utilisateurs.stream().anyMatch(u -> u.getEmail().equals(utilisateur.getEmail()));
+        var pseudoExist = utilisateurs.stream().anyMatch(u -> u.getPseudo().equals(utilisateur.getPseudo()));
+        if (!pseudoExist && !emailExist) {
+            utilisateur.setCredit(10);
+            utilisateurDAO.create(utilisateur);
 
+        }
+        if (pseudoExist) {
+            throw new IllegalArgumentException("Pseudo déjà existant");
+        }
+        if (emailExist) {
+            throw new IllegalArgumentException("Email déjà existant");
+        }
 
-        utilisateurDAO.create(utilisateur);
         return utilisateur.getPseudo();
     }
 

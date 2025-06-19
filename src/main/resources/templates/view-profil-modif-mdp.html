@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr"
-      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='profil')}"
+      data-th-replace="~{layout::layout(contenu=~{::main},titre=~{::title},cssSpecifique='force-mdp')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Modifier mon mot de passe</title>
+    <!-- CSS profil inclus manuellement car nous avons besoin de 2 CSS -->
+    <link rel="stylesheet" th:href="@{/css/profil.css}">
 </head>
 <body>
 <main>
@@ -33,12 +35,12 @@
 
             <div class="form-group">
                 <label for="inputOldMdp">Mot de passe actuel* :</label>
-                <input type="password" class="form-control" id="inputOldMdp" name="password" required/>
+                <input type="password" class="form-control input-field" id="inputOldMdp" name="password" required/>
             </div>
 
             <div class="form-group">
                 <label for="inputMdp">Nouveau mot de passe* :</label>
-                <input type="password" class="form-control" id="inputMdp" name="newPassword"
+                <input type="password" class="form-control input-field" id="inputMdp" name="newPassword"
                        required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
             </div>
             <p class="form-text text-muted" id="textMdp">Au moins un symbole, un chiffre, ainsi que 8 caractères minimum</p>
@@ -60,17 +62,125 @@
 
             <div class="form-group">
                 <label for="inputConfirmMdp">Confirmer mot de passe* :</label>
-                <input type="password" class="form-control" id="inputConfirmMdp" name="confirmNewPassword"
+                <input type="password" class="form-control input-field" id="inputConfirmMdp" name="confirmNewPassword"
                        required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
             </div>
             <p class="form-text text-danger hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>
 
             <div class="button-group">
                 <button type="submit" class="btn btn-primary disabled" id="btnSubmit">Enregistrer</button>
-                <a th:href="@{/mon-profil(pseudo=${utilisateur.pseudo})}" class="btn btn-secondary">Annuler</a>
+                <a th:href="@{/mon-profil(pseudo=${pseudo})}" class="btn btn-secondary">Annuler</a>
             </div>
         </form>
     </div>
 </main>
+<!-- JavaScript pour la barre de force du mot de passe -->
+<script>
+function initPasswordStrength() {
+    // Variables pour la page de modification de mot de passe
+    var MdpModif = document.getElementById("inputMdp");
+    var ConfirmMdpModif = document.getElementById("inputConfirmMdp");
+    
+    // Variables pour la page de création de compte
+    var MdpCreation = document.getElementById("password");
+    var ConfirmMdpCreation = document.getElementById("confirmPassword");
+    
+    // Variables communes
+    var phraseMdp = document.getElementById("textMdp");
+    var phraseConfirmMdp = document.getElementById("textConfirmMdp");
+
+    console.log("force-mdp fonctionne");
+
+    // Fonction pour gérer la force du mot de passe
+    function handlePasswordStrength(passwordInput) {
+        let forceMdpFaible = document.getElementById("faible");
+        let forceMdpMoyen = document.getElementById("moyen");
+        let forceMdpFort = document.getElementById("fort");
+        let regex = /^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$/;
+
+        forceMdpFaible.style.visibility = "visible";
+
+        if (passwordInput.value.match(regex)) {
+            phraseMdp.classList.remove("red");
+        } else {
+            phraseMdp.classList.add("red");
+        }
+
+        if (passwordInput.value.match(/^(?=.*[\d\W])(?!.* ).{8,}$/)) {
+            forceMdpMoyen.style.visibility = "visible";
+            if (passwordInput.value.match(/^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{12,}$/)) {
+                forceMdpFort.style.visibility = "visible";
+            }
+        } else {
+            forceMdpMoyen.style.visibility = "hidden";
+            forceMdpFort.style.visibility = "hidden";
+        }
+    }
+
+    // Fonction pour vérifier la correspondance des mots de passe
+    function handlePasswordConfirmation(passwordInput, confirmInput) {
+        if (confirmInput.value == passwordInput.value) {
+            phraseConfirmMdp.style.visibility = "hidden";
+        } else {
+            phraseConfirmMdp.style.visibility = "visible";
+        }
+    }
+
+    // Fonction pour gérer l'activation du bouton
+    function handleButtonState(expectedFieldCount) {
+        let buttonEnable = document.getElementById("btnSubmit");
+        let champValide = document.querySelectorAll(".input-field:valid");
+        
+        if (champValide.length == expectedFieldCount) {
+            buttonEnable.classList.remove("disabled");
+        } else {
+            buttonEnable.classList.add("disabled");
+        }
+    }
+
+    // Configuration pour la page de modification de mot de passe
+    if (MdpModif && ConfirmMdpModif) {
+        MdpModif.addEventListener("input", function() {
+            handlePasswordStrength(MdpModif);
+        });
+
+        ConfirmMdpModif.addEventListener("input", function() {
+            handlePasswordConfirmation(MdpModif, ConfirmMdpModif);
+        });
+
+        // Event listener pour le formulaire (page modif = 3 champs requis)
+        const formModif = document.getElementById("form");
+        if (formModif) {
+            formModif.addEventListener("input", function() {
+                handleButtonState(3);
+            });
+        }
+    }
+
+    // Configuration pour la page de création de compte
+    if (MdpCreation && ConfirmMdpCreation) {
+        MdpCreation.addEventListener("input", function() {
+            handlePasswordStrength(MdpCreation);
+        });
+
+        ConfirmMdpCreation.addEventListener("input", function() {
+            handlePasswordConfirmation(MdpCreation, ConfirmMdpCreation);
+        });
+
+        // Event listener pour le formulaire (page création = 9 champs requis)
+        const formCreation = document.getElementById("form");
+        if (formCreation) {
+            formCreation.addEventListener("input", function() {
+                handleButtonState(9);
+            });
+        }
+    }
+}
+
+// Initialiser quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', function() {
+    initPasswordStrength();
+});
+</script>
 </body>
 </html>

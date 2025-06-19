@@ -252,17 +252,20 @@ public class UtilisateurController {
         var password = utilisateur.getMot_de_passe();
 
         utilisateur.setMot_de_passe(passwordEncoder.encode(password));
-
-        utilisateurService.enregistrerUneAdresse(utilisateur.getAdresse());
-
-        utilisateurService.enregistrerUnUtilisateur(utilisateur);
-
         try {
-            request.login(utilisateur.getUsername(), password);
-        } catch (ServletException e) {
-            logger.error("Erreur, mot de passe incorrect : {",e);
-            redirectAttributes.addFlashAttribute("errorMdpMessage", "Erreur, mot de passe incorrect");
-            return "redirect:/register?error";
+            utilisateurService.enregistrerUneAdresse(utilisateur.getAdresse());
+
+            utilisateurService.enregistrerUnUtilisateur(utilisateur);
+            try {
+                request.login(utilisateur.getUsername(), password);
+            } catch (ServletException e) {
+                logger.error("Erreur, mot de passe incorrect : {",e);
+                return "redirect:/register?error";
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorCreationCompte",
+                    e.getMessage());
+            return "redirect:/creer-compte";
         }
 
         // 2. Authentifier automatiquement l'utilisateur

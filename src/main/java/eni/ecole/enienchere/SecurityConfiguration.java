@@ -45,7 +45,7 @@ public class SecurityConfiguration {
                         // Pages d'authentification
                         .requestMatchers("/connexion").permitAll()
                         .requestMatchers("/creer-compte").permitAll()
-                        .requestMatchers("/deconnexion").permitAll()
+                        .requestMatchers("/logout").permitAll()
 
                         // ========== PAGES ENCHÈRES ==========
                         // Liste des enchères (page principale)
@@ -127,7 +127,7 @@ public class SecurityConfiguration {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/deconnexion")
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
