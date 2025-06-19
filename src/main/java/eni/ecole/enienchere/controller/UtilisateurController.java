@@ -48,9 +48,9 @@ public class UtilisateurController {
             Model model, Authentication authentication) {
 
         if (authentication != null) {
-            var principal = authentication.getPrincipal();
+            String pseudoPrincipal = authentication.getName();
 
-            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
+            if (pseudo.equals(pseudoPrincipal)) {
 
                 try {
 
@@ -77,9 +77,9 @@ public class UtilisateurController {
             Authentication authentication) {
 
         if (authentication != null) {
-            var principal = authentication.getPrincipal();
+            String pseudoPrincipal = authentication.getName();
 
-            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
+            if (pseudo.equals(pseudoPrincipal)) {
 
                 try {
 
@@ -121,9 +121,9 @@ public class UtilisateurController {
             Model model,
             Authentication authentication) {
         if (authentication != null) {
-            var principal = authentication.getPrincipal();
+            String pseudoPrincipal = authentication.getName();
 
-            if (principal instanceof Utilisateur && pseudo.equals(((Utilisateur) principal).getPseudo())) {
+            if (pseudo.equals(pseudoPrincipal)) {
 
                 try {
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
@@ -150,19 +150,19 @@ public class UtilisateurController {
            var utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
 
            if (!nouveauMotDePasse.equals(confirmationMotDePasse)) {
-               redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe doit être identique à celui entré dans le champ de confirmation");
+               redirectAttributes.addFlashAttribute("errorConfirmMdpMessage", "Le nouveau mot de passe doit être identique à celui entré dans le champ de confirmation");
                return "view-profil-modif-mdp";
            }
 
            // Vérification de l'ancien mot de passe
            if (!passwordEncoder.matches(ancienMotDePasse, utilisateurAModifier.getMot_de_passe())) {
-               redirectAttributes.addFlashAttribute("errorMessage", "Mot de passe incorrect");
+               redirectAttributes.addFlashAttribute("errorMdpMessage", "Mot de passe incorrect");
                return "view-profil-modif-mdp";
            }
 
            // Vérification que le nouveau mot de passe est différent de l'ancien
            if (passwordEncoder.matches(nouveauMotDePasse, utilisateurAModifier.getMot_de_passe())) {
-               redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe et l'ancien sont identiques");
+               redirectAttributes.addFlashAttribute("errorNewMdpMessage", "Le nouveau mot de passe et l'ancien sont identiques");
                return "view-profil-modif-mdp";
            }
 
@@ -173,13 +173,13 @@ public class UtilisateurController {
                 // Mise à jour en base de données
                 utilisateurService.updateMdp(utilisateurAModifier, nouveauMotDePasseEncode);
 
-                redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
+                redirectAttributes.addFlashAttribute("successModifMdpMessage", "Mot de passe mis à jour avec succès");
 
                 return "redirect:/mon-profil?pseudo=" + authentication.getName();
 
             } catch (Exception e) {
                 logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}",e);
-                redirectAttributes.addFlashAttribute("successMessage", "Erreur lors de la mise à jour du mot de passe");
+                redirectAttributes.addFlashAttribute("errorModifMdpMessage", "Erreur lors de la mise à jour du mot de passe");
                 return "view-profil-modif-mdp";
             }
        }
@@ -214,7 +214,7 @@ public class UtilisateurController {
             request.login(utilisateur.getUsername(), password);
         } catch (ServletException e) {
             logger.error("Erreur, mot de passe incorrect : {",e);
-            redirectAttributes.addFlashAttribute("successMessage", "Erreur, mot de passe incorrect");
+            redirectAttributes.addFlashAttribute("errorMdpMessage", "Erreur, mot de passe incorrect");
             return "redirect:/register?error";
         }
 

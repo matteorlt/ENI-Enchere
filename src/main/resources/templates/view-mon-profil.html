@@ -8,6 +8,18 @@
 </head>
 <body>
 <main class="container py-5">
+  <div th:if="${successModifProfilMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${successModifProfilMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div th:if="${successModifMdpMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${successModifMdpMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div th:if="${errorModifMdpMessage}" class="alert alert-error alert-dismissible fade show" role="alert">
+    <span th:text="${errorModifMdpMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="profil-container">

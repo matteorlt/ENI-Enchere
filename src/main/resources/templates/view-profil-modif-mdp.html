@@ -60,8 +60,8 @@
         <p class="small red hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>
 
         <div class="button-group">
-            <button type="submit" class="btn btn-primary disabled" id=btnSubmit>Enregistrer</button>
-            <a th:href="@{/mon-profil(pseudo=${utilisateur.getPseudo()})}" class="btn btn-cancel-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary" id=btnSubmit>Enregistrer</button>
+            <a th:href="@{/mon-profil(pseudo=${utilisateur.getPseudo()})}" class="btn btn-cancel-secondary">❌ Annuler</a>
         </div>
     </form>
 
