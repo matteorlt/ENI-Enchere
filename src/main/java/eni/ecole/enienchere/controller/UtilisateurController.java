@@ -6,14 +6,9 @@ import eni.ecole.enienchere.bo.Utilisateur;
 import eni.ecole.enienchere.dal.AdresseDAOImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,18 +16,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
 
 @Controller
-
-@SessionAttributes({"utilisateurConnecte"})
 @Validated
 public class UtilisateurController {
 
@@ -43,13 +34,11 @@ public class UtilisateurController {
     private final PasswordEncoder passwordEncoder;
 
     private final UtilisateurService utilisateurService;
-    private final AdresseDAOImpl adresseDAOImpl;
 
     public UtilisateurController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UtilisateurService utilisateurService, AdresseDAOImpl adresseDAOImpl) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.utilisateurService = utilisateurService;
-        this.adresseDAOImpl = adresseDAOImpl;
     }
 
 
@@ -88,11 +77,10 @@ public class UtilisateurController {
             Model model, Authentication authentication) {
 
         if (authentication != null) {
-            // Utiliser getName() qui retourne le username (pseudo)
-            String pseudoConnecte = authentication.getName();
-            
-            // Vérifier que l'utilisateur connecté accède à son propre profil
-            if (pseudo.equals(pseudoConnecte)) {
+            String pseudoPrincipal = authentication.getName();
+
+            if (pseudo.equals(pseudoPrincipal)) {
+
                 try {
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
                     int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
@@ -117,34 +105,16 @@ public class UtilisateurController {
             Authentication authentication) {
 
         if (authentication != null) {
-            String pseudoConnecte = authentication.getName();
-            
-            if (pseudo.equals(pseudoConnecte)) {
+            String pseudoPrincipal = authentication.getName();
+
+            if (pseudo.equals(pseudoPrincipal)) {
+
                 try {
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-                    
-                    // Vérifier que l'utilisateur existe
-                    if (utilisateur == null) {
-                        logger.error("Utilisateur non trouvé: " + pseudo);
-                        return "redirect:/";
-                    }
-                    
-                    // Vérifier que l'adresse existe
-                    if (utilisateur.getAdresse() == null) {
-                        logger.warn("Aucune adresse trouvée pour l'utilisateur: " + pseudo + ", création d'une adresse vide");
-                        utilisateur.setAdresse(new Adresse());
-                    } else {
-                        long no_adresse = utilisateur.getAdresse().getNo_adresse();
-                        Adresse adresse = utilisateurService.consulterAdresseParId((int) no_adresse);
-                        
-                        // Si l'adresse complète n'est pas trouvée, garder l'adresse partielle
-                        if (adresse != null) {
-                            utilisateur.setAdresse(adresse);
-                        }
-                    }
-                    
+                    int no_adresse = (int) utilisateur.getAdresse().getNo_adresse();
+                    Adresse adresse = utilisateurService.consulterAdresseParId(no_adresse);
                     model.addAttribute("utilisateur", utilisateur);
-                    model.addAttribute("pseudo", pseudo);
+                    model.addAttribute("adresse", adresse);
                     return "view-profil-modif";
                 } catch (Exception e) {
                     logger.error("Erreur lors du chargement du formulaire de modification pour: " + pseudo, e);
@@ -159,13 +129,14 @@ public class UtilisateurController {
     public String mettreAJourUtilisateur(
 
             Authentication authentication,
+            RedirectAttributes redirectAttributes,
             @ModelAttribute Utilisateur utilisateur, Principal principal) {
 
         var utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
 
-
         utilisateurService.modifUtilisateur(utilisateurAModifier, utilisateur.getNom(), utilisateur.getPrenom(), utilisateur.getEmail(), utilisateur.getTelephone());
-
+        utilisateurService.updateAdresse(utilisateurAModifier, utilisateur.getAdresse().getRue(), utilisateur.getAdresse().getCode_postal(), utilisateur.getAdresse().getVille());
+        redirectAttributes.addFlashAttribute("successModifProfilMessage", "Modifications effectuées avec succès");
 
         return "redirect:/mon-profil?pseudo=" + authentication.getName();
     }
@@ -176,23 +147,15 @@ public class UtilisateurController {
             Model model,
             Authentication authentication) {
         if (authentication != null) {
-            String pseudoConnecte = authentication.getName();
+            String pseudoPrincipal = authentication.getName();
             
-            if (pseudo.equals(pseudoConnecte)) {
+            if (pseudo.equals(pseudoPrincipal)) {
                 try {
                     Utilisateur utilisateur = utilisateurService.consulterUtilisateurParPseudo(pseudo);
-                    
-                    // Vérifier que l'utilisateur existe
-                    if (utilisateur == null) {
-                        logger.error("Utilisateur non trouvé: " + pseudo);
-                        return "redirect:/";
-                    }
-                    
                     model.addAttribute("utilisateur", utilisateur);
-                    model.addAttribute("pseudo", pseudo);
                     return "view-profil-modif-mdp";
                 } catch (Exception e) {
-                    logger.error("Erreur lors du chargement du formulaire de modification de mot de passe pour: " + pseudo, e);
+                    logger.error("Erreur lors du chargement du formulaire de modification de mot de passe: {",e);
                     return "redirect:/";
                 }
             }
@@ -200,26 +163,51 @@ public class UtilisateurController {
         return "redirect:/";
     }
 
-
        @PostMapping("/mon-profil/modifier-mot-de-passe")
         public String mettreAJourMdp(
                Authentication authentication,
-               @ModelAttribute Utilisateur utilisateur, Principal principal,
+               Principal principal,
                RedirectAttributes redirectAttributes,
-               @RequestParam("newPassword") @NotBlank String nouveauMotDePasse) {
+               @RequestParam("password") @NotBlank String ancienMotDePasse,
+               @RequestParam("newPassword") @NotBlank String nouveauMotDePasse,
+               @RequestParam("confirmNewPassword") @NotBlank String confirmationMotDePasse) {
+
+           var utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+
+           if (!nouveauMotDePasse.equals(confirmationMotDePasse)) {
+               redirectAttributes.addFlashAttribute("errorConfirmMdpMessage", "Le nouveau mot de passe doit être identique à celui entré dans le champ de confirmation");
+               return "view-profil-modif-mdp";
+           }
+
+           // Vérification de l'ancien mot de passe
+           if (!passwordEncoder.matches(ancienMotDePasse, utilisateurAModifier.getMot_de_passe())) {
+               redirectAttributes.addFlashAttribute("errorMdpMessage", "Mot de passe incorrect");
+               return "view-profil-modif-mdp";
+           }
+
+           // Vérification que le nouveau mot de passe est différent de l'ancien
+           if (passwordEncoder.matches(nouveauMotDePasse, utilisateurAModifier.getMot_de_passe())) {
+               redirectAttributes.addFlashAttribute("errorNewMdpMessage", "Le nouveau mot de passe et l'ancien sont identiques");
+               return "view-profil-modif-mdp";
+           }
 
             try {
+                // Encodage du nouveau mot de passe
                 String nouveauMotDePasseEncode = passwordEncoder.encode(nouveauMotDePasse);
-                var utilisateurAModifier = utilisateurService.consulterUtilisateurParPseudo(principal.getName());
+
+                // Mise à jour en base de données
                 utilisateurService.updateMdp(utilisateurAModifier, nouveauMotDePasseEncode);
-                redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
+
+                redirectAttributes.addFlashAttribute("successModifMdpMessage", "Mot de passe mis à jour avec succès");
+
+                return "redirect:/mon-profil?pseudo=" + authentication.getName();
 
             } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la mise à jour du mot de passe");
+                logger.error("Erreur lors de la mise à jour du mot de passe pour l'utilisateur: {}",e);
+                redirectAttributes.addFlashAttribute("errorModifMdpMessage", "Erreur lors de la mise à jour du mot de passe");
+                return "view-profil-modif-mdp";
             }
-
-            return "redirect:/mon-profil?pseudo=" + authentication.getName();
-        }
+       }
 
     /// /    @PostMapping("/mon-profil/modifier-mot-de-passe")
     /// /    public String mettreAJourMdp(
@@ -248,56 +236,32 @@ public class UtilisateurController {
     String login() {
         logger.info("Affichage du formulaire login");
 
-
         return "view-connexion";
     }
 
 
-    /// /    @PostMapping("/supprimer")
-    /// /    public String supprimerCompte(
-    /// /            @RequestParam("pseudo") @NotBlank String pseudo,
-    /// /            @ModelAttribute("utilisateurConnecte") Utilisateur utilisateurConnecte,
-    /// /            SessionStatus status,
-    /// /            RedirectAttributes redirectAttributes) {
-    /// /
-    /// /        if (!isUtilisateurAutorise(utilisateurConnecte, pseudo)) {
-    /// /            return "redirect:/accueil";
-    /// /        }
-    /// /
-    /// /        try {
-    /// /            utilisateurService.supprimerUtilisateur(pseudo);
-    /// /            status.setComplete(); // Terminer la session après suppression
-    /// /            logger.info("Compte supprimé avec succès pour l'utilisateur: {}", pseudo);
-    /// /            redirectAttributes.addFlashAttribute("successMessage", "Votre compte a été supprimé avec succès");
-    /// /            return "redirect:/accueil";
-    /// /        } catch (Exception e) {
-    /// /            logger.error("Erreur lors de la suppression du compte: {}", pseudo, e);
-    /// /            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression du compte");
-    /// /            return "redirect:/utilisateur/mon-profil?pseudo=" + pseudo;
-    /// /        }
-    /// /    }
+    @GetMapping("/creer-compte")
+    public String registerGet(Model model) {
+        model.addAttribute("utilisateur", new Utilisateur());
+        return "view-creer-compte";
+    }
 
     @PostMapping("/creer-compte")
-    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request, Principal principal) {
+    public String formulaireCreationCompte(@ModelAttribute Utilisateur utilisateur, HttpServletRequest request, RedirectAttributes redirectAttributes, Principal principal) {
 
         var password = utilisateur.getMot_de_passe();
 
         utilisateur.setMot_de_passe(passwordEncoder.encode(password));
 
-
         utilisateurService.enregistrerUneAdresse(utilisateur.getAdresse());
 
-//        var no_adresse = newAdresse.getNo_adresse();
-//        utilisateur.
-
-//        utilisateur.getAdresse().setNo_adresse(adresseEnregistrer.getNo_adresse());
         utilisateurService.enregistrerUnUtilisateur(utilisateur);
-
 
         try {
             request.login(utilisateur.getUsername(), password);
         } catch (ServletException e) {
-            // Gérer l'erreur (par exemple, mot de passe incorrect)
+            logger.error("Erreur, mot de passe incorrect : {",e);
+            redirectAttributes.addFlashAttribute("errorMdpMessage", "Erreur, mot de passe incorrect");
             return "redirect:/register?error";
         }
 
@@ -311,67 +275,8 @@ public class UtilisateurController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
-
         return "redirect:/";
     }
 
-    @GetMapping("/creer-compte")
-    public String registerGet(Model model) {
-        model.addAttribute("utilisateur", new Utilisateur());
-        return "view-creer-compte";
-    }
 
 }
-
-
-/// /    @PostMapping("/creer-compte/enregistrer")
-/// /    public String enregistrerCompte(
-/// /            @ModelAttribute("utilisateur") @Valid Utilisateur utilisateur,
-/// /            BindingResult result,
-/// /            Model model,
-/// /            RedirectAttributes redirectAttributes) {
-/// /
-/// /        // Vérification de l'unicité de l'email
-/// /        if (utilisateurService.existeParEmail(utilisateur.getEmail())) {
-/// /            result.rejectValue("email", "email.exists", "Cet email est déjà utilisé");
-/// /        }
-/// /
-/// /        // Vérification de l'unicité du pseudo
-/// /        if (utilisateurService.existeParPseudo(utilisateur.getPseudo())) {
-/// /            result.rejectValue("pseudo", "pseudo.exists", "Ce pseudo est déjà utilisé");
-/// /        }
-/// /
-/// /        if (result.hasErrors()) {
-/// /            model.addAttribute("utilisateur", utilisateur);
-/// /            return "view-creer-compte";
-/// /        }
-/// /
-/// /        try {
-/// /            utilisateurService.enregistrerUtilisateur(utilisateur);
-/// /            logger.info("Nouveau compte créé avec succès pour l'utilisateur: {}", utilisateur.getPseudo());
-/// /            redirectAttributes.addFlashAttribute("successMessage", "Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
-/// /            return "redirect:/utilisateur/connexion";
-/// /        } catch (Exception e) {
-/// /            logger.error("Erreur lors de la création du compte pour: {}", utilisateur.getPseudo(), e);
-/// /            model.addAttribute("errorMessage", "Erreur lors de la création du compte");
-/// /            model.addAttribute("utilisateur", utilisateur);
-/// /            return "view-creer-compte";
-/// /        }
-//    }
-//
-//    // Méthodes utilitaires privées
-//    private boolean isUtilisateurConnecte(Utilisateur utilisateur) {
-//        return utilisateur != null && utilisateur.getPseudo() != null && !utilisateur.getPseudo().trim().isEmpty();
-//    }
-//
-//    private boolean isUtilisateurAutorise(Utilisateur utilisateurConnecte, String pseudo) {
-//        return isUtilisateurConnecte(utilisateurConnecte) && pseudo.equals(utilisateurConnecte.getPseudo());
-//    }
-//
-//    @ExceptionHandler(Exception.class)
-//    public String handleException(Exception e, RedirectAttributes redirectAttributes) {
-//        logger.error("Erreur non gérée dans UtilisateurController", e);
-//        redirectAttributes.addFlashAttribute("errorMessage", "Une erreur inattendue s'est produite");
-//        return "redirect:/accueil";
-//    }

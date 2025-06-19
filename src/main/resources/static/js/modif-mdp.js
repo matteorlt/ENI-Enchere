@@ -1,3 +1,5 @@
+
+var OldMdp = document.getElementById("inputOldMdp")
 var Mdp = document.getElementById("inputMdp")
 var ConfirmMdp = document.getElementById("inputConfirmMdp")
 var phraseMdp = document.getElementById("textMdp")
@@ -9,7 +11,13 @@ document.getElementById("inputMdp").addEventListener("input", function () {
     let forceMdpFort = document.getElementById("fort")
     let regex = /^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$/;
 
+    if (Mdp.value.length>0) {
         forceMdpFaible.style.visibility = "visible";
+    }
+    else {
+        forceMdpFaible.style.visibility = "hidden"
+    }
+
 
     if (Mdp.value.match(regex)) {
         phraseMdp.classList.remove("red");
@@ -38,18 +46,6 @@ document.getElementById("inputConfirmMdp").addEventListener("input", function ()
     }
     else {
         phraseConfirmMdp.style.visibility = "visible";
-    }
-})
-
-
-document.getElementById("form").addEventListener("input", function () {
-    let buttonEnable = document.getElementById("btnSubmit");
-    let champValide = document.querySelectorAll(".input-field:valid");
-    if (champValide.length == 8) {
-        buttonEnable.classList.remove("disabled");
-    }
-    if (champValide.length < 8) {
-        buttonEnable.classList.add("disabled");
     }
 })
 

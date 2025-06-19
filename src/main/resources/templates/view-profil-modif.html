@@ -12,9 +12,8 @@
         <form class="form-container"
               method="post"
               data-th-object="${utilisateur}"
-              th:action="@{/mon-profil/modifier(pseudo=${utilisateur.pseudo})}">
-            
-            <h1>Modifier mon profil</h1>
+              th:action="@{/mon-profil/modifier(pseudo=${pseudo})}">
+            <h1>Mon profil</h1>
 
             <div class="form-group">
                 <label>Pseudo :</label>
@@ -32,47 +31,42 @@
                 <input type="text" class="form-control" id="inputPrenom" data-th-field="*{prenom}" required/>
             </div>
 
-            <div class="form-group">
-                <label for="inputEmail">Email* :</label>
-                <input type="email" class="form-control" id="inputEmail" data-th-field="*{email}" required/>
-            </div>
+        <div class="form-group">
+            <label for="inputEmail">Email* :</label>
+            <input type="email" id="inputEmail" data-th-field="*{email}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>
+        </div>
 
-            <div class="form-group">
-                <label for="inputTelephone">Téléphone :</label>
-                <input type="tel" class="form-control" id="inputTelephone" data-th-field="*{telephone}"/>
-            </div>
+        <div class="form-group">
+            <label for="inputTelephone">Téléphone :</label>
+            <input type="tel" id="inputTelephone" data-th-field="*{telephone}" pattern="[0][0-9]{10}"/>
+        </div>
 
-            <div class="form-group address-group">
+        <div class="form-group address-group">
+            <div>
+                <label for="inputAdresse">Adresse* :</label>
+                <input type="text" class="form-control" id="inputAdresse" data-th-field="*{adresse.rue}" required/>
+            </div>
+            <div class="address-row">
                 <div>
-                    <label for="inputAdresse">Adresse* :</label>
-                    <input type="text" class="form-control" id="inputAdresse" 
-                           th:field="*{adresse.rue}" 
-                           th:value="${utilisateur.adresse?.rue ?: ''}" 
-                           required/>
+                    <label for="inputCP">Code postal* :</label>
+                    <input type="text" class="form-control" id="inputCP" data-th-field="*{adresse.code_postal}" pattern="[0-9]{5}" required/>
                 </div>
-                <div class="address-row">
-                    <div>
-                        <label for="inputCP">Code postal* :</label>
-                        <input type="text" class="form-control" id="inputCP" 
-                               th:field="*{adresse.code_postal}" 
-                               th:value="${utilisateur.adresse?.code_postal ?: ''}" 
-                               required/>
-                    </div>
-                    <div>
-                        <label for="inputVille">Ville* :</label>
-                        <input type="text" class="form-control" id="inputVille" 
-                               th:field="*{adresse.ville}" 
-                               th:value="${utilisateur.adresse?.ville ?: ''}" 
-                               required/>
-                    </div>
+                <div>
+                    <label for="inputVille" >Ville* :</label>
+                    <input type="text" class="form-control" id="inputVille" data-th-field="*{adresse.ville}" required/>
                 </div>
             </div>
+        </div>
 
-            <div class="button-group">
-                <button type="submit" class="btn btn-primary">Enregistrer</button>
-                <a th:href="@{/mon-profil(pseudo=${utilisateur.pseudo})}" class="btn btn-secondary">Annuler</a>
-                <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${utilisateur.pseudo})}" class="btn btn-outline-primary">Modifier mot de passe</a>
-            </div>
+        <div class="button-group">
+            <a th:href="@{/mon-profil/modifier-mot-de-passe(pseudo=${#authentication.name})}" class="btn btn-secondary">🔒 Modifier mot de passe</a>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <button th:href="@{/mon-profil(pseudo=${#authentication.name})}" class="btn btn-cancel-secondary">Annuler</button>
+
+<!--            AJOUTER DU JS POUR UNE POP UP DE CONFIRMATION AVANT SUPPRESSION-->
+            <a href="/supprimer" class="btn btn-cancel">Supprimer mon compte</a>
+<!--            ...............................................................-->
+        </div>
 
         </form>
     </div>

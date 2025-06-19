@@ -1,0 +1,50 @@
+/* Styles pour les alertes */
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    position: relative;
+}
+
+.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+.alert-error {
+    color: #881515;
+    background-color: #ffcece;
+    border-color: #ff9c9c;
+}
+
+.alert-dismissible {
+    padding-right: 3rem;
+}
+
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    padding: 0.9375rem 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.fade {
+    transition: opacity 0.15s linear;
+}
+
+.show {
+    opacity: 1;
+}
+
+.btn-close::before {
+    content: "×";
+    font-size: 1.5rem;
+    color: #000;
+}

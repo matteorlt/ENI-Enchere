@@ -8,11 +8,27 @@
 </head>
 <body>
 <main>
+    <div th:if="${errorConfirmMdpMessage}" class="alert alert-error alert-dismissible fade show" role="alert">
+        <span th:text="${errorConfirmMdpMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMdpMessage}" class="alert alert-error alert-dismissible fade show" role="alert">
+        <span th:text="${errorMdpMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorModifMdpMessage}" class="alert alert-error alert-dismissible fade show" role="alert">
+        <span th:text="${errorModifMdpMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorNewMdpMessage}" class="alert alert-error alert-dismissible fade show" role="alert">
+        <span th:text="${errorNewMdpMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     <div class="profil-container">
-        <form class="form-container" id="form" 
-              th:action="@{/mon-profil/modifier-mot-de-passe(pseudo=${utilisateur.pseudo})}"
+        <form class="form-container" id="form"
+              th:action="@{/mon-profil/modifier-mot-de-passe(pseudo=${pseudo})}"
               method="post">
-            
+
             <h1>Modifier mon mot de passe</h1>
 
             <div class="form-group">
@@ -22,11 +38,11 @@
 
             <div class="form-group">
                 <label for="inputMdp">Nouveau mot de passe* :</label>
-                <input type="password" class="form-control" id="inputMdp" name="newPassword" 
+                <input type="password" class="form-control" id="inputMdp" name="newPassword"
                        required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
             </div>
             <p class="form-text text-muted" id="textMdp">Au moins un symbole, un chiffre, ainsi que 8 caractères minimum</p>
-            
+
             <div class="forceMdp" id="forceMdp">
                 <div class="hidden" id="faible">
                     <div class="barreCouleur"></div>
@@ -44,7 +60,7 @@
 
             <div class="form-group">
                 <label for="inputConfirmMdp">Confirmer mot de passe* :</label>
-                <input type="password" class="form-control" id="inputConfirmMdp" name="confirmNewPassword" 
+                <input type="password" class="form-control" id="inputConfirmMdp" name="confirmNewPassword"
                        required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
             </div>
             <p class="form-text text-danger hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>

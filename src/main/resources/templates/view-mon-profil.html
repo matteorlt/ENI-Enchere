@@ -8,13 +8,25 @@
 </head>
 <body>
 <main class="container py-5">
+  <div th:if="${successModifProfilMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${successModifProfilMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div th:if="${successModifMdpMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${successModifMdpMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div th:if="${errorModifMdpMessage}" class="alert alert-error alert-dismissible fade show" role="alert">
+    <span th:text="${errorModifMdpMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="profil-container">
         <div class="profil-header">
           <h1>Mon Profil</h1>
         </div>
-        
+
         <form method="post" data-th-object="${utilisateur}">
           <div class="profil-info">
             <div class="row profil-info__row">
@@ -54,18 +66,18 @@
             <div class="row profil-info__row">
               <div class="col-md-3 profil-info__label">Adresse :</div>
               <div class="col-md-9">
-                <input type="text" id="inputAdresse" class="form-control" data-th-field="*{adresse.rue}" required/>
+                <input type="text" id="inputAdresse" class="form-control" data-th-field="*{adresse.rue}" readonly/>
               </div>
             </div>
-            
+
             <div class="row profil-info__row">
               <div class="col-md-3 profil-info__label">Code postal :</div>
               <div class="col-md-4">
-                <input type="text" id="inputCP" class="form-control" data-th-field="*{adresse.code_postal}" required/>
+                <input type="text" id="inputCP" class="form-control" data-th-field="*{adresse.code_postal}" readonly/>
               </div>
               <div class="col-md-2 profil-info__label">Ville :</div>
               <div class="col-md-3">
-                <input type="text" id="inputVille" class="form-control" data-th-field="*{adresse.ville}" required/>
+                <input type="text" id="inputVille" class="form-control" data-th-field="*{adresse.ville}" readonly/>
               </div>
             </div>
           </div>
@@ -75,7 +87,7 @@
             <div class="fs-4 fw-bold" data-th-text="*{credit} + ' points'"></div>
             <input type="hidden" data-th-field="*{credit}" readonly/>
           </div>
-          
+
           <div class="text-center mt-4">
             <a th:href="@{/mon-profil/modifier(pseudo=${#authentication.name})}" class="btn btn-primary me-3">
               ✏️ Modifier mon profil
