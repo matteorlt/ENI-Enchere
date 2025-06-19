@@ -102,3 +102,21 @@ SET @ArticleEnchereCloturee = SCOPE_IDENTITY();
 -- 1 article avec enchère annulée
 INSERT INTO ARTICLES_A_VENDRE (nom_article, description, date_debut_encheres, date_fin_encheres, statut_enchere, prix_initial,  id_utilisateur , no_categorie , no_adresse_retrait)
 	VALUES ('Bureau', 'Bureau d''ordinateur', DATEADD (DAY , +2 , GETDATE() ), DATEADD (DAY , +16 , GETDATE() ),100, 1, @CoachTiti, @CatMeuble,@AddNantesFranklin);
+
+INSERT INTO articles (
+    no_article, nom_article, description, photo, date_debut_encheres,
+    date_fin_encheres, statut_enchere, prix_initial, prix_vente,
+    id_utilisateur, no_categorie, no_adresse_retrait
+) VALUES
+      (1, 'PC ENI 2', 'Un PC de salle de cours', 'uploads/photos/article_1_7541ed7b-d87e-4feb-9392-26cbadf3c43e.jpg', '2025-06-11', '2025-06-25', 1, 1, 999, 'coach_toto', 2, 2),
+      (2, 'Disque Dur', 'Disque dur externe', 'uploads/photos/article_2_39e8a415-1fe0-4962-b5c1-adca0a92bba1.jpg', '2025-06-09', '2025-06-30', 1, 1, 4, 'coach_toto', 2, 2),
+      (3, 'PC Gamer pour travailler', 'Un PC de Gamer avec une RAM de 36Go', 'uploads/photos/article_3_49fa4a4e-891f-460a-aefc-743a11fcf838.jpg', '2025-06-11', '2025-06-25', 1, 2, 3, 'coach_toto', 2, 1),
+      (4, 'Baskets blanches', 'Chaussures pour le sport ou tous les jours', 'uploads/photos/article_4_fe98afac-9b6d-4761-bc0a-079fe103994b.png', '2025-06-09', '2025-06-20', 1, 2, 10, 'coach_titi', 4, 3),
+      (5, 'Chaise', 'Chaise de bureau', 'uploads/photos/article_5_ff107f0b-b6d7-4d51-aea5-a752d546b583.jpg', '2025-06-07', '2025-06-10', 2, 1, 2, 'coach_toto', 1, 1),
+      (6, 'Bureau', 'Bureau d''ordinateur', 'uploads/photos/article_6_4b6cad53-f3cd-443a-bc2c-d1f57d65b4d8.jpg', '2025-06-12', '2025-06-26', 1, 1, 9, 'coach_titi', 1, 1),
+      (7, 'Jouet d''enfant', 'Parfait pour les enfants de 3 à 8 ans.', 'uploads/photos/article_7_4468c2ca-5c8e-4808-ba72-29d70e3b5a75.jpg', '2025-06-17', '2025-06-18', 2, 1, 2, 'admin', 3, 17),
+      (8, 'Ballon de football', 'Ballon de la coupe du monde 2020', 'uploads/photos/article_8_4c01d02c-1956-40a0-92cc-16d7d8d5ea75.jpg', '2025-06-18', '2025-06-25', 1, 1, 2, 'matteo', 4, 19),
+      (9, 'Tambour', 'Si vous voulez commencer la musique c''est ce qu''il vous faut', 'uploads/photos/article_9_d9d7a604-fbe0-4932-a4d1-63cc7893edec.jpg', '2025-06-17', '2025-06-17', 2, 1, 5, 'admin', 2, 17),
+      (10, 'Trampolinee', 'trampoline pour enfants', 'uploads/photos/article_10_d54ea371-dc17-4672-9ce1-c1c6101e40d4.jpg', '2025-06-18', '2025-06-20', 1, 2, 0, 'admin', 3, 17),
+      (11, 'Magazine', 'magazine de meubles', 'uploads/photos/article_11_8302117e-9785-4668-ae82-f8014c83cf17.jpg', '2025-06-18', '2025-06-20', 1, 5, 6, 'admin2', 1, 21),
+      (17, 'Chien', 'Pour un magnifique cadeau de Noël.', 'uploads/photos/article_17_4c611cac-c837-4477-8cb5-95aef852a6a0.jpg', '2025-06-19', '2025-06-20', 1, 5, 0, 'administrateur', 3, 23);
