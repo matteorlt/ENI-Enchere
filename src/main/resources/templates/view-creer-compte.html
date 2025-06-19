@@ -19,8 +19,8 @@
         </div>
 
         <div class="form-group">
-            <label for="password" class="form-group__label">Mot de passe :</label>
-            <input type="password" id="password" data-th-field="*{mot_de_passe}" required class="form-group__input">
+            <label for="inputMdp" class="form-group__label">Mot de passe :</label>
+            <input type="password" id="inputMdp" data-th-field="*{mot_de_passe}" required class="form-group__input">
         </div>
 
         <p class="small" id="textMdp">Au moins un symbole, un chiffre, ainsi que 8 caractères minimum</p>
@@ -39,8 +39,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="inputConfirmMdp">Confirmer mot de passe* :</label>
-            <input type="password" id="inputConfirmMdp" name="confirmNewPassword" required pattern="^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$"/>
+            <label for="inputConfirmMdp" class="form-group__label">Confirmer mot de passe* :</label>
+            <input class="form-group__input" type="password" id="inputConfirmMdp" name="confirmNewPassword" required />
         </div>
         <p class="small red hidden" id="textConfirmMdp">Les mots de passe ne sont pas identiques</p>
 
@@ -56,7 +56,7 @@
 
         <div class="form-group">
             <label for="inputEmail" class="form-group__label">Email :</label>
-            <input type="email" id="inputEmail" data-th-field="*{email}" required class="form-group__input">
+            <input type="email" id="inputEmail" data-th-field="*{email}" required class="form-group__input" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">
         </div>
 
         <div class="form-group">

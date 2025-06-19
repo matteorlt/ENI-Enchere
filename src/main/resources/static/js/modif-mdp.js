@@ -2,6 +2,9 @@ var Mdp = document.getElementById("inputMdp")
 var ConfirmMdp = document.getElementById("inputConfirmMdp")
 var phraseMdp = document.getElementById("textMdp")
 var phraseConfirmMdp = document.getElementById("textConfirmMdp")
+var phraseEmailValid = document.getElementById("inputEmail")
+
+
 
 document.getElementById("inputMdp").addEventListener("input", function () {
     let forceMdpFaible = document.getElementById("faible")
@@ -9,7 +12,12 @@ document.getElementById("inputMdp").addEventListener("input", function () {
     let forceMdpFort = document.getElementById("fort")
     let regex = /^(?=.*[0-9])(?=.*[A-Za-z])(?=.*\W)(?!.* ).{8,}$/;
 
+    if (Mdp.value.length>0) {
         forceMdpFaible.style.visibility = "visible";
+    }
+    else {
+        forceMdpFaible.style.visibility = "hidden"
+    }
 
     if (Mdp.value.match(regex)) {
         phraseMdp.classList.remove("red");

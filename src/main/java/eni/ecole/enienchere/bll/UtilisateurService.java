@@ -5,6 +5,8 @@ import eni.ecole.enienchere.bo.Utilisateur;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 public interface UtilisateurService extends UserDetailsService {
 
     Utilisateur consulterUtilisateurParPseudo(String pseudo);
@@ -26,4 +28,7 @@ public interface UtilisateurService extends UserDetailsService {
     void updateCredit(String pseudo, int nouveauCredit);
 
 
+    List<Utilisateur> consulterLaListeDesUtilisateur();
+
+    void supprimerUtilisateur(@NotBlank String pseudo);
 }

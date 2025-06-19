@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
 
@@ -114,4 +116,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         public void updateCredit (String pseudo,int nouveauCredit){
             utilisateurDAO.updateCredit(pseudo, nouveauCredit);
         }
+
+    @Override
+    public List<Utilisateur> consulterLaListeDesUtilisateur() {
+        return utilisateurDAO.readAll();
     }
+
+    @Override
+    public void supprimerUtilisateur(String pseudo) {
+        utilisateurDAO.delete(pseudo);
+    }
+}

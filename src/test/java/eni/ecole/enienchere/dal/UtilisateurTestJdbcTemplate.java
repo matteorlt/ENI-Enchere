@@ -32,7 +32,7 @@ public class UtilisateurTestJdbcTemplate {
         var utilisateur = new Utilisateur();
         var adresse = new Adresse();
         adresse.setNo_adresse(2);
-        utilisateur.setPseudo("test5_admin");
+        utilisateur.setPseudo("test6_admin");
         utilisateur.setNom("Alex");
         utilisateur.setPrenom("René");
         utilisateur.setEmail("alexrene@gmail.com");
@@ -61,7 +61,7 @@ public class UtilisateurTestJdbcTemplate {
     @Test
     public void TestDeleteUtilisteur(){
 
-        var pseudo = "test4_admin";
+        var pseudo = "nnn";
         utilisateurDAO.delete(pseudo);
 
         assertThrows(EmptyResultDataAccessException.class, () -> {
